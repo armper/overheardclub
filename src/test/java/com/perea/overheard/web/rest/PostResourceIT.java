@@ -425,21 +425,21 @@ public class PostResourceIT {
 
     @Test
     @Transactional
-    public void getAllPostsByRankIsEqualToSomething() throws Exception {
+    public void getAllPostsByRankingIsEqualToSomething() throws Exception {
         // Initialize the database
         postRepository.saveAndFlush(post);
-        Ranking rank = RankingResourceIT.createEntity(em);
-        em.persist(rank);
+        Ranking ranking = RankingResourceIT.createEntity(em);
+        em.persist(ranking);
         em.flush();
-        post.addRank(rank);
+        post.addRanking(ranking);
         postRepository.saveAndFlush(post);
-        Long rankId = rank.getId();
+        Long rankingId = ranking.getId();
 
-        // Get all the postList where rank equals to rankId
-        defaultPostShouldBeFound("rankId.equals=" + rankId);
+        // Get all the postList where ranking equals to rankingId
+        defaultPostShouldBeFound("rankingId.equals=" + rankingId);
 
-        // Get all the postList where rank equals to rankId + 1
-        defaultPostShouldNotBeFound("rankId.equals=" + (rankId + 1));
+        // Get all the postList where ranking equals to rankingId + 1
+        defaultPostShouldNotBeFound("rankingId.equals=" + (rankingId + 1));
     }
 
 

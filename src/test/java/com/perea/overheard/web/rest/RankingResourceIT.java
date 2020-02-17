@@ -2,8 +2,13 @@ package com.perea.overheard.web.rest;
 
 import com.perea.overheard.OverheardclubApp;
 import com.perea.overheard.domain.Ranking;
+import com.perea.overheard.domain.User;
+import com.perea.overheard.domain.Post;
 import com.perea.overheard.repository.RankingRepository;
+import com.perea.overheard.service.RankingService;
 import com.perea.overheard.web.rest.errors.ExceptionTranslator;
+import com.perea.overheard.service.dto.RankingCriteria;
+import com.perea.overheard.service.RankingQueryService;
 
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -46,6 +51,12 @@ public class RankingResourceIT {
     private RankingRepository rankingRepository;
 
     @Autowired
+    private RankingService rankingService;
+
+    @Autowired
+    private RankingQueryService rankingQueryService;
+
+    @Autowired
     private MappingJackson2HttpMessageConverter jacksonMessageConverter;
 
     @Autowired
@@ -67,7 +78,7 @@ public class RankingResourceIT {
     @BeforeEach
     public void setup() {
         MockitoAnnotations.initMocks(this);
-        final RankingResource rankingResource = new RankingResource(rankingRepository);
+        final RankingResource rankingResource = new RankingResource(rankingService, rankingQueryService);
         this.restRankingMockMvc = MockMvcBuilders.standaloneSetup(rankingResource)
             .setCustomArgumentResolvers(pageableArgumentResolver)
             .setControllerAdvice(exceptionTranslator)
@@ -175,6 +186,205 @@ public class RankingResourceIT {
             .andExpect(jsonPath("$.date").value(DEFAULT_DATE.toString()));
     }
 
+
+    @Test
+    @Transactional
+    public void getRankingsByIdFiltering() throws Exception {
+        // Initialize the database
+        rankingRepository.saveAndFlush(ranking);
+
+        Long id = ranking.getId();
+
+        defaultRankingShouldBeFound("id.equals=" + id);
+        defaultRankingShouldNotBeFound("id.notEquals=" + id);
+
+        defaultRankingShouldBeFound("id.greaterThanOrEqual=" + id);
+        defaultRankingShouldNotBeFound("id.greaterThan=" + id);
+
+        defaultRankingShouldBeFound("id.lessThanOrEqual=" + id);
+        defaultRankingShouldNotBeFound("id.lessThan=" + id);
+    }
+
+
+    @Test
+    @Transactional
+    public void getAllRankingsByRankTypeIsEqualToSomething() throws Exception {
+        // Initialize the database
+        rankingRepository.saveAndFlush(ranking);
+
+        // Get all the rankingList where rankType equals to DEFAULT_RANK_TYPE
+        defaultRankingShouldBeFound("rankType.equals=" + DEFAULT_RANK_TYPE);
+
+        // Get all the rankingList where rankType equals to UPDATED_RANK_TYPE
+        defaultRankingShouldNotBeFound("rankType.equals=" + UPDATED_RANK_TYPE);
+    }
+
+    @Test
+    @Transactional
+    public void getAllRankingsByRankTypeIsNotEqualToSomething() throws Exception {
+        // Initialize the database
+        rankingRepository.saveAndFlush(ranking);
+
+        // Get all the rankingList where rankType not equals to DEFAULT_RANK_TYPE
+        defaultRankingShouldNotBeFound("rankType.notEquals=" + DEFAULT_RANK_TYPE);
+
+        // Get all the rankingList where rankType not equals to UPDATED_RANK_TYPE
+        defaultRankingShouldBeFound("rankType.notEquals=" + UPDATED_RANK_TYPE);
+    }
+
+    @Test
+    @Transactional
+    public void getAllRankingsByRankTypeIsInShouldWork() throws Exception {
+        // Initialize the database
+        rankingRepository.saveAndFlush(ranking);
+
+        // Get all the rankingList where rankType in DEFAULT_RANK_TYPE or UPDATED_RANK_TYPE
+        defaultRankingShouldBeFound("rankType.in=" + DEFAULT_RANK_TYPE + "," + UPDATED_RANK_TYPE);
+
+        // Get all the rankingList where rankType equals to UPDATED_RANK_TYPE
+        defaultRankingShouldNotBeFound("rankType.in=" + UPDATED_RANK_TYPE);
+    }
+
+    @Test
+    @Transactional
+    public void getAllRankingsByRankTypeIsNullOrNotNull() throws Exception {
+        // Initialize the database
+        rankingRepository.saveAndFlush(ranking);
+
+        // Get all the rankingList where rankType is not null
+        defaultRankingShouldBeFound("rankType.specified=true");
+
+        // Get all the rankingList where rankType is null
+        defaultRankingShouldNotBeFound("rankType.specified=false");
+    }
+
+    @Test
+    @Transactional
+    public void getAllRankingsByDateIsEqualToSomething() throws Exception {
+        // Initialize the database
+        rankingRepository.saveAndFlush(ranking);
+
+        // Get all the rankingList where date equals to DEFAULT_DATE
+        defaultRankingShouldBeFound("date.equals=" + DEFAULT_DATE);
+
+        // Get all the rankingList where date equals to UPDATED_DATE
+        defaultRankingShouldNotBeFound("date.equals=" + UPDATED_DATE);
+    }
+
+    @Test
+    @Transactional
+    public void getAllRankingsByDateIsNotEqualToSomething() throws Exception {
+        // Initialize the database
+        rankingRepository.saveAndFlush(ranking);
+
+        // Get all the rankingList where date not equals to DEFAULT_DATE
+        defaultRankingShouldNotBeFound("date.notEquals=" + DEFAULT_DATE);
+
+        // Get all the rankingList where date not equals to UPDATED_DATE
+        defaultRankingShouldBeFound("date.notEquals=" + UPDATED_DATE);
+    }
+
+    @Test
+    @Transactional
+    public void getAllRankingsByDateIsInShouldWork() throws Exception {
+        // Initialize the database
+        rankingRepository.saveAndFlush(ranking);
+
+        // Get all the rankingList where date in DEFAULT_DATE or UPDATED_DATE
+        defaultRankingShouldBeFound("date.in=" + DEFAULT_DATE + "," + UPDATED_DATE);
+
+        // Get all the rankingList where date equals to UPDATED_DATE
+        defaultRankingShouldNotBeFound("date.in=" + UPDATED_DATE);
+    }
+
+    @Test
+    @Transactional
+    public void getAllRankingsByDateIsNullOrNotNull() throws Exception {
+        // Initialize the database
+        rankingRepository.saveAndFlush(ranking);
+
+        // Get all the rankingList where date is not null
+        defaultRankingShouldBeFound("date.specified=true");
+
+        // Get all the rankingList where date is null
+        defaultRankingShouldNotBeFound("date.specified=false");
+    }
+
+    @Test
+    @Transactional
+    public void getAllRankingsByUserIsEqualToSomething() throws Exception {
+        // Initialize the database
+        rankingRepository.saveAndFlush(ranking);
+        User user = UserResourceIT.createEntity(em);
+        em.persist(user);
+        em.flush();
+        ranking.setUser(user);
+        rankingRepository.saveAndFlush(ranking);
+        Long userId = user.getId();
+
+        // Get all the rankingList where user equals to userId
+        defaultRankingShouldBeFound("userId.equals=" + userId);
+
+        // Get all the rankingList where user equals to userId + 1
+        defaultRankingShouldNotBeFound("userId.equals=" + (userId + 1));
+    }
+
+
+    @Test
+    @Transactional
+    public void getAllRankingsByPostIsEqualToSomething() throws Exception {
+        // Initialize the database
+        rankingRepository.saveAndFlush(ranking);
+        Post post = PostResourceIT.createEntity(em);
+        em.persist(post);
+        em.flush();
+        ranking.setPost(post);
+        rankingRepository.saveAndFlush(ranking);
+        Long postId = post.getId();
+
+        // Get all the rankingList where post equals to postId
+        defaultRankingShouldBeFound("postId.equals=" + postId);
+
+        // Get all the rankingList where post equals to postId + 1
+        defaultRankingShouldNotBeFound("postId.equals=" + (postId + 1));
+    }
+
+    /**
+     * Executes the search, and checks that the default entity is returned.
+     */
+    private void defaultRankingShouldBeFound(String filter) throws Exception {
+        restRankingMockMvc.perform(get("/api/rankings?sort=id,desc&" + filter))
+            .andExpect(status().isOk())
+            .andExpect(content().contentType(MediaType.APPLICATION_JSON_VALUE))
+            .andExpect(jsonPath("$.[*].id").value(hasItem(ranking.getId().intValue())))
+            .andExpect(jsonPath("$.[*].rankType").value(hasItem(DEFAULT_RANK_TYPE.toString())))
+            .andExpect(jsonPath("$.[*].date").value(hasItem(DEFAULT_DATE.toString())));
+
+        // Check, that the count call also returns 1
+        restRankingMockMvc.perform(get("/api/rankings/count?sort=id,desc&" + filter))
+            .andExpect(status().isOk())
+            .andExpect(content().contentType(MediaType.APPLICATION_JSON_VALUE))
+            .andExpect(content().string("1"));
+    }
+
+    /**
+     * Executes the search, and checks that the default entity is not returned.
+     */
+    private void defaultRankingShouldNotBeFound(String filter) throws Exception {
+        restRankingMockMvc.perform(get("/api/rankings?sort=id,desc&" + filter))
+            .andExpect(status().isOk())
+            .andExpect(content().contentType(MediaType.APPLICATION_JSON_VALUE))
+            .andExpect(jsonPath("$").isArray())
+            .andExpect(jsonPath("$").isEmpty());
+
+        // Check, that the count call also returns 0
+        restRankingMockMvc.perform(get("/api/rankings/count?sort=id,desc&" + filter))
+            .andExpect(status().isOk())
+            .andExpect(content().contentType(MediaType.APPLICATION_JSON_VALUE))
+            .andExpect(content().string("0"));
+    }
+
+
     @Test
     @Transactional
     public void getNonExistingRanking() throws Exception {
@@ -187,7 +397,7 @@ public class RankingResourceIT {
     @Transactional
     public void updateRanking() throws Exception {
         // Initialize the database
-        rankingRepository.saveAndFlush(ranking);
+        rankingService.save(ranking);
 
         int databaseSizeBeforeUpdate = rankingRepository.findAll().size();
 
@@ -234,7 +444,7 @@ public class RankingResourceIT {
     @Transactional
     public void deleteRanking() throws Exception {
         // Initialize the database
-        rankingRepository.saveAndFlush(ranking);
+        rankingService.save(ranking);
 
         int databaseSizeBeforeDelete = rankingRepository.findAll().size();
 

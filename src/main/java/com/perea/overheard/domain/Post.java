@@ -37,7 +37,7 @@ public class Post implements Serializable {
 
     @OneToMany(mappedBy = "post")
     @Cache(usage = CacheConcurrencyStrategy.NONSTRICT_READ_WRITE)
-    private Set<Ranking> ranks = new HashSet<>();
+    private Set<Ranking> rankings = new HashSet<>();
 
     @OneToMany(mappedBy = "post")
     @Cache(usage = CacheConcurrencyStrategy.NONSTRICT_READ_WRITE)
@@ -99,29 +99,29 @@ public class Post implements Serializable {
         this.date = date;
     }
 
-    public Set<Ranking> getRanks() {
-        return ranks;
+    public Set<Ranking> getRankings() {
+        return rankings;
     }
 
-    public Post ranks(Set<Ranking> rankings) {
-        this.ranks = rankings;
+    public Post rankings(Set<Ranking> rankings) {
+        this.rankings = rankings;
         return this;
     }
 
-    public Post addRank(Ranking ranking) {
-        this.ranks.add(ranking);
+    public Post addRanking(Ranking ranking) {
+        this.rankings.add(ranking);
         ranking.setPost(this);
         return this;
     }
 
-    public Post removeRank(Ranking ranking) {
-        this.ranks.remove(ranking);
+    public Post removeRanking(Ranking ranking) {
+        this.rankings.remove(ranking);
         ranking.setPost(null);
         return this;
     }
 
-    public void setRanks(Set<Ranking> rankings) {
-        this.ranks = rankings;
+    public void setRankings(Set<Ranking> rankings) {
+        this.rankings = rankings;
     }
 
     public Set<Comment> getComments() {

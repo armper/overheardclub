@@ -12,7 +12,7 @@ import java.util.List;
  */
 @SuppressWarnings("unused")
 @Repository
-public interface RankingRepository extends JpaRepository<Ranking, Long> {
+public interface RankingRepository extends JpaRepository<Ranking, Long>, JpaSpecificationExecutor<Ranking> {
 
     @Query("select ranking from Ranking ranking where ranking.user.login = ?#{principal.username}")
     List<Ranking> findByUserIsCurrentUser();

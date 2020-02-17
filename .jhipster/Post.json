@@ -19,7 +19,7 @@
             "relationshipType": "one-to-many",
             "otherEntityName": "ranking",
             "otherEntityRelationshipName": "post",
-            "relationshipName": "rank"
+            "relationshipName": "ranking"
         },
         {
             "relationshipType": "one-to-many",

@@ -33,7 +33,7 @@ public class PostCriteria implements Serializable, Criteria {
 
     private InstantFilter date;
 
-    private LongFilter rankId;
+    private LongFilter rankingId;
 
     private LongFilter commentId;
 
@@ -49,7 +49,7 @@ public class PostCriteria implements Serializable, Criteria {
         this.title = other.title == null ? null : other.title.copy();
         this.content = other.content == null ? null : other.content.copy();
         this.date = other.date == null ? null : other.date.copy();
-        this.rankId = other.rankId == null ? null : other.rankId.copy();
+        this.rankingId = other.rankingId == null ? null : other.rankingId.copy();
         this.commentId = other.commentId == null ? null : other.commentId.copy();
         this.userId = other.userId == null ? null : other.userId.copy();
         this.topicId = other.topicId == null ? null : other.topicId.copy();
@@ -92,12 +92,12 @@ public class PostCriteria implements Serializable, Criteria {
         this.date = date;
     }
 
-    public LongFilter getRankId() {
-        return rankId;
+    public LongFilter getRankingId() {
+        return rankingId;
     }
 
-    public void setRankId(LongFilter rankId) {
-        this.rankId = rankId;
+    public void setRankingId(LongFilter rankingId) {
+        this.rankingId = rankingId;
     }
 
     public LongFilter getCommentId() {
@@ -139,7 +139,7 @@ public class PostCriteria implements Serializable, Criteria {
             Objects.equals(title, that.title) &&
             Objects.equals(content, that.content) &&
             Objects.equals(date, that.date) &&
-            Objects.equals(rankId, that.rankId) &&
+            Objects.equals(rankingId, that.rankingId) &&
             Objects.equals(commentId, that.commentId) &&
             Objects.equals(userId, that.userId) &&
             Objects.equals(topicId, that.topicId);
@@ -152,7 +152,7 @@ public class PostCriteria implements Serializable, Criteria {
         title,
         content,
         date,
-        rankId,
+        rankingId,
         commentId,
         userId,
         topicId
@@ -166,7 +166,7 @@ public class PostCriteria implements Serializable, Criteria {
                 (title != null ? "title=" + title + ", " : "") +
                 (content != null ? "content=" + content + ", " : "") +
                 (date != null ? "date=" + date + ", " : "") +
-                (rankId != null ? "rankId=" + rankId + ", " : "") +
+                (rankingId != null ? "rankingId=" + rankingId + ", " : "") +
                 (commentId != null ? "commentId=" + commentId + ", " : "") +
                 (userId != null ? "userId=" + userId + ", " : "") +
                 (topicId != null ? "topicId=" + topicId + ", " : "") +

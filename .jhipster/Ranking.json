@@ -22,7 +22,7 @@
         {
             "relationshipType": "many-to-one",
             "otherEntityName": "post",
-            "otherEntityRelationshipName": "rank",
+            "otherEntityRelationshipName": "ranking",
             "relationshipName": "post",
             "otherEntityField": "id"
         }
@@ -31,8 +31,8 @@
     "entityTableName": "ranking",
     "dto": "no",
     "pagination": "no",
-    "service": "no",
-    "jpaMetamodelFiltering": false,
+    "service": "serviceClass",
+    "jpaMetamodelFiltering": true,
     "fluentMethods": true,
     "readOnly": false,
     "clientRootFolder": "",
