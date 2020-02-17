@@ -17,16 +17,16 @@ enum RankType {
 	HILARIOUS, PATHETIC
 }
 
-entity Rank {
+entity Ranking {
 	rankType RankType
 	date Instant	
 }
 
 relationship ManyToOne {
-	Rank{user} to User
+	Ranking{user} to User
 }
 
-relationship ManyToOne {
+relationship OneToMany {
   Post{rank} to Rank
 }
 
