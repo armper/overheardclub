@@ -17,17 +17,17 @@ enum RankType {
 	HILARIOUS, PATHETIC
 }
 
-entity Rank {
+entity Ranking {
 	rankType RankType
 	date Instant	
 }
 
 relationship ManyToOne {
-	Rank{user} to User
+	Ranking{user} to User
 }
 
-relationship ManyToOne {
-  Post{rank} to Rank
+relationship OneToMany {
+  Post{rank} to Ranking
 }
 
 entity Comment {
@@ -38,7 +38,7 @@ entity Comment {
 filter Comment
 
 relationship ManyToOne {
-  Comment{rank} to Rank
+  Comment{rank} to Ranking
 }
 
 relationship OneToMany {
