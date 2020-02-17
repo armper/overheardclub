@@ -2,20 +2,24 @@
     "name": "Rank",
     "fields": [
         {
-            "fieldName": "rank",
-            "fieldType": "Integer"
-        },
-        {
             "fieldName": "rankType",
             "fieldType": "RankType",
-            "fieldValues": "FUNNY,PATHETIC"
+            "fieldValues": "HILARIOUS,PATHETIC"
         },
         {
             "fieldName": "date",
             "fieldType": "Instant"
         }
     ],
-    "relationships": [],
+    "relationships": [
+        {
+            "relationshipType": "many-to-one",
+            "otherEntityName": "user",
+            "otherEntityRelationshipName": "rank",
+            "relationshipName": "user",
+            "otherEntityField": "id"
+        }
+    ],
     "changelogDate": "20200217185400",
     "entityTableName": "rank",
     "dto": "no",

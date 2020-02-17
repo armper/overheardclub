@@ -36,10 +36,7 @@ import com.perea.overheard.domain.enumeration.RankType;
 @SpringBootTest(classes = OverheardclubApp.class)
 public class RankResourceIT {
 
-    private static final Integer DEFAULT_RANK = 1;
-    private static final Integer UPDATED_RANK = 2;
-
-    private static final RankType DEFAULT_RANK_TYPE = RankType.FUNNY;
+    private static final RankType DEFAULT_RANK_TYPE = RankType.HILARIOUS;
     private static final RankType UPDATED_RANK_TYPE = RankType.PATHETIC;
 
     private static final Instant DEFAULT_DATE = Instant.ofEpochMilli(0L);
@@ -87,7 +84,6 @@ public class RankResourceIT {
      */
     public static Rank createEntity(EntityManager em) {
         Rank rank = new Rank()
-            .rank(DEFAULT_RANK)
             .rankType(DEFAULT_RANK_TYPE)
             .date(DEFAULT_DATE);
         return rank;
@@ -100,7 +96,6 @@ public class RankResourceIT {
      */
     public static Rank createUpdatedEntity(EntityManager em) {
         Rank rank = new Rank()
-            .rank(UPDATED_RANK)
             .rankType(UPDATED_RANK_TYPE)
             .date(UPDATED_DATE);
         return rank;
@@ -126,7 +121,6 @@ public class RankResourceIT {
         List<Rank> rankList = rankRepository.findAll();
         assertThat(rankList).hasSize(databaseSizeBeforeCreate + 1);
         Rank testRank = rankList.get(rankList.size() - 1);
-        assertThat(testRank.getRank()).isEqualTo(DEFAULT_RANK);
         assertThat(testRank.getRankType()).isEqualTo(DEFAULT_RANK_TYPE);
         assertThat(testRank.getDate()).isEqualTo(DEFAULT_DATE);
     }
@@ -162,7 +156,6 @@ public class RankResourceIT {
             .andExpect(status().isOk())
             .andExpect(content().contentType(MediaType.APPLICATION_JSON_VALUE))
             .andExpect(jsonPath("$.[*].id").value(hasItem(rank.getId().intValue())))
-            .andExpect(jsonPath("$.[*].rank").value(hasItem(DEFAULT_RANK)))
             .andExpect(jsonPath("$.[*].rankType").value(hasItem(DEFAULT_RANK_TYPE.toString())))
             .andExpect(jsonPath("$.[*].date").value(hasItem(DEFAULT_DATE.toString())));
     }
@@ -178,7 +171,6 @@ public class RankResourceIT {
             .andExpect(status().isOk())
             .andExpect(content().contentType(MediaType.APPLICATION_JSON_VALUE))
             .andExpect(jsonPath("$.id").value(rank.getId().intValue()))
-            .andExpect(jsonPath("$.rank").value(DEFAULT_RANK))
             .andExpect(jsonPath("$.rankType").value(DEFAULT_RANK_TYPE.toString()))
             .andExpect(jsonPath("$.date").value(DEFAULT_DATE.toString()));
     }
@@ -204,7 +196,6 @@ public class RankResourceIT {
         // Disconnect from session so that the updates on updatedRank are not directly saved in db
         em.detach(updatedRank);
         updatedRank
-            .rank(UPDATED_RANK)
             .rankType(UPDATED_RANK_TYPE)
             .date(UPDATED_DATE);
 
@@ -217,7 +208,6 @@ public class RankResourceIT {
         List<Rank> rankList = rankRepository.findAll();
         assertThat(rankList).hasSize(databaseSizeBeforeUpdate);
         Rank testRank = rankList.get(rankList.size() - 1);
-        assertThat(testRank.getRank()).isEqualTo(UPDATED_RANK);
         assertThat(testRank.getRankType()).isEqualTo(UPDATED_RANK_TYPE);
         assertThat(testRank.getDate()).isEqualTo(UPDATED_DATE);
     }

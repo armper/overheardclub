@@ -41,12 +41,11 @@ describe('Rank e2e test', () => {
     await rankComponentsPage.clickOnCreateButton();
 
     await promise.all([
-      rankUpdatePage.setRankInput('5'),
       rankUpdatePage.rankTypeSelectLastOption(),
-      rankUpdatePage.setDateInput('01/01/2001' + protractor.Key.TAB + '02:30AM')
+      rankUpdatePage.setDateInput('01/01/2001' + protractor.Key.TAB + '02:30AM'),
+      rankUpdatePage.userSelectLastOption()
     ]);
 
-    expect(await rankUpdatePage.getRankInput()).to.eq('5', 'Expected rank value to be equals to 5');
     expect(await rankUpdatePage.getDateInput()).to.contain('2001-01-01T02:30', 'Expected date value to be equals to 2000-12-31');
 
     await rankUpdatePage.save();

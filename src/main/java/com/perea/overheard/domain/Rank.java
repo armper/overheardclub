@@ -1,5 +1,6 @@
 package com.perea.overheard.domain;
 
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import org.hibernate.annotations.Cache;
 import org.hibernate.annotations.CacheConcurrencyStrategy;
 
@@ -25,15 +26,16 @@ public class Rank implements Serializable {
     @SequenceGenerator(name = "sequenceGenerator")
     private Long id;
 
-    @Column(name = "rank")
-    private Integer rank;
-
     @Enumerated(EnumType.STRING)
     @Column(name = "rank_type")
     private RankType rankType;
 
     @Column(name = "date")
     private Instant date;
+
+    @ManyToOne
+    @JsonIgnoreProperties("ranks")
+    private User user;
 
     // jhipster-needle-entity-add-field - JHipster will add fields here, do not remove
     public Long getId() {
@@ -42,19 +44,6 @@ public class Rank implements Serializable {
 
     public void setId(Long id) {
         this.id = id;
-    }
-
-    public Integer getRank() {
-        return rank;
-    }
-
-    public Rank rank(Integer rank) {
-        this.rank = rank;
-        return this;
-    }
-
-    public void setRank(Integer rank) {
-        this.rank = rank;
     }
 
     public RankType getRankType() {
@@ -82,6 +71,19 @@ public class Rank implements Serializable {
     public void setDate(Instant date) {
         this.date = date;
     }
+
+    public User getUser() {
+        return user;
+    }
+
+    public Rank user(User user) {
+        this.user = user;
+        return this;
+    }
+
+    public void setUser(User user) {
+        this.user = user;
+    }
     // jhipster-needle-entity-add-getters-setters - JHipster will add getters and setters here, do not remove
 
     @Override
@@ -104,7 +106,6 @@ public class Rank implements Serializable {
     public String toString() {
         return "Rank{" +
             "id=" + getId() +
-            ", rank=" + getRank() +
             ", rankType='" + getRankType() + "'" +
             ", date='" + getDate() + "'" +
             "}";

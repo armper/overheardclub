@@ -14,13 +14,16 @@ entity Post {
 filter Post
 
 enum RankType {
-	FUNNY, PATHETIC
+	HILARIOUS, PATHETIC
 }
 
 entity Rank {
-	rank Integer
 	rankType RankType
 	date Instant	
+}
+
+relationship ManyToOne {
+	Rank{user} to User
 }
 
 relationship ManyToOne {

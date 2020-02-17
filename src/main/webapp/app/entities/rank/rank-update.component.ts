@@ -9,6 +9,8 @@ import { DATE_TIME_FORMAT } from 'app/shared/constants/input.constants';
 
 import { IRank, Rank } from 'app/shared/model/rank.model';
 import { RankService } from './rank.service';
+import { IUser } from 'app/core/user/user.model';
+import { UserService } from 'app/core/user/user.service';
 
 @Component({
   selector: 'jhi-rank-update',
@@ -16,15 +18,21 @@ import { RankService } from './rank.service';
 })
 export class RankUpdateComponent implements OnInit {
   isSaving = false;
+  users: IUser[] = [];
 
   editForm = this.fb.group({
     id: [],
-    rank: [],
     rankType: [],
-    date: []
+    date: [],
+    user: []
   });
 
-  constructor(protected rankService: RankService, protected activatedRoute: ActivatedRoute, private fb: FormBuilder) {}
+  constructor(
+    protected rankService: RankService,
+    protected userService: UserService,
+    protected activatedRoute: ActivatedRoute,
+    private fb: FormBuilder
+  ) {}
 
   ngOnInit(): void {
     this.activatedRoute.data.subscribe(({ rank }) => {
@@ -34,15 +42,17 @@ export class RankUpdateComponent implements OnInit {
       }
 
       this.updateForm(rank);
+
+      this.userService.query().subscribe((res: HttpResponse<IUser[]>) => (this.users = res.body || []));
     });
   }
 
   updateForm(rank: IRank): void {
     this.editForm.patchValue({
       id: rank.id,
-      rank: rank.rank,
       rankType: rank.rankType,
-      date: rank.date ? rank.date.format(DATE_TIME_FORMAT) : null
+      date: rank.date ? rank.date.format(DATE_TIME_FORMAT) : null,
+      user: rank.user
     });
   }
 
@@ -64,9 +74,9 @@ export class RankUpdateComponent implements OnInit {
     return {
       ...new Rank(),
       id: this.editForm.get(['id'])!.value,
-      rank: this.editForm.get(['rank'])!.value,
       rankType: this.editForm.get(['rankType'])!.value,
-      date: this.editForm.get(['date'])!.value ? moment(this.editForm.get(['date'])!.value, DATE_TIME_FORMAT) : undefined
+      date: this.editForm.get(['date'])!.value ? moment(this.editForm.get(['date'])!.value, DATE_TIME_FORMAT) : undefined,
+      user: this.editForm.get(['user'])!.value
     };
   }
 
@@ -84,5 +94,9 @@ export class RankUpdateComponent implements OnInit {
 
   protected onSaveError(): void {
     this.isSaving = false;
+  }
+
+  trackById(index: number, item: IUser): any {
+    return item.id;
   }
 }

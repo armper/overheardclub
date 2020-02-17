@@ -29,20 +29,13 @@ export class RankUpdatePage {
   saveButton = element(by.id('save-entity'));
   cancelButton = element(by.id('cancel-save'));
 
-  rankInput = element(by.id('field_rank'));
   rankTypeSelect = element(by.id('field_rankType'));
   dateInput = element(by.id('field_date'));
 
+  userSelect = element(by.id('field_user'));
+
   async getPageTitle(): Promise<string> {
     return this.pageTitle.getText();
-  }
-
-  async setRankInput(rank: string): Promise<void> {
-    await this.rankInput.sendKeys(rank);
-  }
-
-  async getRankInput(): Promise<string> {
-    return await this.rankInput.getAttribute('value');
   }
 
   async setRankTypeSelect(rankType: string): Promise<void> {
@@ -66,6 +59,25 @@ export class RankUpdatePage {
 
   async getDateInput(): Promise<string> {
     return await this.dateInput.getAttribute('value');
+  }
+
+  async userSelectLastOption(): Promise<void> {
+    await this.userSelect
+      .all(by.tagName('option'))
+      .last()
+      .click();
+  }
+
+  async userSelectOption(option: string): Promise<void> {
+    await this.userSelect.sendKeys(option);
+  }
+
+  getUserSelect(): ElementFinder {
+    return this.userSelect;
+  }
+
+  async getUserSelectedOption(): Promise<string> {
+    return await this.userSelect.element(by.css('option:checked')).getText();
   }
 
   async save(): Promise<void> {
