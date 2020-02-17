@@ -17,16 +17,15 @@
     "relationships": [
         {
             "relationshipType": "one-to-many",
+            "otherEntityName": "ranking",
+            "otherEntityRelationshipName": "post",
+            "relationshipName": "rank"
+        },
+        {
+            "relationshipType": "one-to-many",
             "otherEntityName": "comment",
             "otherEntityRelationshipName": "post",
             "relationshipName": "comment"
-        },
-        {
-            "relationshipType": "many-to-one",
-            "otherEntityName": "rank",
-            "otherEntityRelationshipName": "post",
-            "relationshipName": "rank",
-            "otherEntityField": "id"
         },
         {
             "relationshipType": "many-to-one",

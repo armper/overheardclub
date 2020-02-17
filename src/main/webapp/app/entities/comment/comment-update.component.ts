@@ -9,14 +9,14 @@ import { DATE_TIME_FORMAT } from 'app/shared/constants/input.constants';
 
 import { IComment, Comment } from 'app/shared/model/comment.model';
 import { CommentService } from './comment.service';
-import { IRank } from 'app/shared/model/rank.model';
-import { RankService } from 'app/entities/rank/rank.service';
+import { IRanking } from 'app/shared/model/ranking.model';
+import { RankingService } from 'app/entities/ranking/ranking.service';
 import { IUser } from 'app/core/user/user.model';
 import { UserService } from 'app/core/user/user.service';
 import { IPost } from 'app/shared/model/post.model';
 import { PostService } from 'app/entities/post/post.service';
 
-type SelectableEntity = IRank | IUser | IPost;
+type SelectableEntity = IRanking | IUser | IPost;
 
 @Component({
   selector: 'jhi-comment-update',
@@ -24,7 +24,7 @@ type SelectableEntity = IRank | IUser | IPost;
 })
 export class CommentUpdateComponent implements OnInit {
   isSaving = false;
-  ranks: IRank[] = [];
+  rankings: IRanking[] = [];
   users: IUser[] = [];
   posts: IPost[] = [];
 
@@ -39,7 +39,7 @@ export class CommentUpdateComponent implements OnInit {
 
   constructor(
     protected commentService: CommentService,
-    protected rankService: RankService,
+    protected rankingService: RankingService,
     protected userService: UserService,
     protected postService: PostService,
     protected activatedRoute: ActivatedRoute,
@@ -55,7 +55,7 @@ export class CommentUpdateComponent implements OnInit {
 
       this.updateForm(comment);
 
-      this.rankService.query().subscribe((res: HttpResponse<IRank[]>) => (this.ranks = res.body || []));
+      this.rankingService.query().subscribe((res: HttpResponse<IRanking[]>) => (this.rankings = res.body || []));
 
       this.userService.query().subscribe((res: HttpResponse<IUser[]>) => (this.users = res.body || []));
 

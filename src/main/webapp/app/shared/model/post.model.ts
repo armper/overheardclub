@@ -1,6 +1,6 @@
 import { Moment } from 'moment';
+import { IRanking } from 'app/shared/model/ranking.model';
 import { IComment } from 'app/shared/model/comment.model';
-import { IRank } from 'app/shared/model/rank.model';
 import { IUser } from 'app/core/user/user.model';
 import { ITopic } from 'app/shared/model/topic.model';
 
@@ -9,8 +9,8 @@ export interface IPost {
   title?: string;
   content?: string;
   date?: Moment;
+  ranks?: IRanking[];
   comments?: IComment[];
-  rank?: IRank;
   user?: IUser;
   topic?: ITopic;
 }
@@ -21,8 +21,8 @@ export class Post implements IPost {
     public title?: string,
     public content?: string,
     public date?: Moment,
+    public ranks?: IRanking[],
     public comments?: IComment[],
-    public rank?: IRank,
     public user?: IUser,
     public topic?: ITopic
   ) {}

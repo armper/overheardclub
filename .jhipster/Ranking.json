@@ -1,9 +1,10 @@
 {
-    "name": "Comment",
+    "name": "Ranking",
     "fields": [
         {
-            "fieldName": "content",
-            "fieldType": "String"
+            "fieldName": "rankType",
+            "fieldType": "RankType",
+            "fieldValues": "HILARIOUS,PATHETIC"
         },
         {
             "fieldName": "date",
@@ -13,32 +14,25 @@
     "relationships": [
         {
             "relationshipType": "many-to-one",
-            "otherEntityName": "ranking",
-            "otherEntityRelationshipName": "comment",
-            "relationshipName": "rank",
-            "otherEntityField": "id"
-        },
-        {
-            "relationshipType": "many-to-one",
             "otherEntityName": "user",
-            "otherEntityRelationshipName": "comment",
+            "otherEntityRelationshipName": "ranking",
             "relationshipName": "user",
             "otherEntityField": "id"
         },
         {
             "relationshipType": "many-to-one",
             "otherEntityName": "post",
-            "otherEntityRelationshipName": "comment",
+            "otherEntityRelationshipName": "rank",
             "relationshipName": "post",
             "otherEntityField": "id"
         }
     ],
-    "changelogDate": "20200217174500",
-    "entityTableName": "comment",
+    "changelogDate": "20200217200600",
+    "entityTableName": "ranking",
     "dto": "no",
     "pagination": "no",
-    "service": "serviceClass",
-    "jpaMetamodelFiltering": true,
+    "service": "no",
+    "jpaMetamodelFiltering": false,
     "fluentMethods": true,
     "readOnly": false,
     "clientRootFolder": "",

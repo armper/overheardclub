@@ -94,13 +94,13 @@ public class PostQueryService extends QueryService<Post> {
             if (criteria.getDate() != null) {
                 specification = specification.and(buildRangeSpecification(criteria.getDate(), Post_.date));
             }
+            if (criteria.getRankId() != null) {
+                specification = specification.and(buildSpecification(criteria.getRankId(),
+                    root -> root.join(Post_.ranks, JoinType.LEFT).get(Ranking_.id)));
+            }
             if (criteria.getCommentId() != null) {
                 specification = specification.and(buildSpecification(criteria.getCommentId(),
                     root -> root.join(Post_.comments, JoinType.LEFT).get(Comment_.id)));
-            }
-            if (criteria.getRankId() != null) {
-                specification = specification.and(buildSpecification(criteria.getRankId(),
-                    root -> root.join(Post_.rank, JoinType.LEFT).get(Rank_.id)));
             }
             if (criteria.getUserId() != null) {
                 specification = specification.and(buildSpecification(criteria.getUserId(),

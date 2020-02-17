@@ -1,9 +1,9 @@
 import { element, by, ElementFinder } from 'protractor';
 
-export class PostComponentsPage {
+export class RankingComponentsPage {
   createButton = element(by.id('jh-create-entity'));
-  deleteButtons = element.all(by.css('jhi-post div table .btn-danger'));
-  title = element.all(by.css('jhi-post div h2#page-heading span')).first();
+  deleteButtons = element.all(by.css('jhi-ranking div table .btn-danger'));
+  title = element.all(by.css('jhi-ranking div h2#page-heading span')).first();
   noResult = element(by.id('no-result'));
   entities = element(by.id('entities'));
 
@@ -24,36 +24,34 @@ export class PostComponentsPage {
   }
 }
 
-export class PostUpdatePage {
-  pageTitle = element(by.id('jhi-post-heading'));
+export class RankingUpdatePage {
+  pageTitle = element(by.id('jhi-ranking-heading'));
   saveButton = element(by.id('save-entity'));
   cancelButton = element(by.id('cancel-save'));
 
-  titleInput = element(by.id('field_title'));
-  contentInput = element(by.id('field_content'));
+  rankTypeSelect = element(by.id('field_rankType'));
   dateInput = element(by.id('field_date'));
 
   userSelect = element(by.id('field_user'));
-  topicSelect = element(by.id('field_topic'));
+  postSelect = element(by.id('field_post'));
 
   async getPageTitle(): Promise<string> {
     return this.pageTitle.getText();
   }
 
-  async setTitleInput(title: string): Promise<void> {
-    await this.titleInput.sendKeys(title);
+  async setRankTypeSelect(rankType: string): Promise<void> {
+    await this.rankTypeSelect.sendKeys(rankType);
   }
 
-  async getTitleInput(): Promise<string> {
-    return await this.titleInput.getAttribute('value');
+  async getRankTypeSelect(): Promise<string> {
+    return await this.rankTypeSelect.element(by.css('option:checked')).getText();
   }
 
-  async setContentInput(content: string): Promise<void> {
-    await this.contentInput.sendKeys(content);
-  }
-
-  async getContentInput(): Promise<string> {
-    return await this.contentInput.getAttribute('value');
+  async rankTypeSelectLastOption(): Promise<void> {
+    await this.rankTypeSelect
+      .all(by.tagName('option'))
+      .last()
+      .click();
   }
 
   async setDateInput(date: string): Promise<void> {
@@ -83,23 +81,23 @@ export class PostUpdatePage {
     return await this.userSelect.element(by.css('option:checked')).getText();
   }
 
-  async topicSelectLastOption(): Promise<void> {
-    await this.topicSelect
+  async postSelectLastOption(): Promise<void> {
+    await this.postSelect
       .all(by.tagName('option'))
       .last()
       .click();
   }
 
-  async topicSelectOption(option: string): Promise<void> {
-    await this.topicSelect.sendKeys(option);
+  async postSelectOption(option: string): Promise<void> {
+    await this.postSelect.sendKeys(option);
   }
 
-  getTopicSelect(): ElementFinder {
-    return this.topicSelect;
+  getPostSelect(): ElementFinder {
+    return this.postSelect;
   }
 
-  async getTopicSelectedOption(): Promise<string> {
-    return await this.topicSelect.element(by.css('option:checked')).getText();
+  async getPostSelectedOption(): Promise<string> {
+    return await this.postSelect.element(by.css('option:checked')).getText();
   }
 
   async save(): Promise<void> {
@@ -115,9 +113,9 @@ export class PostUpdatePage {
   }
 }
 
-export class PostDeleteDialog {
-  private dialogTitle = element(by.id('jhi-delete-post-heading'));
-  private confirmButton = element(by.id('jhi-confirm-delete-post'));
+export class RankingDeleteDialog {
+  private dialogTitle = element(by.id('jhi-delete-ranking-heading'));
+  private confirmButton = element(by.id('jhi-confirm-delete-ranking'));
 
   async getDialogTitle(): Promise<string> {
     return this.dialogTitle.getText();

@@ -37,11 +37,11 @@ public class Post implements Serializable {
 
     @OneToMany(mappedBy = "post")
     @Cache(usage = CacheConcurrencyStrategy.NONSTRICT_READ_WRITE)
-    private Set<Comment> comments = new HashSet<>();
+    private Set<Ranking> ranks = new HashSet<>();
 
-    @ManyToOne
-    @JsonIgnoreProperties("posts")
-    private Rank rank;
+    @OneToMany(mappedBy = "post")
+    @Cache(usage = CacheConcurrencyStrategy.NONSTRICT_READ_WRITE)
+    private Set<Comment> comments = new HashSet<>();
 
     @ManyToOne
     @JsonIgnoreProperties("posts")
@@ -99,6 +99,31 @@ public class Post implements Serializable {
         this.date = date;
     }
 
+    public Set<Ranking> getRanks() {
+        return ranks;
+    }
+
+    public Post ranks(Set<Ranking> rankings) {
+        this.ranks = rankings;
+        return this;
+    }
+
+    public Post addRank(Ranking ranking) {
+        this.ranks.add(ranking);
+        ranking.setPost(this);
+        return this;
+    }
+
+    public Post removeRank(Ranking ranking) {
+        this.ranks.remove(ranking);
+        ranking.setPost(null);
+        return this;
+    }
+
+    public void setRanks(Set<Ranking> rankings) {
+        this.ranks = rankings;
+    }
+
     public Set<Comment> getComments() {
         return comments;
     }
@@ -122,19 +147,6 @@ public class Post implements Serializable {
 
     public void setComments(Set<Comment> comments) {
         this.comments = comments;
-    }
-
-    public Rank getRank() {
-        return rank;
-    }
-
-    public Post rank(Rank rank) {
-        this.rank = rank;
-        return this;
-    }
-
-    public void setRank(Rank rank) {
-        this.rank = rank;
     }
 
     public User getUser() {

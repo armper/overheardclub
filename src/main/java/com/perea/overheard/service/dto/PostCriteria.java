@@ -33,9 +33,9 @@ public class PostCriteria implements Serializable, Criteria {
 
     private InstantFilter date;
 
-    private LongFilter commentId;
-
     private LongFilter rankId;
+
+    private LongFilter commentId;
 
     private LongFilter userId;
 
@@ -49,8 +49,8 @@ public class PostCriteria implements Serializable, Criteria {
         this.title = other.title == null ? null : other.title.copy();
         this.content = other.content == null ? null : other.content.copy();
         this.date = other.date == null ? null : other.date.copy();
-        this.commentId = other.commentId == null ? null : other.commentId.copy();
         this.rankId = other.rankId == null ? null : other.rankId.copy();
+        this.commentId = other.commentId == null ? null : other.commentId.copy();
         this.userId = other.userId == null ? null : other.userId.copy();
         this.topicId = other.topicId == null ? null : other.topicId.copy();
     }
@@ -92,20 +92,20 @@ public class PostCriteria implements Serializable, Criteria {
         this.date = date;
     }
 
-    public LongFilter getCommentId() {
-        return commentId;
-    }
-
-    public void setCommentId(LongFilter commentId) {
-        this.commentId = commentId;
-    }
-
     public LongFilter getRankId() {
         return rankId;
     }
 
     public void setRankId(LongFilter rankId) {
         this.rankId = rankId;
+    }
+
+    public LongFilter getCommentId() {
+        return commentId;
+    }
+
+    public void setCommentId(LongFilter commentId) {
+        this.commentId = commentId;
     }
 
     public LongFilter getUserId() {
@@ -139,8 +139,8 @@ public class PostCriteria implements Serializable, Criteria {
             Objects.equals(title, that.title) &&
             Objects.equals(content, that.content) &&
             Objects.equals(date, that.date) &&
-            Objects.equals(commentId, that.commentId) &&
             Objects.equals(rankId, that.rankId) &&
+            Objects.equals(commentId, that.commentId) &&
             Objects.equals(userId, that.userId) &&
             Objects.equals(topicId, that.topicId);
     }
@@ -152,8 +152,8 @@ public class PostCriteria implements Serializable, Criteria {
         title,
         content,
         date,
-        commentId,
         rankId,
+        commentId,
         userId,
         topicId
         );
@@ -166,8 +166,8 @@ public class PostCriteria implements Serializable, Criteria {
                 (title != null ? "title=" + title + ", " : "") +
                 (content != null ? "content=" + content + ", " : "") +
                 (date != null ? "date=" + date + ", " : "") +
-                (commentId != null ? "commentId=" + commentId + ", " : "") +
                 (rankId != null ? "rankId=" + rankId + ", " : "") +
+                (commentId != null ? "commentId=" + commentId + ", " : "") +
                 (userId != null ? "userId=" + userId + ", " : "") +
                 (topicId != null ? "topicId=" + topicId + ", " : "") +
             "}";

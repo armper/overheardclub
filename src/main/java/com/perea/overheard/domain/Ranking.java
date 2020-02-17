@@ -9,13 +9,15 @@ import javax.persistence.*;
 import java.io.Serializable;
 import java.time.Instant;
 
+import com.perea.overheard.domain.enumeration.RankType;
+
 /**
- * A Comment.
+ * A Ranking.
  */
 @Entity
-@Table(name = "comment")
+@Table(name = "ranking")
 @Cache(usage = CacheConcurrencyStrategy.NONSTRICT_READ_WRITE)
-public class Comment implements Serializable {
+public class Ranking implements Serializable {
 
     private static final long serialVersionUID = 1L;
 
@@ -24,22 +26,19 @@ public class Comment implements Serializable {
     @SequenceGenerator(name = "sequenceGenerator")
     private Long id;
 
-    @Column(name = "content")
-    private String content;
+    @Enumerated(EnumType.STRING)
+    @Column(name = "rank_type")
+    private RankType rankType;
 
     @Column(name = "date")
     private Instant date;
 
     @ManyToOne
-    @JsonIgnoreProperties("comments")
-    private Ranking rank;
-
-    @ManyToOne
-    @JsonIgnoreProperties("comments")
+    @JsonIgnoreProperties("rankings")
     private User user;
 
     @ManyToOne
-    @JsonIgnoreProperties("comments")
+    @JsonIgnoreProperties("ranks")
     private Post post;
 
     // jhipster-needle-entity-add-field - JHipster will add fields here, do not remove
@@ -51,24 +50,24 @@ public class Comment implements Serializable {
         this.id = id;
     }
 
-    public String getContent() {
-        return content;
+    public RankType getRankType() {
+        return rankType;
     }
 
-    public Comment content(String content) {
-        this.content = content;
+    public Ranking rankType(RankType rankType) {
+        this.rankType = rankType;
         return this;
     }
 
-    public void setContent(String content) {
-        this.content = content;
+    public void setRankType(RankType rankType) {
+        this.rankType = rankType;
     }
 
     public Instant getDate() {
         return date;
     }
 
-    public Comment date(Instant date) {
+    public Ranking date(Instant date) {
         this.date = date;
         return this;
     }
@@ -77,24 +76,11 @@ public class Comment implements Serializable {
         this.date = date;
     }
 
-    public Ranking getRank() {
-        return rank;
-    }
-
-    public Comment rank(Ranking ranking) {
-        this.rank = ranking;
-        return this;
-    }
-
-    public void setRank(Ranking ranking) {
-        this.rank = ranking;
-    }
-
     public User getUser() {
         return user;
     }
 
-    public Comment user(User user) {
+    public Ranking user(User user) {
         this.user = user;
         return this;
     }
@@ -107,7 +93,7 @@ public class Comment implements Serializable {
         return post;
     }
 
-    public Comment post(Post post) {
+    public Ranking post(Post post) {
         this.post = post;
         return this;
     }
@@ -122,10 +108,10 @@ public class Comment implements Serializable {
         if (this == o) {
             return true;
         }
-        if (!(o instanceof Comment)) {
+        if (!(o instanceof Ranking)) {
             return false;
         }
-        return id != null && id.equals(((Comment) o).id);
+        return id != null && id.equals(((Ranking) o).id);
     }
 
     @Override
@@ -135,9 +121,9 @@ public class Comment implements Serializable {
 
     @Override
     public String toString() {
-        return "Comment{" +
+        return "Ranking{" +
             "id=" + getId() +
-            ", content='" + getContent() + "'" +
+            ", rankType='" + getRankType() + "'" +
             ", date='" + getDate() + "'" +
             "}";
     }
