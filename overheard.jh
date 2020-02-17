@@ -1,0 +1,43 @@
+entity Topic {
+	title String
+    author User
+}
+
+filter Topic
+
+entity Post {
+	title String
+	content String
+    date Instant
+    author User
+}
+
+filter Post
+
+entity Comment {
+	content String
+    date Instant
+    author Author
+}
+
+filter Comment
+
+relationship OneToMany {
+	Topic{post} to Post
+}
+
+relationship OneToMany {
+	Post{comment} to Comment
+}
+
+relationship OneToMany {
+	User{topic} to Topic
+}
+
+relationship OneToMany {
+	User{post} to Post
+}
+
+relationship OneToMany {
+	User{comment} to Comment
+}
