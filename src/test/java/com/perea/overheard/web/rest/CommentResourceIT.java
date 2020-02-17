@@ -2,7 +2,7 @@ package com.perea.overheard.web.rest;
 
 import com.perea.overheard.OverheardclubApp;
 import com.perea.overheard.domain.Comment;
-import com.perea.overheard.domain.Rank;
+import com.perea.overheard.domain.Ranking;
 import com.perea.overheard.domain.User;
 import com.perea.overheard.domain.Post;
 import com.perea.overheard.repository.CommentRepository;
@@ -341,7 +341,7 @@ public class CommentResourceIT {
     public void getAllCommentsByRankIsEqualToSomething() throws Exception {
         // Initialize the database
         commentRepository.saveAndFlush(comment);
-        Rank rank = RankResourceIT.createEntity(em);
+        Ranking rank = RankingResourceIT.createEntity(em);
         em.persist(rank);
         em.flush();
         comment.setRank(rank);

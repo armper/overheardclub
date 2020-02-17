@@ -7,64 +7,62 @@ import { Observable } from 'rxjs';
 import * as moment from 'moment';
 import { DATE_TIME_FORMAT } from 'app/shared/constants/input.constants';
 
-import { IPost, Post } from 'app/shared/model/post.model';
-import { PostService } from './post.service';
+import { IRanking, Ranking } from 'app/shared/model/ranking.model';
+import { RankingService } from './ranking.service';
 import { IUser } from 'app/core/user/user.model';
 import { UserService } from 'app/core/user/user.service';
-import { ITopic } from 'app/shared/model/topic.model';
-import { TopicService } from 'app/entities/topic/topic.service';
+import { IPost } from 'app/shared/model/post.model';
+import { PostService } from 'app/entities/post/post.service';
 
-type SelectableEntity = IUser | ITopic;
+type SelectableEntity = IUser | IPost;
 
 @Component({
-  selector: 'jhi-post-update',
-  templateUrl: './post-update.component.html'
+  selector: 'jhi-ranking-update',
+  templateUrl: './ranking-update.component.html'
 })
-export class PostUpdateComponent implements OnInit {
+export class RankingUpdateComponent implements OnInit {
   isSaving = false;
   users: IUser[] = [];
-  topics: ITopic[] = [];
+  posts: IPost[] = [];
 
   editForm = this.fb.group({
     id: [],
-    title: [],
-    content: [],
+    rankType: [],
     date: [],
     user: [],
-    topic: []
+    post: []
   });
 
   constructor(
-    protected postService: PostService,
+    protected rankingService: RankingService,
     protected userService: UserService,
-    protected topicService: TopicService,
+    protected postService: PostService,
     protected activatedRoute: ActivatedRoute,
     private fb: FormBuilder
   ) {}
 
   ngOnInit(): void {
-    this.activatedRoute.data.subscribe(({ post }) => {
-      if (!post.id) {
+    this.activatedRoute.data.subscribe(({ ranking }) => {
+      if (!ranking.id) {
         const today = moment().startOf('day');
-        post.date = today;
+        ranking.date = today;
       }
 
-      this.updateForm(post);
+      this.updateForm(ranking);
 
       this.userService.query().subscribe((res: HttpResponse<IUser[]>) => (this.users = res.body || []));
 
-      this.topicService.query().subscribe((res: HttpResponse<ITopic[]>) => (this.topics = res.body || []));
+      this.postService.query().subscribe((res: HttpResponse<IPost[]>) => (this.posts = res.body || []));
     });
   }
 
-  updateForm(post: IPost): void {
+  updateForm(ranking: IRanking): void {
     this.editForm.patchValue({
-      id: post.id,
-      title: post.title,
-      content: post.content,
-      date: post.date ? post.date.format(DATE_TIME_FORMAT) : null,
-      user: post.user,
-      topic: post.topic
+      id: ranking.id,
+      rankType: ranking.rankType,
+      date: ranking.date ? ranking.date.format(DATE_TIME_FORMAT) : null,
+      user: ranking.user,
+      post: ranking.post
     });
   }
 
@@ -74,27 +72,26 @@ export class PostUpdateComponent implements OnInit {
 
   save(): void {
     this.isSaving = true;
-    const post = this.createFromForm();
-    if (post.id !== undefined) {
-      this.subscribeToSaveResponse(this.postService.update(post));
+    const ranking = this.createFromForm();
+    if (ranking.id !== undefined) {
+      this.subscribeToSaveResponse(this.rankingService.update(ranking));
     } else {
-      this.subscribeToSaveResponse(this.postService.create(post));
+      this.subscribeToSaveResponse(this.rankingService.create(ranking));
     }
   }
 
-  private createFromForm(): IPost {
+  private createFromForm(): IRanking {
     return {
-      ...new Post(),
+      ...new Ranking(),
       id: this.editForm.get(['id'])!.value,
-      title: this.editForm.get(['title'])!.value,
-      content: this.editForm.get(['content'])!.value,
+      rankType: this.editForm.get(['rankType'])!.value,
       date: this.editForm.get(['date'])!.value ? moment(this.editForm.get(['date'])!.value, DATE_TIME_FORMAT) : undefined,
       user: this.editForm.get(['user'])!.value,
-      topic: this.editForm.get(['topic'])!.value
+      post: this.editForm.get(['post'])!.value
     };
   }
 
-  protected subscribeToSaveResponse(result: Observable<HttpResponse<IPost>>): void {
+  protected subscribeToSaveResponse(result: Observable<HttpResponse<IRanking>>): void {
     result.subscribe(
       () => this.onSaveSuccess(),
       () => this.onSaveError()

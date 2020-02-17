@@ -93,7 +93,7 @@ public class CommentQueryService extends QueryService<Comment> {
             }
             if (criteria.getRankId() != null) {
                 specification = specification.and(buildSpecification(criteria.getRankId(),
-                    root -> root.join(Comment_.rank, JoinType.LEFT).get(Rank_.id)));
+                    root -> root.join(Comment_.rank, JoinType.LEFT).get(Ranking_.id)));
             }
             if (criteria.getUserId() != null) {
                 specification = specification.and(buildSpecification(criteria.getUserId(),

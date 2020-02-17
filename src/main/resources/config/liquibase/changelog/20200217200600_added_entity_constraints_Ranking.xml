@@ -4,25 +4,19 @@
     xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
     xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-3.6.xsd">
     <!--
-        Added the constraints for entity Comment.
+        Added the constraints for entity Ranking.
     -->
-    <changeSet id="20200217174500-2" author="jhipster">
+    <changeSet id="20200217200600-2" author="jhipster">
         
-        <addForeignKeyConstraint baseColumnNames="rank_id"
-                                 baseTableName="comment"
-                                 constraintName="fk_comment_rank_id"
-                                 referencedColumnNames="id"
-                                 referencedTableName="ranking"/>
-
         <addForeignKeyConstraint baseColumnNames="user_id"
-                                 baseTableName="comment"
-                                 constraintName="fk_comment_user_id"
+                                 baseTableName="ranking"
+                                 constraintName="fk_ranking_user_id"
                                  referencedColumnNames="id"
                                  referencedTableName="jhi_user"/>
 
         <addForeignKeyConstraint baseColumnNames="post_id"
-                                 baseTableName="comment"
-                                 constraintName="fk_comment_post_id"
+                                 baseTableName="ranking"
+                                 constraintName="fk_ranking_post_id"
                                  referencedColumnNames="id"
                                  referencedTableName="post"/>
 

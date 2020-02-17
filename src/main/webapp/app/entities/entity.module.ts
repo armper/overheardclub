@@ -19,6 +19,10 @@ import { RouterModule } from '@angular/router';
       {
         path: 'rank',
         loadChildren: () => import('./rank/rank.module').then(m => m.OverheardclubRankModule)
+      },
+      {
+        path: 'ranking',
+        loadChildren: () => import('./ranking/ranking.module').then(m => m.OverheardclubRankingModule)
       }
       /* jhipster-needle-add-entity-route - JHipster will add entity modules routes here */
     ])

@@ -1,35 +1,29 @@
 <div class="row justify-content-center">
     <div class="col-8">
-        <div *ngIf="comment">
-            <h2><span>Comment</span> {{ comment.id }}</h2>
+        <div *ngIf="ranking">
+            <h2><span>Ranking</span> {{ ranking.id }}</h2>
 
             <hr>
 
             <jhi-alert-error></jhi-alert-error>
 
             <dl class="row-md jh-entity-details">
-                <dt><span>Content</span></dt>
+                <dt><span>Rank Type</span></dt>
                 <dd>
-                    <span>{{ comment.content }}</span>
+                    <span>{{ ranking.rankType }}</span>
                 </dd>
                 <dt><span>Date</span></dt>
                 <dd>
-                    <span>{{ comment.date }}</span>
-                </dd>
-                <dt><span>Rank</span></dt>
-                <dd>
-                    <div *ngIf="comment.rank">
-                        <a [routerLink]="['/ranking', comment.rank?.id, 'view']">{{ comment.rank?.id }}</a>
-                    </div>
+                    <span>{{ ranking.date }}</span>
                 </dd>
                 <dt><span>User</span></dt>
                 <dd>
-                    {{ comment.user?.id }}
+                    {{ ranking.user?.id }}
                 </dd>
                 <dt><span>Post</span></dt>
                 <dd>
-                    <div *ngIf="comment.post">
-                        <a [routerLink]="['/post', comment.post?.id, 'view']">{{ comment.post?.id }}</a>
+                    <div *ngIf="ranking.post">
+                        <a [routerLink]="['/post', ranking.post?.id, 'view']">{{ ranking.post?.id }}</a>
                     </div>
                 </dd>
             </dl>
@@ -41,7 +35,7 @@
             </button>
 
             <button type="button"
-                    [routerLink]="['/comment', comment.id, 'edit']"
+                    [routerLink]="['/ranking', ranking.id, 'edit']"
                     class="btn btn-primary">
                 <fa-icon icon="pencil-alt"></fa-icon>&nbsp;<span>Edit</span>
             </button>

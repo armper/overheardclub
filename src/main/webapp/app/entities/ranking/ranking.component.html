@@ -1,11 +1,11 @@
 <div>
     <h2 id="page-heading">
-        <span>Comments</span>
+        <span>Rankings</span>
 
-        <button id="jh-create-entity" class="btn btn-primary float-right jh-create-entity create-comment" [routerLink]="['/comment/new']">
+        <button id="jh-create-entity" class="btn btn-primary float-right jh-create-entity create-ranking" [routerLink]="['/ranking/new']">
             <fa-icon icon="plus"></fa-icon>
             <span>
-            Create a new Comment
+            Create a new Ranking
             </span>
         </button>
     </h2>
@@ -14,58 +14,52 @@
 
     <jhi-alert></jhi-alert>
 
-    <div class="alert alert-warning" id="no-result" *ngIf="comments?.length === 0">
-        <span>No comments found</span>
+    <div class="alert alert-warning" id="no-result" *ngIf="rankings?.length === 0">
+        <span>No rankings found</span>
     </div>
 
-    <div class="table-responsive" id="entities" *ngIf="comments?.length > 0">
+    <div class="table-responsive" id="entities" *ngIf="rankings?.length > 0">
         <table class="table table-striped" aria-describedby="page-heading">
             <thead>
                 <tr>
                     <th scope="col" ><span>ID</span></th>
-                    <th scope="col" ><span>Content</span></th>
+                    <th scope="col" ><span>Rank Type</span></th>
                     <th scope="col" ><span>Date</span></th>
-                    <th scope="col" ><span>Rank</span></th>
                     <th scope="col" ><span>User</span></th>
                     <th scope="col" ><span>Post</span></th>
                     <th scope="col"></th>
                 </tr>
             </thead>
             <tbody>
-                <tr *ngFor="let comment of comments ;trackBy: trackId">
-                    <td><a [routerLink]="['/comment', comment.id, 'view']">{{ comment.id }}</a></td>
-                    <td>{{ comment.content }}</td>
-                    <td>{{ comment.date | date:'medium' }}</td>
+                <tr *ngFor="let ranking of rankings ;trackBy: trackId">
+                    <td><a [routerLink]="['/ranking', ranking.id, 'view']">{{ ranking.id }}</a></td>
+                    <td>{{ ranking.rankType }}</td>
+                    <td>{{ ranking.date | date:'medium' }}</td>
                     <td>
-                        <div *ngIf="comment.rank">
-                            <a [routerLink]="['/ranking', comment.rank?.id, 'view']" >{{ comment.rank?.id }}</a>
-                        </div>
+                        {{ ranking.user?.id }}
                     </td>
                     <td>
-                        {{ comment.user?.id }}
-                    </td>
-                    <td>
-                        <div *ngIf="comment.post">
-                            <a [routerLink]="['/post', comment.post?.id, 'view']" >{{ comment.post?.id }}</a>
+                        <div *ngIf="ranking.post">
+                            <a [routerLink]="['/post', ranking.post?.id, 'view']" >{{ ranking.post?.id }}</a>
                         </div>
                     </td>
                     <td class="text-right">
                         <div class="btn-group">
                             <button type="submit"
-                                    [routerLink]="['/comment', comment.id, 'view']"
+                                    [routerLink]="['/ranking', ranking.id, 'view']"
                                     class="btn btn-info btn-sm">
                                 <fa-icon icon="eye"></fa-icon>
                                 <span class="d-none d-md-inline">View</span>
                             </button>
 
                             <button type="submit"
-                                    [routerLink]="['/comment', comment.id, 'edit']"
+                                    [routerLink]="['/ranking', ranking.id, 'edit']"
                                     class="btn btn-primary btn-sm">
                                 <fa-icon icon="pencil-alt"></fa-icon>
                                 <span class="d-none d-md-inline">Edit</span>
                             </button>
 
-                            <button type="submit" (click)="delete(comment)"
+                            <button type="submit" (click)="delete(ranking)"
                                     class="btn btn-danger btn-sm">
                                 <fa-icon icon="times"></fa-icon>
                                 <span class="d-none d-md-inline">Delete</span>
