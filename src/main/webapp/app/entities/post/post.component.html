@@ -1,0 +1,75 @@
+<div>
+    <h2 id="page-heading">
+        <span>Posts</span>
+
+        <button id="jh-create-entity" class="btn btn-primary float-right jh-create-entity create-post" [routerLink]="['/post/new']">
+            <fa-icon icon="plus"></fa-icon>
+            <span>
+            Create a new Post
+            </span>
+        </button>
+    </h2>
+
+    <jhi-alert-error></jhi-alert-error>
+
+    <jhi-alert></jhi-alert>
+
+    <div class="alert alert-warning" id="no-result" *ngIf="posts?.length === 0">
+        <span>No posts found</span>
+    </div>
+
+    <div class="table-responsive" id="entities" *ngIf="posts?.length > 0">
+        <table class="table table-striped" aria-describedby="page-heading">
+            <thead>
+                <tr>
+                    <th scope="col" ><span>ID</span></th>
+                    <th scope="col" ><span>Title</span></th>
+                    <th scope="col" ><span>Content</span></th>
+                    <th scope="col" ><span>Date</span></th>
+                    <th scope="col" ><span>User</span></th>
+                    <th scope="col" ><span>Topic</span></th>
+                    <th scope="col"></th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr *ngFor="let post of posts ;trackBy: trackId">
+                    <td><a [routerLink]="['/post', post.id, 'view']">{{ post.id }}</a></td>
+                    <td>{{ post.title }}</td>
+                    <td>{{ post.content }}</td>
+                    <td>{{ post.date | date:'medium' }}</td>
+                    <td>
+                        {{ post.user?.id }}
+                    </td>
+                    <td>
+                        <div *ngIf="post.topic">
+                            <a [routerLink]="['/topic', post.topic?.id, 'view']" >{{ post.topic?.id }}</a>
+                        </div>
+                    </td>
+                    <td class="text-right">
+                        <div class="btn-group">
+                            <button type="submit"
+                                    [routerLink]="['/post', post.id, 'view']"
+                                    class="btn btn-info btn-sm">
+                                <fa-icon icon="eye"></fa-icon>
+                                <span class="d-none d-md-inline">View</span>
+                            </button>
+
+                            <button type="submit"
+                                    [routerLink]="['/post', post.id, 'edit']"
+                                    class="btn btn-primary btn-sm">
+                                <fa-icon icon="pencil-alt"></fa-icon>
+                                <span class="d-none d-md-inline">Edit</span>
+                            </button>
+
+                            <button type="submit" (click)="delete(post)"
+                                    class="btn btn-danger btn-sm">
+                                <fa-icon icon="times"></fa-icon>
+                                <span class="d-none d-md-inline">Delete</span>
+                            </button>
+                        </div>
+                    </td>
+                </tr>
+            </tbody>
+        </table>
+    </div>
+</div>

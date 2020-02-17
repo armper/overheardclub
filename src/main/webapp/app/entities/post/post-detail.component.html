@@ -1,0 +1,48 @@
+<div class="row justify-content-center">
+    <div class="col-8">
+        <div *ngIf="post">
+            <h2><span>Post</span> {{ post.id }}</h2>
+
+            <hr>
+
+            <jhi-alert-error></jhi-alert-error>
+
+            <dl class="row-md jh-entity-details">
+                <dt><span>Title</span></dt>
+                <dd>
+                    <span>{{ post.title }}</span>
+                </dd>
+                <dt><span>Content</span></dt>
+                <dd>
+                    <span>{{ post.content }}</span>
+                </dd>
+                <dt><span>Date</span></dt>
+                <dd>
+                    <span>{{ post.date }}</span>
+                </dd>
+                <dt><span>User</span></dt>
+                <dd>
+                    {{ post.user?.id }}
+                </dd>
+                <dt><span>Topic</span></dt>
+                <dd>
+                    <div *ngIf="post.topic">
+                        <a [routerLink]="['/topic', post.topic?.id, 'view']">{{ post.topic?.id }}</a>
+                    </div>
+                </dd>
+            </dl>
+
+            <button type="submit"
+                    (click)="previousState()"
+                    class="btn btn-info">
+                <fa-icon icon="arrow-left"></fa-icon>&nbsp;<span>Back</span>
+            </button>
+
+            <button type="button"
+                    [routerLink]="['/post', post.id, 'edit']"
+                    class="btn btn-primary">
+                <fa-icon icon="pencil-alt"></fa-icon>&nbsp;<span>Edit</span>
+            </button>
+        </div>
+    </div>
+</div>
