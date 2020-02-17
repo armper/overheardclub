@@ -22,12 +22,14 @@ entity Ranking {
 	date Instant	
 }
 
+filter Ranking
+
 relationship ManyToOne {
 	Ranking{user} to User
 }
 
 relationship OneToMany {
-  Post{rank} to Ranking
+  Post{ranking} to Ranking
 }
 
 entity Comment {

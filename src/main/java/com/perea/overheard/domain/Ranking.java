@@ -38,7 +38,7 @@ public class Ranking implements Serializable {
     private User user;
 
     @ManyToOne
-    @JsonIgnoreProperties("ranks")
+    @JsonIgnoreProperties("rankings")
     private Post post;
 
     // jhipster-needle-entity-add-field - JHipster will add fields here, do not remove

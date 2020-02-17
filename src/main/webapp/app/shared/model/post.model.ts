@@ -9,7 +9,7 @@ export interface IPost {
   title?: string;
   content?: string;
   date?: Moment;
-  ranks?: IRanking[];
+  rankings?: IRanking[];
   comments?: IComment[];
   user?: IUser;
   topic?: ITopic;
@@ -21,7 +21,7 @@ export class Post implements IPost {
     public title?: string,
     public content?: string,
     public date?: Moment,
-    public ranks?: IRanking[],
+    public rankings?: IRanking[],
     public comments?: IComment[],
     public user?: IUser,
     public topic?: ITopic

@@ -1,8 +1,10 @@
 package com.perea.overheard.web.rest;
 
 import com.perea.overheard.domain.Ranking;
-import com.perea.overheard.repository.RankingRepository;
+import com.perea.overheard.service.RankingService;
 import com.perea.overheard.web.rest.errors.BadRequestAlertException;
+import com.perea.overheard.service.dto.RankingCriteria;
+import com.perea.overheard.service.RankingQueryService;
 
 import io.github.jhipster.web.util.HeaderUtil;
 import io.github.jhipster.web.util.ResponseUtil;
@@ -10,7 +12,6 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.ResponseEntity;
-import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.bind.annotation.*;
 
 import java.net.URI;
@@ -23,7 +24,6 @@ import java.util.Optional;
  */
 @RestController
 @RequestMapping("/api")
-@Transactional
 public class RankingResource {
 
     private final Logger log = LoggerFactory.getLogger(RankingResource.class);
@@ -33,10 +33,13 @@ public class RankingResource {
     @Value("${jhipster.clientApp.name}")
     private String applicationName;
 
-    private final RankingRepository rankingRepository;
+    private final RankingService rankingService;
 
-    public RankingResource(RankingRepository rankingRepository) {
-        this.rankingRepository = rankingRepository;
+    private final RankingQueryService rankingQueryService;
+
+    public RankingResource(RankingService rankingService, RankingQueryService rankingQueryService) {
+        this.rankingService = rankingService;
+        this.rankingQueryService = rankingQueryService;
     }
 
     /**
@@ -52,7 +55,7 @@ public class RankingResource {
         if (ranking.getId() != null) {
             throw new BadRequestAlertException("A new ranking cannot already have an ID", ENTITY_NAME, "idexists");
         }
-        Ranking result = rankingRepository.save(ranking);
+        Ranking result = rankingService.save(ranking);
         return ResponseEntity.created(new URI("/api/rankings/" + result.getId()))
             .headers(HeaderUtil.createEntityCreationAlert(applicationName, false, ENTITY_NAME, result.getId().toString()))
             .body(result);
@@ -73,7 +76,7 @@ public class RankingResource {
         if (ranking.getId() == null) {
             throw new BadRequestAlertException("Invalid id", ENTITY_NAME, "idnull");
         }
-        Ranking result = rankingRepository.save(ranking);
+        Ranking result = rankingService.save(ranking);
         return ResponseEntity.ok()
             .headers(HeaderUtil.createEntityUpdateAlert(applicationName, false, ENTITY_NAME, ranking.getId().toString()))
             .body(result);
@@ -82,12 +85,26 @@ public class RankingResource {
     /**
      * {@code GET  /rankings} : get all the rankings.
      *
+     * @param criteria the criteria which the requested entities should match.
      * @return the {@link ResponseEntity} with status {@code 200 (OK)} and the list of rankings in body.
      */
     @GetMapping("/rankings")
-    public List<Ranking> getAllRankings() {
-        log.debug("REST request to get all Rankings");
-        return rankingRepository.findAll();
+    public ResponseEntity<List<Ranking>> getAllRankings(RankingCriteria criteria) {
+        log.debug("REST request to get Rankings by criteria: {}", criteria);
+        List<Ranking> entityList = rankingQueryService.findByCriteria(criteria);
+        return ResponseEntity.ok().body(entityList);
+    }
+
+    /**
+     * {@code GET  /rankings/count} : count all the rankings.
+     *
+     * @param criteria the criteria which the requested entities should match.
+     * @return the {@link ResponseEntity} with status {@code 200 (OK)} and the count in body.
+     */
+    @GetMapping("/rankings/count")
+    public ResponseEntity<Long> countRankings(RankingCriteria criteria) {
+        log.debug("REST request to count Rankings by criteria: {}", criteria);
+        return ResponseEntity.ok().body(rankingQueryService.countByCriteria(criteria));
     }
 
     /**
@@ -99,7 +116,7 @@ public class RankingResource {
     @GetMapping("/rankings/{id}")
     public ResponseEntity<Ranking> getRanking(@PathVariable Long id) {
         log.debug("REST request to get Ranking : {}", id);
-        Optional<Ranking> ranking = rankingRepository.findById(id);
+        Optional<Ranking> ranking = rankingService.findOne(id);
         return ResponseUtil.wrapOrNotFound(ranking);
     }
 
@@ -112,7 +129,7 @@ public class RankingResource {
     @DeleteMapping("/rankings/{id}")
     public ResponseEntity<Void> deleteRanking(@PathVariable Long id) {
         log.debug("REST request to delete Ranking : {}", id);
-        rankingRepository.deleteById(id);
+        rankingService.delete(id);
         return ResponseEntity.noContent().headers(HeaderUtil.createEntityDeletionAlert(applicationName, false, ENTITY_NAME, id.toString())).build();
     }
 }

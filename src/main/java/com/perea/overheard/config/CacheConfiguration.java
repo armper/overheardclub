@@ -50,6 +50,7 @@ public class CacheConfiguration {
             createCache(cm, com.perea.overheard.domain.Rank.class.getName());
             createCache(cm, com.perea.overheard.domain.Post.class.getName() + ".ranks");
             createCache(cm, com.perea.overheard.domain.Ranking.class.getName());
+            createCache(cm, com.perea.overheard.domain.Post.class.getName() + ".rankings");
             // jhipster-needle-ehcache-add-entry
         };
     }
