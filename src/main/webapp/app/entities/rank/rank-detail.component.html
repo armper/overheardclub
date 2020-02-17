@@ -8,10 +8,6 @@
             <jhi-alert-error></jhi-alert-error>
 
             <dl class="row-md jh-entity-details">
-                <dt><span>Rank</span></dt>
-                <dd>
-                    <span>{{ rank.rank }}</span>
-                </dd>
                 <dt><span>Rank Type</span></dt>
                 <dd>
                     <span>{{ rank.rankType }}</span>
@@ -19,6 +15,10 @@
                 <dt><span>Date</span></dt>
                 <dd>
                     <span>{{ rank.date }}</span>
+                </dd>
+                <dt><span>User</span></dt>
+                <dd>
+                    {{ rank.user?.id }}
                 </dd>
             </dl>
 

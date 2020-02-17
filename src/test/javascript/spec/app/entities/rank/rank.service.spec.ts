@@ -25,7 +25,7 @@ describe('Service Tests', () => {
       httpMock = injector.get(HttpTestingController);
       currentDate = moment();
 
-      elemDefault = new Rank(0, 0, RankType.FUNNY, currentDate);
+      elemDefault = new Rank(0, RankType.HILARIOUS, currentDate);
     });
 
     describe('Service methods', () => {
@@ -70,7 +70,6 @@ describe('Service Tests', () => {
       it('should update a Rank', () => {
         const returnedFromService = Object.assign(
           {
-            rank: 1,
             rankType: 'BBBBBB',
             date: currentDate.format(DATE_TIME_FORMAT)
           },
@@ -94,7 +93,6 @@ describe('Service Tests', () => {
       it('should return a list of Rank', () => {
         const returnedFromService = Object.assign(
           {
-            rank: 1,
             rankType: 'BBBBBB',
             date: currentDate.format(DATE_TIME_FORMAT)
           },

@@ -1,4 +1,4 @@
 export const enum RankType {
-  FUNNY,
+  HILARIOUS,
   PATHETIC
 }

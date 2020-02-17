@@ -12,15 +12,9 @@
                 </div>
 
                 <div class="form-group">
-                    <label class="form-control-label" for="field_rank">Rank</label>
-                    <input type="number" class="form-control" name="rank" id="field_rank"
-                           formControlName="rank"/>
-                </div>
-
-                <div class="form-group">
                     <label class="form-control-label" for="field_rankType">Rank Type</label>
                     <select class="form-control" name="rankType" formControlName="rankType" id="field_rankType">
-                        <option value="FUNNY">FUNNY</option>
+                        <option value="HILARIOUS">HILARIOUS</option>
                         <option value="PATHETIC">PATHETIC</option>
                     </select>
                 </div>
@@ -30,6 +24,14 @@
                     <div class="d-flex">
                         <input id="field_date" type="datetime-local" class="form-control" name="date" formControlName="date" placeholder="YYYY-MM-DD HH:mm"/>
                     </div>
+                </div>
+
+                <div class="form-group">
+                    <label class="form-control-label" for="field_user">User</label>
+                    <select class="form-control" id="field_user" name="user" formControlName="user">
+                        <option [ngValue]="null"></option>
+                        <option [ngValue]="userOption.id === editForm.get('user')!.value?.id ? editForm.get('user')!.value : userOption" *ngFor="let userOption of users; trackBy: trackById">{{ userOption.id }}</option>
+                    </select>
                 </div>
             </div>
 

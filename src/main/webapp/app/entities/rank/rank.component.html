@@ -23,18 +23,20 @@
             <thead>
                 <tr>
                     <th scope="col" ><span>ID</span></th>
-                    <th scope="col" ><span>Rank</span></th>
                     <th scope="col" ><span>Rank Type</span></th>
                     <th scope="col" ><span>Date</span></th>
+                    <th scope="col" ><span>User</span></th>
                     <th scope="col"></th>
                 </tr>
             </thead>
             <tbody>
                 <tr *ngFor="let rank of ranks ;trackBy: trackId">
                     <td><a [routerLink]="['/rank', rank.id, 'view']">{{ rank.id }}</a></td>
-                    <td>{{ rank.rank }}</td>
                     <td>{{ rank.rankType }}</td>
                     <td>{{ rank.date | date:'medium' }}</td>
+                    <td>
+                        {{ rank.user?.id }}
+                    </td>
                     <td class="text-right">
                         <div class="btn-group">
                             <button type="submit"

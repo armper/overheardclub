@@ -22,5 +22,6 @@
     <include file="config/liquibase/changelog/20200217174300_added_entity_constraints_Topic.xml" relativeToChangelogFile="false"/>
     <include file="config/liquibase/changelog/20200217174400_added_entity_constraints_Post.xml" relativeToChangelogFile="false"/>
     <include file="config/liquibase/changelog/20200217174500_added_entity_constraints_Comment.xml" relativeToChangelogFile="false"/>
+    <include file="config/liquibase/changelog/20200217185400_added_entity_constraints_Rank.xml" relativeToChangelogFile="false"/>
     <!-- jhipster-needle-liquibase-add-constraints-changelog - JHipster will add liquibase constraints changelogs here -->
 </databaseChangeLog>
