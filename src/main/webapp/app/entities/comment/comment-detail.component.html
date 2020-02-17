@@ -16,6 +16,12 @@
                 <dd>
                     <span>{{ comment.date }}</span>
                 </dd>
+                <dt><span>Rank</span></dt>
+                <dd>
+                    <div *ngIf="comment.rank">
+                        <a [routerLink]="['/rank', comment.rank?.id, 'view']">{{ comment.rank?.id }}</a>
+                    </div>
+                </dd>
                 <dt><span>User</span></dt>
                 <dd>
                     {{ comment.user?.id }}

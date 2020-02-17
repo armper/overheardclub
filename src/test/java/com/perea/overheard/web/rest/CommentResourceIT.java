@@ -2,6 +2,7 @@ package com.perea.overheard.web.rest;
 
 import com.perea.overheard.OverheardclubApp;
 import com.perea.overheard.domain.Comment;
+import com.perea.overheard.domain.Rank;
 import com.perea.overheard.domain.User;
 import com.perea.overheard.domain.Post;
 import com.perea.overheard.repository.CommentRepository;
@@ -334,6 +335,26 @@ public class CommentResourceIT {
         // Get all the commentList where date is null
         defaultCommentShouldNotBeFound("date.specified=false");
     }
+
+    @Test
+    @Transactional
+    public void getAllCommentsByRankIsEqualToSomething() throws Exception {
+        // Initialize the database
+        commentRepository.saveAndFlush(comment);
+        Rank rank = RankResourceIT.createEntity(em);
+        em.persist(rank);
+        em.flush();
+        comment.setRank(rank);
+        commentRepository.saveAndFlush(comment);
+        Long rankId = rank.getId();
+
+        // Get all the commentList where rank equals to rankId
+        defaultCommentShouldBeFound("rankId.equals=" + rankId);
+
+        // Get all the commentList where rank equals to rankId + 1
+        defaultCommentShouldNotBeFound("rankId.equals=" + (rankId + 1));
+    }
+
 
     @Test
     @Transactional

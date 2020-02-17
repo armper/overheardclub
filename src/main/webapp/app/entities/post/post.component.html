@@ -26,6 +26,7 @@
                     <th scope="col" ><span>Title</span></th>
                     <th scope="col" ><span>Content</span></th>
                     <th scope="col" ><span>Date</span></th>
+                    <th scope="col" ><span>Rank</span></th>
                     <th scope="col" ><span>User</span></th>
                     <th scope="col" ><span>Topic</span></th>
                     <th scope="col"></th>
@@ -37,6 +38,11 @@
                     <td>{{ post.title }}</td>
                     <td>{{ post.content }}</td>
                     <td>{{ post.date | date:'medium' }}</td>
+                    <td>
+                        <div *ngIf="post.rank">
+                            <a [routerLink]="['/rank', post.rank?.id, 'view']" >{{ post.rank?.id }}</a>
+                        </div>
+                    </td>
                     <td>
                         {{ post.user?.id }}
                     </td>

@@ -1,0 +1,29 @@
+{
+    "name": "Rank",
+    "fields": [
+        {
+            "fieldName": "rank",
+            "fieldType": "Integer"
+        },
+        {
+            "fieldName": "rankType",
+            "fieldType": "RankType",
+            "fieldValues": "FUNNY,PATHETIC"
+        },
+        {
+            "fieldName": "date",
+            "fieldType": "Instant"
+        }
+    ],
+    "relationships": [],
+    "changelogDate": "20200217185400",
+    "entityTableName": "rank",
+    "dto": "no",
+    "pagination": "no",
+    "service": "no",
+    "jpaMetamodelFiltering": false,
+    "fluentMethods": true,
+    "readOnly": false,
+    "clientRootFolder": "",
+    "applications": "*"
+}

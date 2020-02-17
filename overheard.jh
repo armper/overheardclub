@@ -1,3 +1,4 @@
+
 entity Topic {
 	title String
 }
@@ -12,12 +13,30 @@ entity Post {
 
 filter Post
 
+enum RankType {
+	FUNNY, PATHETIC
+}
+
+entity Rank {
+	rank Integer
+	rankType RankType
+	date Instant	
+}
+
+relationship ManyToOne {
+  Post{rank} to Rank
+}
+
 entity Comment {
 	content String
     date Instant
 }
 
 filter Comment
+
+relationship ManyToOne {
+  Comment{rank} to Rank
+}
 
 relationship OneToMany {
 	Topic{post} to Post

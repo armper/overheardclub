@@ -3,6 +3,7 @@ package com.perea.overheard.web.rest;
 import com.perea.overheard.OverheardclubApp;
 import com.perea.overheard.domain.Post;
 import com.perea.overheard.domain.Comment;
+import com.perea.overheard.domain.Rank;
 import com.perea.overheard.domain.User;
 import com.perea.overheard.domain.Topic;
 import com.perea.overheard.repository.PostRepository;
@@ -439,6 +440,26 @@ public class PostResourceIT {
 
         // Get all the postList where comment equals to commentId + 1
         defaultPostShouldNotBeFound("commentId.equals=" + (commentId + 1));
+    }
+
+
+    @Test
+    @Transactional
+    public void getAllPostsByRankIsEqualToSomething() throws Exception {
+        // Initialize the database
+        postRepository.saveAndFlush(post);
+        Rank rank = RankResourceIT.createEntity(em);
+        em.persist(rank);
+        em.flush();
+        post.setRank(rank);
+        postRepository.saveAndFlush(post);
+        Long rankId = rank.getId();
+
+        // Get all the postList where rank equals to rankId
+        defaultPostShouldBeFound("rankId.equals=" + rankId);
+
+        // Get all the postList where rank equals to rankId + 1
+        defaultPostShouldNotBeFound("rankId.equals=" + (rankId + 1));
     }
 
 

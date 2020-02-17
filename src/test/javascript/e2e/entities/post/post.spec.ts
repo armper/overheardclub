@@ -44,6 +44,7 @@ describe('Post e2e test', () => {
       postUpdatePage.setTitleInput('title'),
       postUpdatePage.setContentInput('content'),
       postUpdatePage.setDateInput('01/01/2001' + protractor.Key.TAB + '02:30AM'),
+      postUpdatePage.rankSelectLastOption(),
       postUpdatePage.userSelectLastOption(),
       postUpdatePage.topicSelectLastOption()
     ]);
