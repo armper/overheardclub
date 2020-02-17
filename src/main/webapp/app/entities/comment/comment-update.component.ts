@@ -9,12 +9,14 @@ import { DATE_TIME_FORMAT } from 'app/shared/constants/input.constants';
 
 import { IComment, Comment } from 'app/shared/model/comment.model';
 import { CommentService } from './comment.service';
+import { IRank } from 'app/shared/model/rank.model';
+import { RankService } from 'app/entities/rank/rank.service';
 import { IUser } from 'app/core/user/user.model';
 import { UserService } from 'app/core/user/user.service';
 import { IPost } from 'app/shared/model/post.model';
 import { PostService } from 'app/entities/post/post.service';
 
-type SelectableEntity = IUser | IPost;
+type SelectableEntity = IRank | IUser | IPost;
 
 @Component({
   selector: 'jhi-comment-update',
@@ -22,6 +24,7 @@ type SelectableEntity = IUser | IPost;
 })
 export class CommentUpdateComponent implements OnInit {
   isSaving = false;
+  ranks: IRank[] = [];
   users: IUser[] = [];
   posts: IPost[] = [];
 
@@ -29,12 +32,14 @@ export class CommentUpdateComponent implements OnInit {
     id: [],
     content: [],
     date: [],
+    rank: [],
     user: [],
     post: []
   });
 
   constructor(
     protected commentService: CommentService,
+    protected rankService: RankService,
     protected userService: UserService,
     protected postService: PostService,
     protected activatedRoute: ActivatedRoute,
@@ -50,6 +55,8 @@ export class CommentUpdateComponent implements OnInit {
 
       this.updateForm(comment);
 
+      this.rankService.query().subscribe((res: HttpResponse<IRank[]>) => (this.ranks = res.body || []));
+
       this.userService.query().subscribe((res: HttpResponse<IUser[]>) => (this.users = res.body || []));
 
       this.postService.query().subscribe((res: HttpResponse<IPost[]>) => (this.posts = res.body || []));
@@ -61,6 +68,7 @@ export class CommentUpdateComponent implements OnInit {
       id: comment.id,
       content: comment.content,
       date: comment.date ? comment.date.format(DATE_TIME_FORMAT) : null,
+      rank: comment.rank,
       user: comment.user,
       post: comment.post
     });
@@ -86,6 +94,7 @@ export class CommentUpdateComponent implements OnInit {
       id: this.editForm.get(['id'])!.value,
       content: this.editForm.get(['content'])!.value,
       date: this.editForm.get(['date'])!.value ? moment(this.editForm.get(['date'])!.value, DATE_TIME_FORMAT) : undefined,
+      rank: this.editForm.get(['rank'])!.value,
       user: this.editForm.get(['user'])!.value,
       post: this.editForm.get(['post'])!.value
     };

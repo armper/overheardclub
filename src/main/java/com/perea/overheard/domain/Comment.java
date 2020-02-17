@@ -32,6 +32,10 @@ public class Comment implements Serializable {
 
     @ManyToOne
     @JsonIgnoreProperties("comments")
+    private Rank rank;
+
+    @ManyToOne
+    @JsonIgnoreProperties("comments")
     private User user;
 
     @ManyToOne
@@ -71,6 +75,19 @@ public class Comment implements Serializable {
 
     public void setDate(Instant date) {
         this.date = date;
+    }
+
+    public Rank getRank() {
+        return rank;
+    }
+
+    public Comment rank(Rank rank) {
+        this.rank = rank;
+        return this;
+    }
+
+    public void setRank(Rank rank) {
+        this.rank = rank;
     }
 
     public User getUser() {

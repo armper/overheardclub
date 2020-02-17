@@ -20,6 +20,12 @@
                 <dd>
                     <span>{{ post.date }}</span>
                 </dd>
+                <dt><span>Rank</span></dt>
+                <dd>
+                    <div *ngIf="post.rank">
+                        <a [routerLink]="['/rank', post.rank?.id, 'view']">{{ post.rank?.id }}</a>
+                    </div>
+                </dd>
                 <dt><span>User</span></dt>
                 <dd>
                     {{ post.user?.id }}

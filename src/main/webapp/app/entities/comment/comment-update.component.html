@@ -25,6 +25,14 @@
                 </div>
 
                 <div class="form-group">
+                    <label class="form-control-label" for="field_rank">Rank</label>
+                    <select class="form-control" id="field_rank" name="rank" formControlName="rank">
+                        <option [ngValue]="null"></option>
+                        <option [ngValue]="rankOption.id === editForm.get('rank')!.value?.id ? editForm.get('rank')!.value : rankOption" *ngFor="let rankOption of ranks; trackBy: trackById">{{ rankOption.id }}</option>
+                    </select>
+                </div>
+
+                <div class="form-group">
                     <label class="form-control-label" for="field_user">User</label>
                     <select class="form-control" id="field_user" name="user" formControlName="user">
                         <option [ngValue]="null"></option>

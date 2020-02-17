@@ -33,6 +33,7 @@ export class PostUpdatePage {
   contentInput = element(by.id('field_content'));
   dateInput = element(by.id('field_date'));
 
+  rankSelect = element(by.id('field_rank'));
   userSelect = element(by.id('field_user'));
   topicSelect = element(by.id('field_topic'));
 
@@ -62,6 +63,25 @@ export class PostUpdatePage {
 
   async getDateInput(): Promise<string> {
     return await this.dateInput.getAttribute('value');
+  }
+
+  async rankSelectLastOption(): Promise<void> {
+    await this.rankSelect
+      .all(by.tagName('option'))
+      .last()
+      .click();
+  }
+
+  async rankSelectOption(option: string): Promise<void> {
+    await this.rankSelect.sendKeys(option);
+  }
+
+  getRankSelect(): ElementFinder {
+    return this.rankSelect;
+  }
+
+  async getRankSelectedOption(): Promise<string> {
+    return await this.rankSelect.element(by.css('option:checked')).getText();
   }
 
   async userSelectLastOption(): Promise<void> {

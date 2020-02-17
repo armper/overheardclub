@@ -43,6 +43,7 @@ describe('Comment e2e test', () => {
     await promise.all([
       commentUpdatePage.setContentInput('content'),
       commentUpdatePage.setDateInput('01/01/2001' + protractor.Key.TAB + '02:30AM'),
+      commentUpdatePage.rankSelectLastOption(),
       commentUpdatePage.userSelectLastOption(),
       commentUpdatePage.postSelectLastOption()
     ]);

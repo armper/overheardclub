@@ -31,6 +31,8 @@ public class CommentCriteria implements Serializable, Criteria {
 
     private InstantFilter date;
 
+    private LongFilter rankId;
+
     private LongFilter userId;
 
     private LongFilter postId;
@@ -42,6 +44,7 @@ public class CommentCriteria implements Serializable, Criteria {
         this.id = other.id == null ? null : other.id.copy();
         this.content = other.content == null ? null : other.content.copy();
         this.date = other.date == null ? null : other.date.copy();
+        this.rankId = other.rankId == null ? null : other.rankId.copy();
         this.userId = other.userId == null ? null : other.userId.copy();
         this.postId = other.postId == null ? null : other.postId.copy();
     }
@@ -75,6 +78,14 @@ public class CommentCriteria implements Serializable, Criteria {
         this.date = date;
     }
 
+    public LongFilter getRankId() {
+        return rankId;
+    }
+
+    public void setRankId(LongFilter rankId) {
+        this.rankId = rankId;
+    }
+
     public LongFilter getUserId() {
         return userId;
     }
@@ -105,6 +116,7 @@ public class CommentCriteria implements Serializable, Criteria {
             Objects.equals(id, that.id) &&
             Objects.equals(content, that.content) &&
             Objects.equals(date, that.date) &&
+            Objects.equals(rankId, that.rankId) &&
             Objects.equals(userId, that.userId) &&
             Objects.equals(postId, that.postId);
     }
@@ -115,6 +127,7 @@ public class CommentCriteria implements Serializable, Criteria {
         id,
         content,
         date,
+        rankId,
         userId,
         postId
         );
@@ -126,6 +139,7 @@ public class CommentCriteria implements Serializable, Criteria {
                 (id != null ? "id=" + id + ", " : "") +
                 (content != null ? "content=" + content + ", " : "") +
                 (date != null ? "date=" + date + ", " : "") +
+                (rankId != null ? "rankId=" + rankId + ", " : "") +
                 (userId != null ? "userId=" + userId + ", " : "") +
                 (postId != null ? "postId=" + postId + ", " : "") +
             "}";

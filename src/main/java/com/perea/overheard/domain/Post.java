@@ -41,6 +41,10 @@ public class Post implements Serializable {
 
     @ManyToOne
     @JsonIgnoreProperties("posts")
+    private Rank rank;
+
+    @ManyToOne
+    @JsonIgnoreProperties("posts")
     private User user;
 
     @ManyToOne
@@ -118,6 +122,19 @@ public class Post implements Serializable {
 
     public void setComments(Set<Comment> comments) {
         this.comments = comments;
+    }
+
+    public Rank getRank() {
+        return rank;
+    }
+
+    public Post rank(Rank rank) {
+        this.rank = rank;
+        return this;
+    }
+
+    public void setRank(Rank rank) {
+        this.rank = rank;
     }
 
     public User getUser() {

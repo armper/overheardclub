@@ -23,6 +23,13 @@
         },
         {
             "relationshipType": "many-to-one",
+            "otherEntityName": "rank",
+            "otherEntityRelationshipName": "post",
+            "relationshipName": "rank",
+            "otherEntityField": "id"
+        },
+        {
+            "relationshipType": "many-to-one",
             "otherEntityName": "user",
             "otherEntityRelationshipName": "post",
             "relationshipName": "user",

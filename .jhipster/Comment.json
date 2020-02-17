@@ -13,6 +13,13 @@
     "relationships": [
         {
             "relationshipType": "many-to-one",
+            "otherEntityName": "rank",
+            "otherEntityRelationshipName": "comment",
+            "relationshipName": "rank",
+            "otherEntityField": "id"
+        },
+        {
+            "relationshipType": "many-to-one",
             "otherEntityName": "user",
             "otherEntityRelationshipName": "comment",
             "relationshipName": "user",
