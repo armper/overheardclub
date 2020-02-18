@@ -27,7 +27,7 @@
             "otherEntityField": "id"
         }
     ],
-    "changelogDate": "20200217200600",
+    "changelogDate": "20200217204900",
     "entityTableName": "ranking",
     "dto": "no",
     "pagination": "no",

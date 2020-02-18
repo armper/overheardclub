@@ -6,7 +6,7 @@
     <!--
         Added the constraints for entity Comment.
     -->
-    <changeSet id="20200217174500-2" author="jhipster">
+    <changeSet id="20200217205000-2" author="jhipster">
         
         <addForeignKeyConstraint baseColumnNames="rank_id"
                                  baseTableName="comment"

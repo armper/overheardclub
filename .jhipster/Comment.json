@@ -33,7 +33,7 @@
             "otherEntityField": "id"
         }
     ],
-    "changelogDate": "20200217174500",
+    "changelogDate": "20200217205000",
     "entityTableName": "comment",
     "dto": "no",
     "pagination": "no",

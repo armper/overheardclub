@@ -4,15 +4,21 @@
     xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
     xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-3.6.xsd">
     <!--
-        Added the constraints for entity Topic.
+        Added the constraints for entity Ranking.
     -->
-    <changeSet id="20200217174300-2" author="jhipster">
+    <changeSet id="20200217204900-2" author="jhipster">
         
         <addForeignKeyConstraint baseColumnNames="user_id"
-                                 baseTableName="topic"
-                                 constraintName="fk_topic_user_id"
+                                 baseTableName="ranking"
+                                 constraintName="fk_ranking_user_id"
                                  referencedColumnNames="id"
                                  referencedTableName="jhi_user"/>
+
+        <addForeignKeyConstraint baseColumnNames="post_id"
+                                 baseTableName="ranking"
+                                 constraintName="fk_ranking_post_id"
+                                 referencedColumnNames="id"
+                                 referencedTableName="post"/>
 
     </changeSet>
 </databaseChangeLog>

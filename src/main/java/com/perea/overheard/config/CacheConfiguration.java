@@ -45,12 +45,10 @@ public class CacheConfiguration {
             createCache(cm, com.perea.overheard.domain.Topic.class.getName());
             createCache(cm, com.perea.overheard.domain.Topic.class.getName() + ".posts");
             createCache(cm, com.perea.overheard.domain.Post.class.getName());
-            createCache(cm, com.perea.overheard.domain.Post.class.getName() + ".comments");
-            createCache(cm, com.perea.overheard.domain.Comment.class.getName());
-            createCache(cm, com.perea.overheard.domain.Rank.class.getName());
-            createCache(cm, com.perea.overheard.domain.Post.class.getName() + ".ranks");
-            createCache(cm, com.perea.overheard.domain.Ranking.class.getName());
             createCache(cm, com.perea.overheard.domain.Post.class.getName() + ".rankings");
+            createCache(cm, com.perea.overheard.domain.Post.class.getName() + ".comments");
+            createCache(cm, com.perea.overheard.domain.Ranking.class.getName());
+            createCache(cm, com.perea.overheard.domain.Comment.class.getName());
             // jhipster-needle-ehcache-add-entry
         };
     }

@@ -2,7 +2,7 @@
   "generator-jhipster": {
     "applicationType": "monolith",
     "gitCompany": "",
-    "baseName": "Overheardclub",
+    "baseName": "overheardclub",
     "packageName": "com.perea.overheard",
     "packageFolder": "com/perea/overheard",
     "serverPort": 8076,
@@ -24,20 +24,17 @@
     "testFrameworks": ["protractor"],
     "enableTranslation": false,
     "nativeLanguage": "en",
-    "languages": ["ru"],
+    "languages": ["en"],
     "clientFramework": "angularX",
     "jhiPrefix": "jhi",
     "jhipsterVersion": "6.7.1",
-    "jwtSecretKey": "N2ZmYjEwYjY4MzkxN2M3NDQ4YWYzYzZhOGUxMTY1MGI5ZjE2NDNkNjZiOTk5NTdlZmU2ZmQzOGQwNDUwMjYwNWE4NDUwNmFmZmZmNDEyNzFlMjZmNWU1OGVjY2EwNGRmNDhhMGQzZTU4N2UzZGM0MjQ5ZDAwNjRkZjYyMzM0YjM=",
+    "jwtSecretKey": "MTEwZDM3NmZhMzA0ZmVmZTQ0OWEzODBmOTZhYmJmOTg2YzY4ZGRiZTc3OWM3NDk4YzQ4ZTAxNWRjMGZhZTAyNzU0ZTM2ZGVkNDVmMGJkM2IxMWNhOTJjMmRlYjViOGFkMzFlNmRjOGVlNGRmNjQ5MTIxNmRjMWY4M2U0ZmYwYzg=",
     "embeddableLaunchScript": false,
     "clientTheme": "none",
-    "creationTimestamp": 1581959826767,
+    "creationTimestamp": 1581971914377,
     "entitySuffix": "",
     "dtoSuffix": "DTO",
     "otherModules": [],
     "blueprints": []
-  },
-  "git-provider": "GitHub",
-  "git-company": "armper",
-  "repository-name": "overheardclub"
+  }
 }
