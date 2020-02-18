@@ -38,7 +38,7 @@ spring:
   datasource:
     type: com.zaxxer.hikari.HikariDataSource
     url: jdbc:h2:file:./target/h2db/db/overheardclub;DB_CLOSE_DELAY=-1
-    username: Overheardclub
+    username: overheardclub
     password:
     hikari:
       poolName: Hikari
@@ -93,7 +93,7 @@ jhipster:
     authentication:
       jwt:
         # This token must be encoded using Base64 and be at least 256 bits long (you can type `openssl rand -base64 64` on your command line to generate a 512 bits one)
-        base64-secret: N2ZmYjEwYjY4MzkxN2M3NDQ4YWYzYzZhOGUxMTY1MGI5ZjE2NDNkNjZiOTk5NTdlZmU2ZmQzOGQwNDUwMjYwNWE4NDUwNmFmZmZmNDEyNzFlMjZmNWU1OGVjY2EwNGRmNDhhMGQzZTU4N2UzZGM0MjQ5ZDAwNjRkZjYyMzM0YjM=
+        base64-secret: MTEwZDM3NmZhMzA0ZmVmZTQ0OWEzODBmOTZhYmJmOTg2YzY4ZGRiZTc3OWM3NDk4YzQ4ZTAxNWRjMGZhZTAyNzU0ZTM2ZGVkNDVmMGJkM2IxMWNhOTJjMmRlYjViOGFkMzFlNmRjOGVlNGRmNjQ5MTIxNmRjMWY4M2U0ZmYwYzg=
         # Token is valid 24 hours
         token-validity-in-seconds: 86400
         token-validity-in-seconds-for-remember-me: 2592000

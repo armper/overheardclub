@@ -15,10 +15,10 @@
 
 spring:
   application:
-    name: Overheardclub
+    name: overheardclub
   datasource:
     type: com.zaxxer.hikari.HikariDataSource
-    url: jdbc:h2:mem:Overheardclub;DB_CLOSE_DELAY=-1;DB_CLOSE_ON_EXIT=FALSE
+    url: jdbc:h2:mem:overheardclub;DB_CLOSE_DELAY=-1;DB_CLOSE_ON_EXIT=FALSE
     name:
     username:
     password:
@@ -97,7 +97,7 @@ jhipster:
     authentication:
       jwt:
         # This token must be encoded using Base64 (you can type `echo 'secret-key'|base64` on your command line)
-        base64-secret: N2ZmYjEwYjY4MzkxN2M3NDQ4YWYzYzZhOGUxMTY1MGI5ZjE2NDNkNjZiOTk5NTdlZmU2ZmQzOGQwNDUwMjYwNWE4NDUwNmFmZmZmNDEyNzFlMjZmNWU1OGVjY2EwNGRmNDhhMGQzZTU4N2UzZGM0MjQ5ZDAwNjRkZjYyMzM0YjM=
+        base64-secret: MTEwZDM3NmZhMzA0ZmVmZTQ0OWEzODBmOTZhYmJmOTg2YzY4ZGRiZTc3OWM3NDk4YzQ4ZTAxNWRjMGZhZTAyNzU0ZTM2ZGVkNDVmMGJkM2IxMWNhOTJjMmRlYjViOGFkMzFlNmRjOGVlNGRmNjQ5MTIxNmRjMWY4M2U0ZmYwYzg=
         # Token is valid 24 hours
         token-validity-in-seconds: 86400
   metrics:

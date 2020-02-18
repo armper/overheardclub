@@ -21,7 +21,7 @@
             "otherEntityField": "id"
         }
     ],
-    "changelogDate": "20200217174300",
+    "changelogDate": "20200217204700",
     "entityTableName": "topic",
     "dto": "no",
     "pagination": "no",

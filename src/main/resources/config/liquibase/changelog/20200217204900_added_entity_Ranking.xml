@@ -8,10 +8,10 @@
 
     
     <!--
-        Added the entity Rank.
+        Added the entity Ranking.
     -->
-    <changeSet id="20200217185400-1" author="jhipster">
-        <createTable tableName="rank">
+    <changeSet id="20200217204900-1" author="jhipster">
+        <createTable tableName="ranking">
             <column name="id" type="bigint">
                 <constraints primaryKey="true" nullable="false"/>
             </column>
@@ -24,12 +24,15 @@
             <column name="user_id" type="bigint">
                 <constraints nullable="true" />
             </column>
+            <column name="post_id" type="bigint">
+                <constraints nullable="true" />
+            </column>
             <!-- jhipster-needle-liquibase-add-column - JHipster will add columns here, do not remove-->
         </createTable>
-        <dropDefaultValue tableName="rank" columnName="date" columnDataType="datetime"/>
+        <dropDefaultValue tableName="ranking" columnName="date" columnDataType="datetime"/>
     </changeSet>
 
-    <changeSet id="20200217185400-1-relations" author="jhipster">
+    <changeSet id="20200217204900-1-relations" author="jhipster">
 
     </changeSet>
     <!-- jhipster-needle-liquibase-add-changeset - JHipster will add changesets here, do not remove-->
@@ -42,11 +45,11 @@
           This can be customized by adding or removing 'faker' in the 'spring.liquibase.contexts'
           Spring Boot configuration key.
     -->
-    <changeSet id="20200217185400-1-data" author="jhipster" context="faker">
+    <changeSet id="20200217204900-1-data" author="jhipster" context="faker">
         <loadData
-                  file="config/liquibase/fake-data/rank.csv"
+                  file="config/liquibase/fake-data/ranking.csv"
                   separator=";"
-                  tableName="rank">
+                  tableName="ranking">
             <column name="id" type="numeric"/>
             <column name="rank_type" type="string"/>
             <column name="date" type="datetime"/>

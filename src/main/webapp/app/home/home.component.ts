@@ -4,8 +4,8 @@ import { Subscription } from 'rxjs';
 import { LoginModalService } from 'app/core/login/login-modal.service';
 import { AccountService } from 'app/core/auth/account.service';
 import { Account } from 'app/core/user/account.model';
-import { PostService } from 'app/entities/post/post.service';
 import { IPost } from 'app/shared/model/post.model';
+import { PostService } from 'app/entities/post/post.service';
 
 @Component({
   selector: 'jhi-home',
@@ -22,7 +22,6 @@ export class HomeComponent implements OnInit, OnDestroy {
 
   ngOnInit(): void {
     this.authSubscription = this.accountService.getAuthenticationState().subscribe(account => (this.account = account));
-
     this.postSubscription = this.postService.query().subscribe(posts => (this.posts = posts.body));
   }
 
@@ -37,6 +36,10 @@ export class HomeComponent implements OnInit, OnDestroy {
   ngOnDestroy(): void {
     if (this.authSubscription) {
       this.authSubscription.unsubscribe();
+    }
+
+    if (this.postSubscription) {
+      this.postSubscription.unsubscribe();
     }
   }
 }

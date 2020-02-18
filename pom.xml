@@ -625,7 +625,7 @@
                         <driver>org.h2.Driver</driver>
                         <url>jdbc:h2:file:${project.build.directory}/h2db/db/overheardclub</url>
                         <defaultSchemaName></defaultSchemaName>
-                        <username>Overheardclub</username>
+                        <username>overheardclub</username>
                         <password></password>
                         <referenceUrl>hibernate:spring:com.perea.overheard.domain?dialect=org.hibernate.dialect.H2Dialect&amp;hibernate.physical_naming_strategy=org.springframework.boot.orm.jpa.hibernate.SpringPhysicalNamingStrategy&amp;hibernate.implicit_naming_strategy=org.springframework.boot.orm.jpa.hibernate.SpringImplicitNamingStrategy</referenceUrl>
                         <verbose>true</verbose>
