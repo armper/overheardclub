@@ -37,7 +37,18 @@
     "entitySuffix": "",
     "dtoSuffix": "DTO",
     "blueprints": [],
-    "otherModules": []
+    "otherModules": [],
+    "gcpProjectId": "overheardclubcom",
+    "gcpCloudSqlInstanceName": "overheardclubcom:us-east4:overheardclub",
+    "gcpCloudSqlUserName": "root",
+    "gcpCloudSqlDatabaseName": "overheardclub",
+    "gaeServiceName": "default",
+    "gaeLocation": "us-east4",
+    "gaeInstanceClass": "F4",
+    "gaeScalingType": "automatic",
+    "gaeMinInstances": "0",
+    "gaeMaxInstances": "3",
+    "gaeCloudSQLInstanceNeeded": "Y"
   },
   "entities": ["OverheardComment", "Post", "Topic"]
 }
