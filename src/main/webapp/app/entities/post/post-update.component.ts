@@ -30,6 +30,11 @@ export class PostUpdateComponent implements OnInit {
     title: [],
     content: [],
     date: [],
+    rankOne: [],
+    rankTwo: [],
+    rankThree: [],
+    rankFour: [],
+    rankFive: [],
     user: [],
     topic: []
   });
@@ -63,6 +68,11 @@ export class PostUpdateComponent implements OnInit {
       title: post.title,
       content: post.content,
       date: post.date ? post.date.format(DATE_TIME_FORMAT) : null,
+      rankOne: post.rankOne,
+      rankTwo: post.rankTwo,
+      rankThree: post.rankThree,
+      rankFour: post.rankFour,
+      rankFive: post.rankFive,
       user: post.user,
       topic: post.topic
     });
@@ -89,6 +99,11 @@ export class PostUpdateComponent implements OnInit {
       title: this.editForm.get(['title'])!.value,
       content: this.editForm.get(['content'])!.value,
       date: this.editForm.get(['date'])!.value ? moment(this.editForm.get(['date'])!.value, DATE_TIME_FORMAT) : undefined,
+      rankOne: this.editForm.get(['rankOne'])!.value,
+      rankTwo: this.editForm.get(['rankTwo'])!.value,
+      rankThree: this.editForm.get(['rankThree'])!.value,
+      rankFour: this.editForm.get(['rankFour'])!.value,
+      rankFive: this.editForm.get(['rankFive'])!.value,
       user: this.editForm.get(['user'])!.value,
       topic: this.editForm.get(['topic'])!.value
     };

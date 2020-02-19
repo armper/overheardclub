@@ -32,6 +32,11 @@ export class PostUpdatePage {
   titleInput = element(by.id('field_title'));
   contentInput = element(by.id('field_content'));
   dateInput = element(by.id('field_date'));
+  rankOneInput = element(by.id('field_rankOne'));
+  rankTwoInput = element(by.id('field_rankTwo'));
+  rankThreeInput = element(by.id('field_rankThree'));
+  rankFourInput = element(by.id('field_rankFour'));
+  rankFiveInput = element(by.id('field_rankFive'));
 
   userSelect = element(by.id('field_user'));
   topicSelect = element(by.id('field_topic'));
@@ -62,6 +67,46 @@ export class PostUpdatePage {
 
   async getDateInput(): Promise<string> {
     return await this.dateInput.getAttribute('value');
+  }
+
+  async setRankOneInput(rankOne: string): Promise<void> {
+    await this.rankOneInput.sendKeys(rankOne);
+  }
+
+  async getRankOneInput(): Promise<string> {
+    return await this.rankOneInput.getAttribute('value');
+  }
+
+  async setRankTwoInput(rankTwo: string): Promise<void> {
+    await this.rankTwoInput.sendKeys(rankTwo);
+  }
+
+  async getRankTwoInput(): Promise<string> {
+    return await this.rankTwoInput.getAttribute('value');
+  }
+
+  async setRankThreeInput(rankThree: string): Promise<void> {
+    await this.rankThreeInput.sendKeys(rankThree);
+  }
+
+  async getRankThreeInput(): Promise<string> {
+    return await this.rankThreeInput.getAttribute('value');
+  }
+
+  async setRankFourInput(rankFour: string): Promise<void> {
+    await this.rankFourInput.sendKeys(rankFour);
+  }
+
+  async getRankFourInput(): Promise<string> {
+    return await this.rankFourInput.getAttribute('value');
+  }
+
+  async setRankFiveInput(rankFive: string): Promise<void> {
+    await this.rankFiveInput.sendKeys(rankFive);
+  }
+
+  async getRankFiveInput(): Promise<string> {
+    return await this.rankFiveInput.getAttribute('value');
   }
 
   async userSelectLastOption(): Promise<void> {

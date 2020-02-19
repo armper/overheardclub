@@ -15,14 +15,23 @@ import { PostService } from 'app/entities/post/post.service';
 export class HomeComponent implements OnInit, OnDestroy {
   account: Account | null = null;
   authSubscription!: Subscription;
-  posts!: IPost[] | null;
+  topFunnyPosts!: IPost[] | null;
   postSubscription!: Subscription;
 
-  constructor(private accountService: AccountService, private loginModalService: LoginModalService, private postService: PostService) {}
+  constructor(private accountService: AccountService, private loginModalService: LoginModalService, private postService: PostService) { }
 
   ngOnInit(): void {
     this.authSubscription = this.accountService.getAuthenticationState().subscribe(account => (this.account = account));
-    this.postSubscription = this.postService.query().subscribe(posts => (this.posts = posts.body));
+    const date = new Date();
+    date.setDate(date.getDate() - 7);
+
+    this.postSubscription = this.postService.query({
+      page: "0",
+      size: "5",
+      sort: ["rankOne,desc"],
+      "date.greaterThan": date.toISOString()
+
+    }).subscribe(posts => this.topFunnyPosts = posts.body);
   }
 
   isAuthenticated(): boolean {

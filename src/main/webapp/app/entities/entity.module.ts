@@ -5,20 +5,16 @@ import { RouterModule } from '@angular/router';
   imports: [
     RouterModule.forChild([
       {
-        path: 'topic',
-        loadChildren: () => import('./topic/topic.module').then(m => m.OverheardclubTopicModule)
+        path: 'overheard-comment',
+        loadChildren: () => import('./overheard-comment/overheard-comment.module').then(m => m.OverheardclubOverheardCommentModule)
       },
       {
         path: 'post',
         loadChildren: () => import('./post/post.module').then(m => m.OverheardclubPostModule)
       },
       {
-        path: 'ranking',
-        loadChildren: () => import('./ranking/ranking.module').then(m => m.OverheardclubRankingModule)
-      },
-      {
-        path: 'comment',
-        loadChildren: () => import('./comment/comment.module').then(m => m.OverheardclubCommentModule)
+        path: 'topic',
+        loadChildren: () => import('./topic/topic.module').then(m => m.OverheardclubTopicModule)
       }
       /* jhipster-needle-add-entity-route - JHipster will add entity modules routes here */
     ])

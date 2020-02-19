@@ -24,7 +24,7 @@ describe('Service Tests', () => {
       httpMock = injector.get(HttpTestingController);
       currentDate = moment();
 
-      elemDefault = new Post(0, 'AAAAAAA', 'AAAAAAA', currentDate);
+      elemDefault = new Post(0, 'AAAAAAA', 'AAAAAAA', currentDate, 0, 0, 0, 0, 0);
     });
 
     describe('Service methods', () => {
@@ -71,7 +71,12 @@ describe('Service Tests', () => {
           {
             title: 'BBBBBB',
             content: 'BBBBBB',
-            date: currentDate.format(DATE_TIME_FORMAT)
+            date: currentDate.format(DATE_TIME_FORMAT),
+            rankOne: 1,
+            rankTwo: 1,
+            rankThree: 1,
+            rankFour: 1,
+            rankFive: 1
           },
           elemDefault
         );
@@ -95,7 +100,12 @@ describe('Service Tests', () => {
           {
             title: 'BBBBBB',
             content: 'BBBBBB',
-            date: currentDate.format(DATE_TIME_FORMAT)
+            date: currentDate.format(DATE_TIME_FORMAT),
+            rankOne: 1,
+            rankTwo: 1,
+            rankThree: 1,
+            rankFour: 1,
+            rankFive: 1
           },
           elemDefault
         );

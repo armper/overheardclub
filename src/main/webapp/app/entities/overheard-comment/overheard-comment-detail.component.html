@@ -1,0 +1,48 @@
+<div class="row justify-content-center">
+    <div class="col-8">
+        <div *ngIf="overheardComment">
+            <h2><span>Overheard Comment</span> {{ overheardComment.id }}</h2>
+
+            <hr>
+
+            <jhi-alert-error></jhi-alert-error>
+
+            <dl class="row-md jh-entity-details">
+                <dt><span>Content</span></dt>
+                <dd>
+                    <span>{{ overheardComment.content }}</span>
+                </dd>
+                <dt><span>Date</span></dt>
+                <dd>
+                    <span>{{ overheardComment.date }}</span>
+                </dd>
+                <dt><span>Ranking</span></dt>
+                <dd>
+                    <span>{{ overheardComment.ranking }}</span>
+                </dd>
+                <dt><span>User</span></dt>
+                <dd>
+                    {{ overheardComment.user?.id }}
+                </dd>
+                <dt><span>Post</span></dt>
+                <dd>
+                    <div *ngIf="overheardComment.post">
+                        <a [routerLink]="['/post', overheardComment.post?.id, 'view']">{{ overheardComment.post?.id }}</a>
+                    </div>
+                </dd>
+            </dl>
+
+            <button type="submit"
+                    (click)="previousState()"
+                    class="btn btn-info">
+                <fa-icon icon="arrow-left"></fa-icon>&nbsp;<span>Back</span>
+            </button>
+
+            <button type="button"
+                    [routerLink]="['/overheard-comment', overheardComment.id, 'edit']"
+                    class="btn btn-primary">
+                <fa-icon icon="pencil-alt"></fa-icon>&nbsp;<span>Edit</span>
+            </button>
+        </div>
+    </div>
+</div>

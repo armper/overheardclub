@@ -12,20 +12,34 @@
         {
             "fieldName": "date",
             "fieldType": "Instant"
+        },
+        {
+            "fieldName": "rankOne",
+            "fieldType": "Integer"
+        },
+        {
+            "fieldName": "rankTwo",
+            "fieldType": "Integer"
+        },
+        {
+            "fieldName": "rankThree",
+            "fieldType": "Integer"
+        },
+        {
+            "fieldName": "rankFour",
+            "fieldType": "Integer"
+        },
+        {
+            "fieldName": "rankFive",
+            "fieldType": "Integer"
         }
     ],
     "relationships": [
         {
             "relationshipType": "one-to-many",
-            "otherEntityName": "ranking",
+            "otherEntityName": "overheardComment",
             "otherEntityRelationshipName": "post",
-            "relationshipName": "ranking"
-        },
-        {
-            "relationshipType": "one-to-many",
-            "otherEntityName": "comment",
-            "otherEntityRelationshipName": "post",
-            "relationshipName": "comment"
+            "relationshipName": "overheardComment"
         },
         {
             "relationshipType": "many-to-one",
@@ -42,14 +56,16 @@
             "otherEntityField": "id"
         }
     ],
-    "changelogDate": "20200217204800",
+    "changelogDate": "20200219141942",
     "entityTableName": "post",
     "dto": "no",
-    "pagination": "no",
+    "pagination": "infinite-scroll",
     "service": "serviceClass",
     "jpaMetamodelFiltering": true,
     "fluentMethods": true,
     "readOnly": false,
     "clientRootFolder": "",
-    "applications": "*"
+    "applications": [
+        "overheardclub"
+    ]
 }

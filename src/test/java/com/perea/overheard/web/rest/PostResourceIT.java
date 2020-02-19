@@ -2,8 +2,7 @@ package com.perea.overheard.web.rest;
 
 import com.perea.overheard.OverheardclubApp;
 import com.perea.overheard.domain.Post;
-import com.perea.overheard.domain.Ranking;
-import com.perea.overheard.domain.Comment;
+import com.perea.overheard.domain.OverheardComment;
 import com.perea.overheard.domain.User;
 import com.perea.overheard.domain.Topic;
 import com.perea.overheard.repository.PostRepository;
@@ -50,6 +49,26 @@ public class PostResourceIT {
 
     private static final Instant DEFAULT_DATE = Instant.ofEpochMilli(0L);
     private static final Instant UPDATED_DATE = Instant.now().truncatedTo(ChronoUnit.MILLIS);
+
+    private static final Integer DEFAULT_RANK_ONE = 1;
+    private static final Integer UPDATED_RANK_ONE = 2;
+    private static final Integer SMALLER_RANK_ONE = 1 - 1;
+
+    private static final Integer DEFAULT_RANK_TWO = 1;
+    private static final Integer UPDATED_RANK_TWO = 2;
+    private static final Integer SMALLER_RANK_TWO = 1 - 1;
+
+    private static final Integer DEFAULT_RANK_THREE = 1;
+    private static final Integer UPDATED_RANK_THREE = 2;
+    private static final Integer SMALLER_RANK_THREE = 1 - 1;
+
+    private static final Integer DEFAULT_RANK_FOUR = 1;
+    private static final Integer UPDATED_RANK_FOUR = 2;
+    private static final Integer SMALLER_RANK_FOUR = 1 - 1;
+
+    private static final Integer DEFAULT_RANK_FIVE = 1;
+    private static final Integer UPDATED_RANK_FIVE = 2;
+    private static final Integer SMALLER_RANK_FIVE = 1 - 1;
 
     @Autowired
     private PostRepository postRepository;
@@ -101,7 +120,12 @@ public class PostResourceIT {
         Post post = new Post()
             .title(DEFAULT_TITLE)
             .content(DEFAULT_CONTENT)
-            .date(DEFAULT_DATE);
+            .date(DEFAULT_DATE)
+            .rankOne(DEFAULT_RANK_ONE)
+            .rankTwo(DEFAULT_RANK_TWO)
+            .rankThree(DEFAULT_RANK_THREE)
+            .rankFour(DEFAULT_RANK_FOUR)
+            .rankFive(DEFAULT_RANK_FIVE);
         return post;
     }
     /**
@@ -114,7 +138,12 @@ public class PostResourceIT {
         Post post = new Post()
             .title(UPDATED_TITLE)
             .content(UPDATED_CONTENT)
-            .date(UPDATED_DATE);
+            .date(UPDATED_DATE)
+            .rankOne(UPDATED_RANK_ONE)
+            .rankTwo(UPDATED_RANK_TWO)
+            .rankThree(UPDATED_RANK_THREE)
+            .rankFour(UPDATED_RANK_FOUR)
+            .rankFive(UPDATED_RANK_FIVE);
         return post;
     }
 
@@ -141,6 +170,11 @@ public class PostResourceIT {
         assertThat(testPost.getTitle()).isEqualTo(DEFAULT_TITLE);
         assertThat(testPost.getContent()).isEqualTo(DEFAULT_CONTENT);
         assertThat(testPost.getDate()).isEqualTo(DEFAULT_DATE);
+        assertThat(testPost.getRankOne()).isEqualTo(DEFAULT_RANK_ONE);
+        assertThat(testPost.getRankTwo()).isEqualTo(DEFAULT_RANK_TWO);
+        assertThat(testPost.getRankThree()).isEqualTo(DEFAULT_RANK_THREE);
+        assertThat(testPost.getRankFour()).isEqualTo(DEFAULT_RANK_FOUR);
+        assertThat(testPost.getRankFive()).isEqualTo(DEFAULT_RANK_FIVE);
     }
 
     @Test
@@ -176,7 +210,12 @@ public class PostResourceIT {
             .andExpect(jsonPath("$.[*].id").value(hasItem(post.getId().intValue())))
             .andExpect(jsonPath("$.[*].title").value(hasItem(DEFAULT_TITLE)))
             .andExpect(jsonPath("$.[*].content").value(hasItem(DEFAULT_CONTENT)))
-            .andExpect(jsonPath("$.[*].date").value(hasItem(DEFAULT_DATE.toString())));
+            .andExpect(jsonPath("$.[*].date").value(hasItem(DEFAULT_DATE.toString())))
+            .andExpect(jsonPath("$.[*].rankOne").value(hasItem(DEFAULT_RANK_ONE)))
+            .andExpect(jsonPath("$.[*].rankTwo").value(hasItem(DEFAULT_RANK_TWO)))
+            .andExpect(jsonPath("$.[*].rankThree").value(hasItem(DEFAULT_RANK_THREE)))
+            .andExpect(jsonPath("$.[*].rankFour").value(hasItem(DEFAULT_RANK_FOUR)))
+            .andExpect(jsonPath("$.[*].rankFive").value(hasItem(DEFAULT_RANK_FIVE)));
     }
     
     @Test
@@ -192,7 +231,12 @@ public class PostResourceIT {
             .andExpect(jsonPath("$.id").value(post.getId().intValue()))
             .andExpect(jsonPath("$.title").value(DEFAULT_TITLE))
             .andExpect(jsonPath("$.content").value(DEFAULT_CONTENT))
-            .andExpect(jsonPath("$.date").value(DEFAULT_DATE.toString()));
+            .andExpect(jsonPath("$.date").value(DEFAULT_DATE.toString()))
+            .andExpect(jsonPath("$.rankOne").value(DEFAULT_RANK_ONE))
+            .andExpect(jsonPath("$.rankTwo").value(DEFAULT_RANK_TWO))
+            .andExpect(jsonPath("$.rankThree").value(DEFAULT_RANK_THREE))
+            .andExpect(jsonPath("$.rankFour").value(DEFAULT_RANK_FOUR))
+            .andExpect(jsonPath("$.rankFive").value(DEFAULT_RANK_FIVE));
     }
 
 
@@ -425,41 +469,546 @@ public class PostResourceIT {
 
     @Test
     @Transactional
-    public void getAllPostsByRankingIsEqualToSomething() throws Exception {
+    public void getAllPostsByRankOneIsEqualToSomething() throws Exception {
         // Initialize the database
         postRepository.saveAndFlush(post);
-        Ranking ranking = RankingResourceIT.createEntity(em);
-        em.persist(ranking);
-        em.flush();
-        post.addRanking(ranking);
+
+        // Get all the postList where rankOne equals to DEFAULT_RANK_ONE
+        defaultPostShouldBeFound("rankOne.equals=" + DEFAULT_RANK_ONE);
+
+        // Get all the postList where rankOne equals to UPDATED_RANK_ONE
+        defaultPostShouldNotBeFound("rankOne.equals=" + UPDATED_RANK_ONE);
+    }
+
+    @Test
+    @Transactional
+    public void getAllPostsByRankOneIsNotEqualToSomething() throws Exception {
+        // Initialize the database
         postRepository.saveAndFlush(post);
-        Long rankingId = ranking.getId();
 
-        // Get all the postList where ranking equals to rankingId
-        defaultPostShouldBeFound("rankingId.equals=" + rankingId);
+        // Get all the postList where rankOne not equals to DEFAULT_RANK_ONE
+        defaultPostShouldNotBeFound("rankOne.notEquals=" + DEFAULT_RANK_ONE);
 
-        // Get all the postList where ranking equals to rankingId + 1
-        defaultPostShouldNotBeFound("rankingId.equals=" + (rankingId + 1));
+        // Get all the postList where rankOne not equals to UPDATED_RANK_ONE
+        defaultPostShouldBeFound("rankOne.notEquals=" + UPDATED_RANK_ONE);
+    }
+
+    @Test
+    @Transactional
+    public void getAllPostsByRankOneIsInShouldWork() throws Exception {
+        // Initialize the database
+        postRepository.saveAndFlush(post);
+
+        // Get all the postList where rankOne in DEFAULT_RANK_ONE or UPDATED_RANK_ONE
+        defaultPostShouldBeFound("rankOne.in=" + DEFAULT_RANK_ONE + "," + UPDATED_RANK_ONE);
+
+        // Get all the postList where rankOne equals to UPDATED_RANK_ONE
+        defaultPostShouldNotBeFound("rankOne.in=" + UPDATED_RANK_ONE);
+    }
+
+    @Test
+    @Transactional
+    public void getAllPostsByRankOneIsNullOrNotNull() throws Exception {
+        // Initialize the database
+        postRepository.saveAndFlush(post);
+
+        // Get all the postList where rankOne is not null
+        defaultPostShouldBeFound("rankOne.specified=true");
+
+        // Get all the postList where rankOne is null
+        defaultPostShouldNotBeFound("rankOne.specified=false");
+    }
+
+    @Test
+    @Transactional
+    public void getAllPostsByRankOneIsGreaterThanOrEqualToSomething() throws Exception {
+        // Initialize the database
+        postRepository.saveAndFlush(post);
+
+        // Get all the postList where rankOne is greater than or equal to DEFAULT_RANK_ONE
+        defaultPostShouldBeFound("rankOne.greaterThanOrEqual=" + DEFAULT_RANK_ONE);
+
+        // Get all the postList where rankOne is greater than or equal to UPDATED_RANK_ONE
+        defaultPostShouldNotBeFound("rankOne.greaterThanOrEqual=" + UPDATED_RANK_ONE);
+    }
+
+    @Test
+    @Transactional
+    public void getAllPostsByRankOneIsLessThanOrEqualToSomething() throws Exception {
+        // Initialize the database
+        postRepository.saveAndFlush(post);
+
+        // Get all the postList where rankOne is less than or equal to DEFAULT_RANK_ONE
+        defaultPostShouldBeFound("rankOne.lessThanOrEqual=" + DEFAULT_RANK_ONE);
+
+        // Get all the postList where rankOne is less than or equal to SMALLER_RANK_ONE
+        defaultPostShouldNotBeFound("rankOne.lessThanOrEqual=" + SMALLER_RANK_ONE);
+    }
+
+    @Test
+    @Transactional
+    public void getAllPostsByRankOneIsLessThanSomething() throws Exception {
+        // Initialize the database
+        postRepository.saveAndFlush(post);
+
+        // Get all the postList where rankOne is less than DEFAULT_RANK_ONE
+        defaultPostShouldNotBeFound("rankOne.lessThan=" + DEFAULT_RANK_ONE);
+
+        // Get all the postList where rankOne is less than UPDATED_RANK_ONE
+        defaultPostShouldBeFound("rankOne.lessThan=" + UPDATED_RANK_ONE);
+    }
+
+    @Test
+    @Transactional
+    public void getAllPostsByRankOneIsGreaterThanSomething() throws Exception {
+        // Initialize the database
+        postRepository.saveAndFlush(post);
+
+        // Get all the postList where rankOne is greater than DEFAULT_RANK_ONE
+        defaultPostShouldNotBeFound("rankOne.greaterThan=" + DEFAULT_RANK_ONE);
+
+        // Get all the postList where rankOne is greater than SMALLER_RANK_ONE
+        defaultPostShouldBeFound("rankOne.greaterThan=" + SMALLER_RANK_ONE);
     }
 
 
     @Test
     @Transactional
-    public void getAllPostsByCommentIsEqualToSomething() throws Exception {
+    public void getAllPostsByRankTwoIsEqualToSomething() throws Exception {
         // Initialize the database
         postRepository.saveAndFlush(post);
-        Comment comment = CommentResourceIT.createEntity(em);
-        em.persist(comment);
-        em.flush();
-        post.addComment(comment);
+
+        // Get all the postList where rankTwo equals to DEFAULT_RANK_TWO
+        defaultPostShouldBeFound("rankTwo.equals=" + DEFAULT_RANK_TWO);
+
+        // Get all the postList where rankTwo equals to UPDATED_RANK_TWO
+        defaultPostShouldNotBeFound("rankTwo.equals=" + UPDATED_RANK_TWO);
+    }
+
+    @Test
+    @Transactional
+    public void getAllPostsByRankTwoIsNotEqualToSomething() throws Exception {
+        // Initialize the database
         postRepository.saveAndFlush(post);
-        Long commentId = comment.getId();
 
-        // Get all the postList where comment equals to commentId
-        defaultPostShouldBeFound("commentId.equals=" + commentId);
+        // Get all the postList where rankTwo not equals to DEFAULT_RANK_TWO
+        defaultPostShouldNotBeFound("rankTwo.notEquals=" + DEFAULT_RANK_TWO);
 
-        // Get all the postList where comment equals to commentId + 1
-        defaultPostShouldNotBeFound("commentId.equals=" + (commentId + 1));
+        // Get all the postList where rankTwo not equals to UPDATED_RANK_TWO
+        defaultPostShouldBeFound("rankTwo.notEquals=" + UPDATED_RANK_TWO);
+    }
+
+    @Test
+    @Transactional
+    public void getAllPostsByRankTwoIsInShouldWork() throws Exception {
+        // Initialize the database
+        postRepository.saveAndFlush(post);
+
+        // Get all the postList where rankTwo in DEFAULT_RANK_TWO or UPDATED_RANK_TWO
+        defaultPostShouldBeFound("rankTwo.in=" + DEFAULT_RANK_TWO + "," + UPDATED_RANK_TWO);
+
+        // Get all the postList where rankTwo equals to UPDATED_RANK_TWO
+        defaultPostShouldNotBeFound("rankTwo.in=" + UPDATED_RANK_TWO);
+    }
+
+    @Test
+    @Transactional
+    public void getAllPostsByRankTwoIsNullOrNotNull() throws Exception {
+        // Initialize the database
+        postRepository.saveAndFlush(post);
+
+        // Get all the postList where rankTwo is not null
+        defaultPostShouldBeFound("rankTwo.specified=true");
+
+        // Get all the postList where rankTwo is null
+        defaultPostShouldNotBeFound("rankTwo.specified=false");
+    }
+
+    @Test
+    @Transactional
+    public void getAllPostsByRankTwoIsGreaterThanOrEqualToSomething() throws Exception {
+        // Initialize the database
+        postRepository.saveAndFlush(post);
+
+        // Get all the postList where rankTwo is greater than or equal to DEFAULT_RANK_TWO
+        defaultPostShouldBeFound("rankTwo.greaterThanOrEqual=" + DEFAULT_RANK_TWO);
+
+        // Get all the postList where rankTwo is greater than or equal to UPDATED_RANK_TWO
+        defaultPostShouldNotBeFound("rankTwo.greaterThanOrEqual=" + UPDATED_RANK_TWO);
+    }
+
+    @Test
+    @Transactional
+    public void getAllPostsByRankTwoIsLessThanOrEqualToSomething() throws Exception {
+        // Initialize the database
+        postRepository.saveAndFlush(post);
+
+        // Get all the postList where rankTwo is less than or equal to DEFAULT_RANK_TWO
+        defaultPostShouldBeFound("rankTwo.lessThanOrEqual=" + DEFAULT_RANK_TWO);
+
+        // Get all the postList where rankTwo is less than or equal to SMALLER_RANK_TWO
+        defaultPostShouldNotBeFound("rankTwo.lessThanOrEqual=" + SMALLER_RANK_TWO);
+    }
+
+    @Test
+    @Transactional
+    public void getAllPostsByRankTwoIsLessThanSomething() throws Exception {
+        // Initialize the database
+        postRepository.saveAndFlush(post);
+
+        // Get all the postList where rankTwo is less than DEFAULT_RANK_TWO
+        defaultPostShouldNotBeFound("rankTwo.lessThan=" + DEFAULT_RANK_TWO);
+
+        // Get all the postList where rankTwo is less than UPDATED_RANK_TWO
+        defaultPostShouldBeFound("rankTwo.lessThan=" + UPDATED_RANK_TWO);
+    }
+
+    @Test
+    @Transactional
+    public void getAllPostsByRankTwoIsGreaterThanSomething() throws Exception {
+        // Initialize the database
+        postRepository.saveAndFlush(post);
+
+        // Get all the postList where rankTwo is greater than DEFAULT_RANK_TWO
+        defaultPostShouldNotBeFound("rankTwo.greaterThan=" + DEFAULT_RANK_TWO);
+
+        // Get all the postList where rankTwo is greater than SMALLER_RANK_TWO
+        defaultPostShouldBeFound("rankTwo.greaterThan=" + SMALLER_RANK_TWO);
+    }
+
+
+    @Test
+    @Transactional
+    public void getAllPostsByRankThreeIsEqualToSomething() throws Exception {
+        // Initialize the database
+        postRepository.saveAndFlush(post);
+
+        // Get all the postList where rankThree equals to DEFAULT_RANK_THREE
+        defaultPostShouldBeFound("rankThree.equals=" + DEFAULT_RANK_THREE);
+
+        // Get all the postList where rankThree equals to UPDATED_RANK_THREE
+        defaultPostShouldNotBeFound("rankThree.equals=" + UPDATED_RANK_THREE);
+    }
+
+    @Test
+    @Transactional
+    public void getAllPostsByRankThreeIsNotEqualToSomething() throws Exception {
+        // Initialize the database
+        postRepository.saveAndFlush(post);
+
+        // Get all the postList where rankThree not equals to DEFAULT_RANK_THREE
+        defaultPostShouldNotBeFound("rankThree.notEquals=" + DEFAULT_RANK_THREE);
+
+        // Get all the postList where rankThree not equals to UPDATED_RANK_THREE
+        defaultPostShouldBeFound("rankThree.notEquals=" + UPDATED_RANK_THREE);
+    }
+
+    @Test
+    @Transactional
+    public void getAllPostsByRankThreeIsInShouldWork() throws Exception {
+        // Initialize the database
+        postRepository.saveAndFlush(post);
+
+        // Get all the postList where rankThree in DEFAULT_RANK_THREE or UPDATED_RANK_THREE
+        defaultPostShouldBeFound("rankThree.in=" + DEFAULT_RANK_THREE + "," + UPDATED_RANK_THREE);
+
+        // Get all the postList where rankThree equals to UPDATED_RANK_THREE
+        defaultPostShouldNotBeFound("rankThree.in=" + UPDATED_RANK_THREE);
+    }
+
+    @Test
+    @Transactional
+    public void getAllPostsByRankThreeIsNullOrNotNull() throws Exception {
+        // Initialize the database
+        postRepository.saveAndFlush(post);
+
+        // Get all the postList where rankThree is not null
+        defaultPostShouldBeFound("rankThree.specified=true");
+
+        // Get all the postList where rankThree is null
+        defaultPostShouldNotBeFound("rankThree.specified=false");
+    }
+
+    @Test
+    @Transactional
+    public void getAllPostsByRankThreeIsGreaterThanOrEqualToSomething() throws Exception {
+        // Initialize the database
+        postRepository.saveAndFlush(post);
+
+        // Get all the postList where rankThree is greater than or equal to DEFAULT_RANK_THREE
+        defaultPostShouldBeFound("rankThree.greaterThanOrEqual=" + DEFAULT_RANK_THREE);
+
+        // Get all the postList where rankThree is greater than or equal to UPDATED_RANK_THREE
+        defaultPostShouldNotBeFound("rankThree.greaterThanOrEqual=" + UPDATED_RANK_THREE);
+    }
+
+    @Test
+    @Transactional
+    public void getAllPostsByRankThreeIsLessThanOrEqualToSomething() throws Exception {
+        // Initialize the database
+        postRepository.saveAndFlush(post);
+
+        // Get all the postList where rankThree is less than or equal to DEFAULT_RANK_THREE
+        defaultPostShouldBeFound("rankThree.lessThanOrEqual=" + DEFAULT_RANK_THREE);
+
+        // Get all the postList where rankThree is less than or equal to SMALLER_RANK_THREE
+        defaultPostShouldNotBeFound("rankThree.lessThanOrEqual=" + SMALLER_RANK_THREE);
+    }
+
+    @Test
+    @Transactional
+    public void getAllPostsByRankThreeIsLessThanSomething() throws Exception {
+        // Initialize the database
+        postRepository.saveAndFlush(post);
+
+        // Get all the postList where rankThree is less than DEFAULT_RANK_THREE
+        defaultPostShouldNotBeFound("rankThree.lessThan=" + DEFAULT_RANK_THREE);
+
+        // Get all the postList where rankThree is less than UPDATED_RANK_THREE
+        defaultPostShouldBeFound("rankThree.lessThan=" + UPDATED_RANK_THREE);
+    }
+
+    @Test
+    @Transactional
+    public void getAllPostsByRankThreeIsGreaterThanSomething() throws Exception {
+        // Initialize the database
+        postRepository.saveAndFlush(post);
+
+        // Get all the postList where rankThree is greater than DEFAULT_RANK_THREE
+        defaultPostShouldNotBeFound("rankThree.greaterThan=" + DEFAULT_RANK_THREE);
+
+        // Get all the postList where rankThree is greater than SMALLER_RANK_THREE
+        defaultPostShouldBeFound("rankThree.greaterThan=" + SMALLER_RANK_THREE);
+    }
+
+
+    @Test
+    @Transactional
+    public void getAllPostsByRankFourIsEqualToSomething() throws Exception {
+        // Initialize the database
+        postRepository.saveAndFlush(post);
+
+        // Get all the postList where rankFour equals to DEFAULT_RANK_FOUR
+        defaultPostShouldBeFound("rankFour.equals=" + DEFAULT_RANK_FOUR);
+
+        // Get all the postList where rankFour equals to UPDATED_RANK_FOUR
+        defaultPostShouldNotBeFound("rankFour.equals=" + UPDATED_RANK_FOUR);
+    }
+
+    @Test
+    @Transactional
+    public void getAllPostsByRankFourIsNotEqualToSomething() throws Exception {
+        // Initialize the database
+        postRepository.saveAndFlush(post);
+
+        // Get all the postList where rankFour not equals to DEFAULT_RANK_FOUR
+        defaultPostShouldNotBeFound("rankFour.notEquals=" + DEFAULT_RANK_FOUR);
+
+        // Get all the postList where rankFour not equals to UPDATED_RANK_FOUR
+        defaultPostShouldBeFound("rankFour.notEquals=" + UPDATED_RANK_FOUR);
+    }
+
+    @Test
+    @Transactional
+    public void getAllPostsByRankFourIsInShouldWork() throws Exception {
+        // Initialize the database
+        postRepository.saveAndFlush(post);
+
+        // Get all the postList where rankFour in DEFAULT_RANK_FOUR or UPDATED_RANK_FOUR
+        defaultPostShouldBeFound("rankFour.in=" + DEFAULT_RANK_FOUR + "," + UPDATED_RANK_FOUR);
+
+        // Get all the postList where rankFour equals to UPDATED_RANK_FOUR
+        defaultPostShouldNotBeFound("rankFour.in=" + UPDATED_RANK_FOUR);
+    }
+
+    @Test
+    @Transactional
+    public void getAllPostsByRankFourIsNullOrNotNull() throws Exception {
+        // Initialize the database
+        postRepository.saveAndFlush(post);
+
+        // Get all the postList where rankFour is not null
+        defaultPostShouldBeFound("rankFour.specified=true");
+
+        // Get all the postList where rankFour is null
+        defaultPostShouldNotBeFound("rankFour.specified=false");
+    }
+
+    @Test
+    @Transactional
+    public void getAllPostsByRankFourIsGreaterThanOrEqualToSomething() throws Exception {
+        // Initialize the database
+        postRepository.saveAndFlush(post);
+
+        // Get all the postList where rankFour is greater than or equal to DEFAULT_RANK_FOUR
+        defaultPostShouldBeFound("rankFour.greaterThanOrEqual=" + DEFAULT_RANK_FOUR);
+
+        // Get all the postList where rankFour is greater than or equal to UPDATED_RANK_FOUR
+        defaultPostShouldNotBeFound("rankFour.greaterThanOrEqual=" + UPDATED_RANK_FOUR);
+    }
+
+    @Test
+    @Transactional
+    public void getAllPostsByRankFourIsLessThanOrEqualToSomething() throws Exception {
+        // Initialize the database
+        postRepository.saveAndFlush(post);
+
+        // Get all the postList where rankFour is less than or equal to DEFAULT_RANK_FOUR
+        defaultPostShouldBeFound("rankFour.lessThanOrEqual=" + DEFAULT_RANK_FOUR);
+
+        // Get all the postList where rankFour is less than or equal to SMALLER_RANK_FOUR
+        defaultPostShouldNotBeFound("rankFour.lessThanOrEqual=" + SMALLER_RANK_FOUR);
+    }
+
+    @Test
+    @Transactional
+    public void getAllPostsByRankFourIsLessThanSomething() throws Exception {
+        // Initialize the database
+        postRepository.saveAndFlush(post);
+
+        // Get all the postList where rankFour is less than DEFAULT_RANK_FOUR
+        defaultPostShouldNotBeFound("rankFour.lessThan=" + DEFAULT_RANK_FOUR);
+
+        // Get all the postList where rankFour is less than UPDATED_RANK_FOUR
+        defaultPostShouldBeFound("rankFour.lessThan=" + UPDATED_RANK_FOUR);
+    }
+
+    @Test
+    @Transactional
+    public void getAllPostsByRankFourIsGreaterThanSomething() throws Exception {
+        // Initialize the database
+        postRepository.saveAndFlush(post);
+
+        // Get all the postList where rankFour is greater than DEFAULT_RANK_FOUR
+        defaultPostShouldNotBeFound("rankFour.greaterThan=" + DEFAULT_RANK_FOUR);
+
+        // Get all the postList where rankFour is greater than SMALLER_RANK_FOUR
+        defaultPostShouldBeFound("rankFour.greaterThan=" + SMALLER_RANK_FOUR);
+    }
+
+
+    @Test
+    @Transactional
+    public void getAllPostsByRankFiveIsEqualToSomething() throws Exception {
+        // Initialize the database
+        postRepository.saveAndFlush(post);
+
+        // Get all the postList where rankFive equals to DEFAULT_RANK_FIVE
+        defaultPostShouldBeFound("rankFive.equals=" + DEFAULT_RANK_FIVE);
+
+        // Get all the postList where rankFive equals to UPDATED_RANK_FIVE
+        defaultPostShouldNotBeFound("rankFive.equals=" + UPDATED_RANK_FIVE);
+    }
+
+    @Test
+    @Transactional
+    public void getAllPostsByRankFiveIsNotEqualToSomething() throws Exception {
+        // Initialize the database
+        postRepository.saveAndFlush(post);
+
+        // Get all the postList where rankFive not equals to DEFAULT_RANK_FIVE
+        defaultPostShouldNotBeFound("rankFive.notEquals=" + DEFAULT_RANK_FIVE);
+
+        // Get all the postList where rankFive not equals to UPDATED_RANK_FIVE
+        defaultPostShouldBeFound("rankFive.notEquals=" + UPDATED_RANK_FIVE);
+    }
+
+    @Test
+    @Transactional
+    public void getAllPostsByRankFiveIsInShouldWork() throws Exception {
+        // Initialize the database
+        postRepository.saveAndFlush(post);
+
+        // Get all the postList where rankFive in DEFAULT_RANK_FIVE or UPDATED_RANK_FIVE
+        defaultPostShouldBeFound("rankFive.in=" + DEFAULT_RANK_FIVE + "," + UPDATED_RANK_FIVE);
+
+        // Get all the postList where rankFive equals to UPDATED_RANK_FIVE
+        defaultPostShouldNotBeFound("rankFive.in=" + UPDATED_RANK_FIVE);
+    }
+
+    @Test
+    @Transactional
+    public void getAllPostsByRankFiveIsNullOrNotNull() throws Exception {
+        // Initialize the database
+        postRepository.saveAndFlush(post);
+
+        // Get all the postList where rankFive is not null
+        defaultPostShouldBeFound("rankFive.specified=true");
+
+        // Get all the postList where rankFive is null
+        defaultPostShouldNotBeFound("rankFive.specified=false");
+    }
+
+    @Test
+    @Transactional
+    public void getAllPostsByRankFiveIsGreaterThanOrEqualToSomething() throws Exception {
+        // Initialize the database
+        postRepository.saveAndFlush(post);
+
+        // Get all the postList where rankFive is greater than or equal to DEFAULT_RANK_FIVE
+        defaultPostShouldBeFound("rankFive.greaterThanOrEqual=" + DEFAULT_RANK_FIVE);
+
+        // Get all the postList where rankFive is greater than or equal to UPDATED_RANK_FIVE
+        defaultPostShouldNotBeFound("rankFive.greaterThanOrEqual=" + UPDATED_RANK_FIVE);
+    }
+
+    @Test
+    @Transactional
+    public void getAllPostsByRankFiveIsLessThanOrEqualToSomething() throws Exception {
+        // Initialize the database
+        postRepository.saveAndFlush(post);
+
+        // Get all the postList where rankFive is less than or equal to DEFAULT_RANK_FIVE
+        defaultPostShouldBeFound("rankFive.lessThanOrEqual=" + DEFAULT_RANK_FIVE);
+
+        // Get all the postList where rankFive is less than or equal to SMALLER_RANK_FIVE
+        defaultPostShouldNotBeFound("rankFive.lessThanOrEqual=" + SMALLER_RANK_FIVE);
+    }
+
+    @Test
+    @Transactional
+    public void getAllPostsByRankFiveIsLessThanSomething() throws Exception {
+        // Initialize the database
+        postRepository.saveAndFlush(post);
+
+        // Get all the postList where rankFive is less than DEFAULT_RANK_FIVE
+        defaultPostShouldNotBeFound("rankFive.lessThan=" + DEFAULT_RANK_FIVE);
+
+        // Get all the postList where rankFive is less than UPDATED_RANK_FIVE
+        defaultPostShouldBeFound("rankFive.lessThan=" + UPDATED_RANK_FIVE);
+    }
+
+    @Test
+    @Transactional
+    public void getAllPostsByRankFiveIsGreaterThanSomething() throws Exception {
+        // Initialize the database
+        postRepository.saveAndFlush(post);
+
+        // Get all the postList where rankFive is greater than DEFAULT_RANK_FIVE
+        defaultPostShouldNotBeFound("rankFive.greaterThan=" + DEFAULT_RANK_FIVE);
+
+        // Get all the postList where rankFive is greater than SMALLER_RANK_FIVE
+        defaultPostShouldBeFound("rankFive.greaterThan=" + SMALLER_RANK_FIVE);
+    }
+
+
+    @Test
+    @Transactional
+    public void getAllPostsByOverheardCommentIsEqualToSomething() throws Exception {
+        // Initialize the database
+        postRepository.saveAndFlush(post);
+        OverheardComment overheardComment = OverheardCommentResourceIT.createEntity(em);
+        em.persist(overheardComment);
+        em.flush();
+        post.addOverheardComment(overheardComment);
+        postRepository.saveAndFlush(post);
+        Long overheardCommentId = overheardComment.getId();
+
+        // Get all the postList where overheardComment equals to overheardCommentId
+        defaultPostShouldBeFound("overheardCommentId.equals=" + overheardCommentId);
+
+        // Get all the postList where overheardComment equals to overheardCommentId + 1
+        defaultPostShouldNotBeFound("overheardCommentId.equals=" + (overheardCommentId + 1));
     }
 
 
@@ -512,7 +1061,12 @@ public class PostResourceIT {
             .andExpect(jsonPath("$.[*].id").value(hasItem(post.getId().intValue())))
             .andExpect(jsonPath("$.[*].title").value(hasItem(DEFAULT_TITLE)))
             .andExpect(jsonPath("$.[*].content").value(hasItem(DEFAULT_CONTENT)))
-            .andExpect(jsonPath("$.[*].date").value(hasItem(DEFAULT_DATE.toString())));
+            .andExpect(jsonPath("$.[*].date").value(hasItem(DEFAULT_DATE.toString())))
+            .andExpect(jsonPath("$.[*].rankOne").value(hasItem(DEFAULT_RANK_ONE)))
+            .andExpect(jsonPath("$.[*].rankTwo").value(hasItem(DEFAULT_RANK_TWO)))
+            .andExpect(jsonPath("$.[*].rankThree").value(hasItem(DEFAULT_RANK_THREE)))
+            .andExpect(jsonPath("$.[*].rankFour").value(hasItem(DEFAULT_RANK_FOUR)))
+            .andExpect(jsonPath("$.[*].rankFive").value(hasItem(DEFAULT_RANK_FIVE)));
 
         // Check, that the count call also returns 1
         restPostMockMvc.perform(get("/api/posts/count?sort=id,desc&" + filter))
@@ -562,7 +1116,12 @@ public class PostResourceIT {
         updatedPost
             .title(UPDATED_TITLE)
             .content(UPDATED_CONTENT)
-            .date(UPDATED_DATE);
+            .date(UPDATED_DATE)
+            .rankOne(UPDATED_RANK_ONE)
+            .rankTwo(UPDATED_RANK_TWO)
+            .rankThree(UPDATED_RANK_THREE)
+            .rankFour(UPDATED_RANK_FOUR)
+            .rankFive(UPDATED_RANK_FIVE);
 
         restPostMockMvc.perform(put("/api/posts")
             .contentType(TestUtil.APPLICATION_JSON)
@@ -576,6 +1135,11 @@ public class PostResourceIT {
         assertThat(testPost.getTitle()).isEqualTo(UPDATED_TITLE);
         assertThat(testPost.getContent()).isEqualTo(UPDATED_CONTENT);
         assertThat(testPost.getDate()).isEqualTo(UPDATED_DATE);
+        assertThat(testPost.getRankOne()).isEqualTo(UPDATED_RANK_ONE);
+        assertThat(testPost.getRankTwo()).isEqualTo(UPDATED_RANK_TWO);
+        assertThat(testPost.getRankThree()).isEqualTo(UPDATED_RANK_THREE);
+        assertThat(testPost.getRankFour()).isEqualTo(UPDATED_RANK_FOUR);
+        assertThat(testPost.getRankFive()).isEqualTo(UPDATED_RANK_FIVE);
     }
 
     @Test

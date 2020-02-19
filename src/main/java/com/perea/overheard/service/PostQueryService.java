@@ -94,13 +94,24 @@ public class PostQueryService extends QueryService<Post> {
             if (criteria.getDate() != null) {
                 specification = specification.and(buildRangeSpecification(criteria.getDate(), Post_.date));
             }
-            if (criteria.getRankingId() != null) {
-                specification = specification.and(buildSpecification(criteria.getRankingId(),
-                    root -> root.join(Post_.rankings, JoinType.LEFT).get(Ranking_.id)));
+            if (criteria.getRankOne() != null) {
+                specification = specification.and(buildRangeSpecification(criteria.getRankOne(), Post_.rankOne));
             }
-            if (criteria.getCommentId() != null) {
-                specification = specification.and(buildSpecification(criteria.getCommentId(),
-                    root -> root.join(Post_.comments, JoinType.LEFT).get(Comment_.id)));
+            if (criteria.getRankTwo() != null) {
+                specification = specification.and(buildRangeSpecification(criteria.getRankTwo(), Post_.rankTwo));
+            }
+            if (criteria.getRankThree() != null) {
+                specification = specification.and(buildRangeSpecification(criteria.getRankThree(), Post_.rankThree));
+            }
+            if (criteria.getRankFour() != null) {
+                specification = specification.and(buildRangeSpecification(criteria.getRankFour(), Post_.rankFour));
+            }
+            if (criteria.getRankFive() != null) {
+                specification = specification.and(buildRangeSpecification(criteria.getRankFive(), Post_.rankFive));
+            }
+            if (criteria.getOverheardCommentId() != null) {
+                specification = specification.and(buildSpecification(criteria.getOverheardCommentId(),
+                    root -> root.join(Post_.overheardComments, JoinType.LEFT).get(OverheardComment_.id)));
             }
             if (criteria.getUserId() != null) {
                 specification = specification.and(buildSpecification(criteria.getUserId(),

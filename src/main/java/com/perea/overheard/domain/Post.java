@@ -35,13 +35,24 @@ public class Post implements Serializable {
     @Column(name = "date")
     private Instant date;
 
-    @OneToMany(mappedBy = "post")
-    @Cache(usage = CacheConcurrencyStrategy.NONSTRICT_READ_WRITE)
-    private Set<Ranking> rankings = new HashSet<>();
+    @Column(name = "rank_one")
+    private Integer rankOne;
+
+    @Column(name = "rank_two")
+    private Integer rankTwo;
+
+    @Column(name = "rank_three")
+    private Integer rankThree;
+
+    @Column(name = "rank_four")
+    private Integer rankFour;
+
+    @Column(name = "rank_five")
+    private Integer rankFive;
 
     @OneToMany(mappedBy = "post")
     @Cache(usage = CacheConcurrencyStrategy.NONSTRICT_READ_WRITE)
-    private Set<Comment> comments = new HashSet<>();
+    private Set<OverheardComment> overheardComments = new HashSet<>();
 
     @ManyToOne
     @JsonIgnoreProperties("posts")
@@ -99,54 +110,94 @@ public class Post implements Serializable {
         this.date = date;
     }
 
-    public Set<Ranking> getRankings() {
-        return rankings;
+    public Integer getRankOne() {
+        return rankOne;
     }
 
-    public Post rankings(Set<Ranking> rankings) {
-        this.rankings = rankings;
+    public Post rankOne(Integer rankOne) {
+        this.rankOne = rankOne;
         return this;
     }
 
-    public Post addRanking(Ranking ranking) {
-        this.rankings.add(ranking);
-        ranking.setPost(this);
+    public void setRankOne(Integer rankOne) {
+        this.rankOne = rankOne;
+    }
+
+    public Integer getRankTwo() {
+        return rankTwo;
+    }
+
+    public Post rankTwo(Integer rankTwo) {
+        this.rankTwo = rankTwo;
         return this;
     }
 
-    public Post removeRanking(Ranking ranking) {
-        this.rankings.remove(ranking);
-        ranking.setPost(null);
+    public void setRankTwo(Integer rankTwo) {
+        this.rankTwo = rankTwo;
+    }
+
+    public Integer getRankThree() {
+        return rankThree;
+    }
+
+    public Post rankThree(Integer rankThree) {
+        this.rankThree = rankThree;
         return this;
     }
 
-    public void setRankings(Set<Ranking> rankings) {
-        this.rankings = rankings;
+    public void setRankThree(Integer rankThree) {
+        this.rankThree = rankThree;
     }
 
-    public Set<Comment> getComments() {
-        return comments;
+    public Integer getRankFour() {
+        return rankFour;
     }
 
-    public Post comments(Set<Comment> comments) {
-        this.comments = comments;
+    public Post rankFour(Integer rankFour) {
+        this.rankFour = rankFour;
         return this;
     }
 
-    public Post addComment(Comment comment) {
-        this.comments.add(comment);
-        comment.setPost(this);
+    public void setRankFour(Integer rankFour) {
+        this.rankFour = rankFour;
+    }
+
+    public Integer getRankFive() {
+        return rankFive;
+    }
+
+    public Post rankFive(Integer rankFive) {
+        this.rankFive = rankFive;
         return this;
     }
 
-    public Post removeComment(Comment comment) {
-        this.comments.remove(comment);
-        comment.setPost(null);
+    public void setRankFive(Integer rankFive) {
+        this.rankFive = rankFive;
+    }
+
+    public Set<OverheardComment> getOverheardComments() {
+        return overheardComments;
+    }
+
+    public Post overheardComments(Set<OverheardComment> overheardComments) {
+        this.overheardComments = overheardComments;
         return this;
     }
 
-    public void setComments(Set<Comment> comments) {
-        this.comments = comments;
+    public Post addOverheardComment(OverheardComment overheardComment) {
+        this.overheardComments.add(overheardComment);
+        overheardComment.setPost(this);
+        return this;
+    }
+
+    public Post removeOverheardComment(OverheardComment overheardComment) {
+        this.overheardComments.remove(overheardComment);
+        overheardComment.setPost(null);
+        return this;
+    }
+
+    public void setOverheardComments(Set<OverheardComment> overheardComments) {
+        this.overheardComments = overheardComments;
     }
 
     public User getUser() {
@@ -199,6 +250,11 @@ public class Post implements Serializable {
             ", title='" + getTitle() + "'" +
             ", content='" + getContent() + "'" +
             ", date='" + getDate() + "'" +
+            ", rankOne=" + getRankOne() +
+            ", rankTwo=" + getRankTwo() +
+            ", rankThree=" + getRankThree() +
+            ", rankFour=" + getRankFour() +
+            ", rankFive=" + getRankFive() +
             "}";
     }
 }
