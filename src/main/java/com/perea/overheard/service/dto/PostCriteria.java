@@ -33,9 +33,17 @@ public class PostCriteria implements Serializable, Criteria {
 
     private InstantFilter date;
 
-    private LongFilter rankingId;
+    private IntegerFilter rankOne;
 
-    private LongFilter commentId;
+    private IntegerFilter rankTwo;
+
+    private IntegerFilter rankThree;
+
+    private IntegerFilter rankFour;
+
+    private IntegerFilter rankFive;
+
+    private LongFilter overheardCommentId;
 
     private LongFilter userId;
 
@@ -49,8 +57,12 @@ public class PostCriteria implements Serializable, Criteria {
         this.title = other.title == null ? null : other.title.copy();
         this.content = other.content == null ? null : other.content.copy();
         this.date = other.date == null ? null : other.date.copy();
-        this.rankingId = other.rankingId == null ? null : other.rankingId.copy();
-        this.commentId = other.commentId == null ? null : other.commentId.copy();
+        this.rankOne = other.rankOne == null ? null : other.rankOne.copy();
+        this.rankTwo = other.rankTwo == null ? null : other.rankTwo.copy();
+        this.rankThree = other.rankThree == null ? null : other.rankThree.copy();
+        this.rankFour = other.rankFour == null ? null : other.rankFour.copy();
+        this.rankFive = other.rankFive == null ? null : other.rankFive.copy();
+        this.overheardCommentId = other.overheardCommentId == null ? null : other.overheardCommentId.copy();
         this.userId = other.userId == null ? null : other.userId.copy();
         this.topicId = other.topicId == null ? null : other.topicId.copy();
     }
@@ -92,20 +104,52 @@ public class PostCriteria implements Serializable, Criteria {
         this.date = date;
     }
 
-    public LongFilter getRankingId() {
-        return rankingId;
+    public IntegerFilter getRankOne() {
+        return rankOne;
     }
 
-    public void setRankingId(LongFilter rankingId) {
-        this.rankingId = rankingId;
+    public void setRankOne(IntegerFilter rankOne) {
+        this.rankOne = rankOne;
     }
 
-    public LongFilter getCommentId() {
-        return commentId;
+    public IntegerFilter getRankTwo() {
+        return rankTwo;
     }
 
-    public void setCommentId(LongFilter commentId) {
-        this.commentId = commentId;
+    public void setRankTwo(IntegerFilter rankTwo) {
+        this.rankTwo = rankTwo;
+    }
+
+    public IntegerFilter getRankThree() {
+        return rankThree;
+    }
+
+    public void setRankThree(IntegerFilter rankThree) {
+        this.rankThree = rankThree;
+    }
+
+    public IntegerFilter getRankFour() {
+        return rankFour;
+    }
+
+    public void setRankFour(IntegerFilter rankFour) {
+        this.rankFour = rankFour;
+    }
+
+    public IntegerFilter getRankFive() {
+        return rankFive;
+    }
+
+    public void setRankFive(IntegerFilter rankFive) {
+        this.rankFive = rankFive;
+    }
+
+    public LongFilter getOverheardCommentId() {
+        return overheardCommentId;
+    }
+
+    public void setOverheardCommentId(LongFilter overheardCommentId) {
+        this.overheardCommentId = overheardCommentId;
     }
 
     public LongFilter getUserId() {
@@ -139,8 +183,12 @@ public class PostCriteria implements Serializable, Criteria {
             Objects.equals(title, that.title) &&
             Objects.equals(content, that.content) &&
             Objects.equals(date, that.date) &&
-            Objects.equals(rankingId, that.rankingId) &&
-            Objects.equals(commentId, that.commentId) &&
+            Objects.equals(rankOne, that.rankOne) &&
+            Objects.equals(rankTwo, that.rankTwo) &&
+            Objects.equals(rankThree, that.rankThree) &&
+            Objects.equals(rankFour, that.rankFour) &&
+            Objects.equals(rankFive, that.rankFive) &&
+            Objects.equals(overheardCommentId, that.overheardCommentId) &&
             Objects.equals(userId, that.userId) &&
             Objects.equals(topicId, that.topicId);
     }
@@ -152,8 +200,12 @@ public class PostCriteria implements Serializable, Criteria {
         title,
         content,
         date,
-        rankingId,
-        commentId,
+        rankOne,
+        rankTwo,
+        rankThree,
+        rankFour,
+        rankFive,
+        overheardCommentId,
         userId,
         topicId
         );
@@ -166,8 +218,12 @@ public class PostCriteria implements Serializable, Criteria {
                 (title != null ? "title=" + title + ", " : "") +
                 (content != null ? "content=" + content + ", " : "") +
                 (date != null ? "date=" + date + ", " : "") +
-                (rankingId != null ? "rankingId=" + rankingId + ", " : "") +
-                (commentId != null ? "commentId=" + commentId + ", " : "") +
+                (rankOne != null ? "rankOne=" + rankOne + ", " : "") +
+                (rankTwo != null ? "rankTwo=" + rankTwo + ", " : "") +
+                (rankThree != null ? "rankThree=" + rankThree + ", " : "") +
+                (rankFour != null ? "rankFour=" + rankFour + ", " : "") +
+                (rankFive != null ? "rankFive=" + rankFive + ", " : "") +
+                (overheardCommentId != null ? "overheardCommentId=" + overheardCommentId + ", " : "") +
                 (userId != null ? "userId=" + userId + ", " : "") +
                 (topicId != null ? "topicId=" + topicId + ", " : "") +
             "}";

@@ -25,21 +25,13 @@
                 <a class="alert-link" routerLink="account/register">Register a new account</a>
             </div>
         </div>
-   
-        <p>
-            <span>If you like JHipster, don't forget to give us a star on</span> <a
-                href="https://github.com/jhipster/generator-jhipster" target="_blank"
-                rel="noopener noreferrer">GitHub</a>!
-        </p>
 
-        <h2>Top posts for today:</h2>
-        <ul *ngFor="let post of posts">
+        <h2>Top funny posts for today:</h2>
+        <ul *ngFor="let post of topFunnyPosts">
             <li>
-                {{post.rankings}} <span>{{post.title}}</span> - {{post.user?.login}}
+                {{post.rankOne}} <span>{{post.title}}</span> - {{post.user?.login}}
             </li>
         </ul>
 
-        {{post.rankings}}
-        {{post.id}}
     </div>
 </div>

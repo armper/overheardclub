@@ -21,22 +21,32 @@
     <div class="table-responsive" id="entities" *ngIf="posts?.length > 0">
         <table class="table table-striped" aria-describedby="page-heading">
             <thead>
-                <tr>
-                    <th scope="col" ><span>ID</span></th>
-                    <th scope="col" ><span>Title</span></th>
-                    <th scope="col" ><span>Content</span></th>
-                    <th scope="col" ><span>Date</span></th>
-                    <th scope="col" ><span>User</span></th>
-                    <th scope="col" ><span>Topic</span></th>
+                <tr jhiSort [(predicate)]="predicate" [(ascending)]="ascending" [callback]="reset.bind(this)">
+                    <th scope="col"  jhiSortBy="id"><span>ID</span> <fa-icon icon="sort"></fa-icon></th>
+                    <th scope="col"  jhiSortBy="title"><span>Title</span> <fa-icon icon="sort"></fa-icon></th>
+                    <th scope="col"  jhiSortBy="content"><span>Content</span> <fa-icon icon="sort"></fa-icon></th>
+                    <th scope="col"  jhiSortBy="date"><span>Date</span> <fa-icon icon="sort"></fa-icon></th>
+                    <th scope="col"  jhiSortBy="rankOne"><span>Rank One</span> <fa-icon icon="sort"></fa-icon></th>
+                    <th scope="col"  jhiSortBy="rankTwo"><span>Rank Two</span> <fa-icon icon="sort"></fa-icon></th>
+                    <th scope="col"  jhiSortBy="rankThree"><span>Rank Three</span> <fa-icon icon="sort"></fa-icon></th>
+                    <th scope="col"  jhiSortBy="rankFour"><span>Rank Four</span> <fa-icon icon="sort"></fa-icon></th>
+                    <th scope="col"  jhiSortBy="rankFive"><span>Rank Five</span> <fa-icon icon="sort"></fa-icon></th>
+                    <th scope="col"  jhiSortBy="user.id"><span>User</span> <fa-icon icon="sort"></fa-icon></th>
+                    <th scope="col"  jhiSortBy="topic.id"><span>Topic</span> <fa-icon icon="sort"></fa-icon></th>
                     <th scope="col"></th>
                 </tr>
             </thead>
-            <tbody>
+            <tbody infinite-scroll (scrolled)="loadPage(page + 1)" [infiniteScrollDisabled]="page >= links['last']" [infiniteScrollDistance]="0">
                 <tr *ngFor="let post of posts ;trackBy: trackId">
                     <td><a [routerLink]="['/post', post.id, 'view']">{{ post.id }}</a></td>
                     <td>{{ post.title }}</td>
                     <td>{{ post.content }}</td>
                     <td>{{ post.date | date:'medium' }}</td>
+                    <td>{{ post.rankOne }}</td>
+                    <td>{{ post.rankTwo }}</td>
+                    <td>{{ post.rankThree }}</td>
+                    <td>{{ post.rankFour }}</td>
+                    <td>{{ post.rankFive }}</td>
                     <td>
                         {{ post.user?.id }}
                     </td>

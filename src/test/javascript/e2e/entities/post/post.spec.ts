@@ -44,6 +44,11 @@ describe('Post e2e test', () => {
       postUpdatePage.setTitleInput('title'),
       postUpdatePage.setContentInput('content'),
       postUpdatePage.setDateInput('01/01/2001' + protractor.Key.TAB + '02:30AM'),
+      postUpdatePage.setRankOneInput('5'),
+      postUpdatePage.setRankTwoInput('5'),
+      postUpdatePage.setRankThreeInput('5'),
+      postUpdatePage.setRankFourInput('5'),
+      postUpdatePage.setRankFiveInput('5'),
       postUpdatePage.userSelectLastOption(),
       postUpdatePage.topicSelectLastOption()
     ]);
@@ -51,6 +56,11 @@ describe('Post e2e test', () => {
     expect(await postUpdatePage.getTitleInput()).to.eq('title', 'Expected Title value to be equals to title');
     expect(await postUpdatePage.getContentInput()).to.eq('content', 'Expected Content value to be equals to content');
     expect(await postUpdatePage.getDateInput()).to.contain('2001-01-01T02:30', 'Expected date value to be equals to 2000-12-31');
+    expect(await postUpdatePage.getRankOneInput()).to.eq('5', 'Expected rankOne value to be equals to 5');
+    expect(await postUpdatePage.getRankTwoInput()).to.eq('5', 'Expected rankTwo value to be equals to 5');
+    expect(await postUpdatePage.getRankThreeInput()).to.eq('5', 'Expected rankThree value to be equals to 5');
+    expect(await postUpdatePage.getRankFourInput()).to.eq('5', 'Expected rankFour value to be equals to 5');
+    expect(await postUpdatePage.getRankFiveInput()).to.eq('5', 'Expected rankFive value to be equals to 5');
 
     await postUpdatePage.save();
     expect(await postUpdatePage.getSaveButton().isPresent(), 'Expected save button disappear').to.be.false;

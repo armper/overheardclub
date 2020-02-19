@@ -21,7 +21,7 @@
             "otherEntityField": "id"
         }
     ],
-    "changelogDate": "20200217204700",
+    "changelogDate": "20200219142042",
     "entityTableName": "topic",
     "dto": "no",
     "pagination": "no",
@@ -30,5 +30,7 @@
     "fluentMethods": true,
     "readOnly": false,
     "clientRootFolder": "",
-    "applications": "*"
+    "applications": [
+        "overheardclub"
+    ]
 }

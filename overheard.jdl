@@ -1,0 +1,62 @@
+application {
+  config {
+    databaseType sql
+    devDatabaseType h2Disk
+    enableHibernateCache true
+    enableSwaggerCodegen false
+    enableTranslation false
+    jhiPrefix jhi
+    languages [en]
+    messageBroker false
+    nativeLanguage en
+    packageName com.perea.overheard
+    prodDatabaseType postgresql
+    searchEngine false
+    serviceDiscoveryType false
+    skipClient false
+    skipServer false
+    testFrameworks [protractor]
+    websocket false
+    applicationType monolith
+    baseName overheardclub
+    serverPort 8076
+    authenticationType jwt
+    cacheProvider ehcache
+    buildTool maven
+    useSass true
+    clientFramework angularX
+    jwtSecretKey "MTEwZDM3NmZhMzA0ZmVmZTQ0OWEzODBmOTZhYmJmOTg2YzY4ZGRiZTc3OWM3NDk4YzQ4ZTAxNWRjMGZhZTAyNzU0ZTM2ZGVkNDVmMGJkM2IxMWNhOTJjMmRlYjViOGFkMzFlNmRjOGVlNGRmNjQ5MTIxNmRjMWY4M2U0ZmYwYzg="
+  }
+
+  entities OverheardComment, Post, Topic
+}
+
+entity OverheardComment {
+  content String
+  date Instant
+  ranking Integer
+}
+entity Post {
+  title String
+  content String
+  date Instant
+  rankOne Integer
+  rankTwo Integer
+  rankThree Integer
+  rankFour Integer
+  rankFive Integer
+}
+paginate Post with infinite-scroll
+entity Topic {
+  title String
+}
+relationship OneToMany {
+  Post{overheardComment} to OverheardComment{post} , Topic{post} to Post{topic}
+}
+relationship ManyToOne {
+  OverheardComment{user} to User
+  Post{user} to User
+  Topic{user} to User
+}
+service OverheardComment, Post, Topic with serviceClass
+filter OverheardComment, Post, Topic

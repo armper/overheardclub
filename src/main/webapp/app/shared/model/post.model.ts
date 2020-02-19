@@ -1,6 +1,5 @@
 import { Moment } from 'moment';
-import { IRanking } from 'app/shared/model/ranking.model';
-import { IComment } from 'app/shared/model/comment.model';
+import { IOverheardComment } from 'app/shared/model/overheard-comment.model';
 import { IUser } from 'app/core/user/user.model';
 import { ITopic } from 'app/shared/model/topic.model';
 
@@ -9,8 +8,12 @@ export interface IPost {
   title?: string;
   content?: string;
   date?: Moment;
-  rankings?: IRanking[];
-  comments?: IComment[];
+  rankOne?: number;
+  rankTwo?: number;
+  rankThree?: number;
+  rankFour?: number;
+  rankFive?: number;
+  overheardComments?: IOverheardComment[];
   user?: IUser;
   topic?: ITopic;
 }
@@ -21,8 +24,12 @@ export class Post implements IPost {
     public title?: string,
     public content?: string,
     public date?: Moment,
-    public rankings?: IRanking[],
-    public comments?: IComment[],
+    public rankOne?: number,
+    public rankTwo?: number,
+    public rankThree?: number,
+    public rankFour?: number,
+    public rankFive?: number,
+    public overheardComments?: IOverheardComment[],
     public user?: IUser,
     public topic?: ITopic
   ) {}
