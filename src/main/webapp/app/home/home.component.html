@@ -29,7 +29,7 @@
         <h2>Top funny posts for today:</h2>
         <ul *ngFor="let post of topFunnyPosts">
             <li>
-                {{post.rankOne}} <span>{{post.title}}</span> - {{post.user?.login}}
+                {{post.rankOne}} <a href="post/{{post.id}}/view">{{post.title}}</a> - {{post.user?.firstName}}
             </li>
         </ul>
 
