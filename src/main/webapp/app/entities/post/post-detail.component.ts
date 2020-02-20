@@ -14,7 +14,7 @@ export class PostDetailComponent implements OnInit {
   post: IPost | null = null;
   authSubscription!: Subscription;
   account: Account | null = null;
-
+  //hi
   constructor(protected activatedRoute: ActivatedRoute, private accountService: AccountService) {}
 
   ngOnInit(): void {
