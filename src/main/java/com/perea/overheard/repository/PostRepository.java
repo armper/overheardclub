@@ -10,7 +10,6 @@ import java.util.List;
 /**
  * Spring Data  repository for the Post entity.
  */
-@SuppressWarnings("unused")
 @Repository
 public interface PostRepository extends JpaRepository<Post, Long>, JpaSpecificationExecutor<Post> {
 

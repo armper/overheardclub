@@ -10,7 +10,6 @@ import java.util.List;
 /**
  * Spring Data  repository for the Topic entity.
  */
-@SuppressWarnings("unused")
 @Repository
 public interface TopicRepository extends JpaRepository<Topic, Long>, JpaSpecificationExecutor<Topic> {
 

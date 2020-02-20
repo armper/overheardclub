@@ -7,7 +7,6 @@ import com.perea.overheard.domain.Post;
 import com.perea.overheard.repository.OverheardCommentRepository;
 import com.perea.overheard.service.OverheardCommentService;
 import com.perea.overheard.web.rest.errors.ExceptionTranslator;
-import com.perea.overheard.service.dto.OverheardCommentCriteria;
 import com.perea.overheard.service.OverheardCommentQueryService;
 
 import org.junit.jupiter.api.BeforeEach;

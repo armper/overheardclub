@@ -8,7 +8,6 @@ import com.perea.overheard.domain.Topic;
 import com.perea.overheard.repository.PostRepository;
 import com.perea.overheard.service.PostService;
 import com.perea.overheard.web.rest.errors.ExceptionTranslator;
-import com.perea.overheard.service.dto.PostCriteria;
 import com.perea.overheard.service.PostQueryService;
 
 import org.junit.jupiter.api.BeforeEach;

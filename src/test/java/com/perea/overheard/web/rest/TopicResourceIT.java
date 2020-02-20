@@ -7,7 +7,6 @@ import com.perea.overheard.domain.User;
 import com.perea.overheard.repository.TopicRepository;
 import com.perea.overheard.service.TopicService;
 import com.perea.overheard.web.rest.errors.ExceptionTranslator;
-import com.perea.overheard.service.dto.TopicCriteria;
 import com.perea.overheard.service.TopicQueryService;
 
 import org.junit.jupiter.api.BeforeEach;

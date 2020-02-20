@@ -1,66 +1,33 @@
 <div class="row justify-content-center">
     <div class="col-8">
         <div *ngIf="post">
-            <h2><span>Post</span> {{ post.id }}</h2>
-
             <hr>
+
+            <div *ngIf="post.topic">
+                <h3><a [routerLink]="['/topic', post.topic?.title, 'view']">{{ post.topic?.title }}</a></h3>
+            </div>
 
             <jhi-alert-error></jhi-alert-error>
 
-            <dl class="row-md jh-entity-details">
-                <dt><span>Title</span></dt>
-                <dd>
-                    <span>{{ post.title }}</span>
-                </dd>
-                <dt><span>Content</span></dt>
-                <dd>
-                    <span>{{ post.content }}</span>
-                </dd>
-                <dt><span>Date</span></dt>
-                <dd>
-                    <span>{{ post.date }}</span>
-                </dd>
-                <dt><span>Rank One</span></dt>
-                <dd>
-                    <span>{{ post.rankOne }}</span>
-                </dd>
-                <dt><span>Rank Two</span></dt>
-                <dd>
-                    <span>{{ post.rankTwo }}</span>
-                </dd>
-                <dt><span>Rank Three</span></dt>
-                <dd>
-                    <span>{{ post.rankThree }}</span>
-                </dd>
-                <dt><span>Rank Four</span></dt>
-                <dd>
-                    <span>{{ post.rankFour }}</span>
-                </dd>
-                <dt><span>Rank Five</span></dt>
-                <dd>
-                    <span>{{ post.rankFive }}</span>
-                </dd>
-                <dt><span>User</span></dt>
-                <dd>
-                    {{ post.user?.id }}
-                </dd>
-                <dt><span>Topic</span></dt>
-                <dd>
-                    <div *ngIf="post.topic">
-                        <a [routerLink]="['/topic', post.topic?.id, 'view']">{{ post.topic?.id }}</a>
-                    </div>
-                </dd>
-            </dl>
+            <p>
+                <h4>{{ post.title }}</h4>
+            </p>
+            {{ post.user?.firstName }}
 
-            <button type="submit"
-                    (click)="previousState()"
-                    class="btn btn-info">
+            <span>{{ post.date }}</span>
+            <br>
+            <br>
+            <p>
+                <span>{{ post.content }}</span>
+            </p>
+            <br>
+            <hr>
+
+            <button type="submit" (click)="previousState()" class="btn btn-info">
                 <fa-icon icon="arrow-left"></fa-icon>&nbsp;<span>Back</span>
             </button>
 
-            <button type="button"
-                    [routerLink]="['/post', post.id, 'edit']"
-                    class="btn btn-primary">
+            <button *ngIf="post.user.email===account.email || isAdmin()" type="button" [routerLink]="['/post', post.id, 'edit']" class="btn btn-primary">
                 <fa-icon icon="pencil-alt"></fa-icon>&nbsp;<span>Edit</span>
             </button>
         </div>
