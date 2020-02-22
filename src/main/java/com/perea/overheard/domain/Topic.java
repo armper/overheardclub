@@ -27,7 +27,8 @@ public class Topic implements Serializable {
     private Long id;
 
     @NotNull
-    @Column(name = "title", nullable = false)
+    @Size(min = 2, max = 80)
+    @Column(name = "title", length = 80, nullable = false)
     private String title;
 
     @OneToMany(mappedBy = "topic")

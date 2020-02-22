@@ -20,6 +20,14 @@
                                *ngIf="editForm.get('content')?.errors?.required">
                         This field is required.
                         </small>
+                        <small class="form-text text-danger"
+                               *ngIf="editForm.get('content')?.errors?.minlength">
+                        This field is required to be at least 2 characters.
+                        </small>
+                        <small class="form-text text-danger"
+                               *ngIf="editForm.get('content')?.errors?.maxlength">
+                        This field cannot be longer than 4096 characters.
+                        </small>
                     </div>
                 </div>
 

@@ -27,7 +27,7 @@ export class OverheardCommentUpdateComponent implements OnInit {
 
   editForm = this.fb.group({
     id: [],
-    content: [null, [Validators.required]],
+    content: [null, [Validators.required, Validators.minLength(2), Validators.maxLength(4096)]],
     date: [null, [Validators.required]],
     ranking: [],
     user: [null, Validators.required],

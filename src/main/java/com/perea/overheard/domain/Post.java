@@ -28,11 +28,13 @@ public class Post implements Serializable {
     private Long id;
 
     @NotNull
-    @Column(name = "title", nullable = false)
+    @Size(min = 2, max = 80)
+    @Column(name = "title", length = 80, nullable = false)
     private String title;
 
     @NotNull
-    @Column(name = "content", nullable = false)
+    @Size(min = 2, max = 4096)
+    @Column(name = "content", length = 4096, nullable = false)
     private String content;
 
     @NotNull

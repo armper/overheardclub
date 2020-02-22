@@ -32,13 +32,13 @@ application {
 }
 
 entity OverheardComment {
-  content String required
+  content String required minlength(2) maxlength(4096)
   date Instant required 
   ranking Integer
 }
 entity Post {
-  title String required
-  content String required
+  title String required minlength(2) maxlength(80)
+  content String required minlength(2) maxlength(4096)
   date Instant required
   rankOne Integer
   rankTwo Integer
@@ -48,7 +48,7 @@ entity Post {
 }
 paginate Post with infinite-scroll
 entity Topic {
-  title String required
+  title String required minlength(2) maxlength(80)
 }
 relationship OneToMany {
   Post{overheardComment} to OverheardComment{post required} , Topic{post} to Post{topic required}

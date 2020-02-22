@@ -28,7 +28,7 @@
     "clientFramework": "angularX",
     "jwtSecretKey": "MTEwZDM3NmZhMzA0ZmVmZTQ0OWEzODBmOTZhYmJmOTg2YzY4ZGRiZTc3OWM3NDk4YzQ4ZTAxNWRjMGZhZTAyNzU0ZTM2ZGVkNDVmMGJkM2IxMWNhOTJjMmRlYjViOGFkMzFlNmRjOGVlNGRmNjQ5MTIxNmRjMWY4M2U0ZmYwYzg=",
     "jhipsterVersion": "6.7.1",
-    "creationTimestamp": 1582391100472,
+    "creationTimestamp": 1582396860383,
     "skipUserManagement": false,
     "clientPackageManager": "npm",
     "clientTheme": "none",
