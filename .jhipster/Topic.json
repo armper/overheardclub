@@ -3,7 +3,10 @@
     "fields": [
         {
             "fieldName": "title",
-            "fieldType": "String"
+            "fieldType": "String",
+            "fieldValidateRules": [
+                "required"
+            ]
         }
     ],
     "relationships": [
@@ -17,6 +20,7 @@
             "relationshipType": "many-to-one",
             "otherEntityName": "user",
             "otherEntityRelationshipName": "topic",
+            "relationshipValidateRules": "required",
             "relationshipName": "user",
             "otherEntityField": "id"
         }

@@ -20,8 +20,8 @@ export class TopicUpdateComponent implements OnInit {
 
   editForm = this.fb.group({
     id: [],
-    title: [],
-    user: []
+    title: [null, [Validators.required]],
+    user: [null, Validators.required]
   });
 
   constructor(

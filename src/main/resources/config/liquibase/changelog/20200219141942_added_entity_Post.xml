@@ -16,13 +16,13 @@
                 <constraints primaryKey="true" nullable="false"/>
             </column>
             <column name="title" type="varchar(255)">
-                <constraints nullable="true" />
+                <constraints nullable="false" />
             </column>
             <column name="content" type="varchar(255)">
-                <constraints nullable="true" />
+                <constraints nullable="false" />
             </column>
             <column name="date" type="datetime">
-                <constraints nullable="true" />
+                <constraints nullable="false" />
             </column>
             <column name="rank_one" type="integer">
                 <constraints nullable="true" />
@@ -40,10 +40,10 @@
                 <constraints nullable="true" />
             </column>
             <column name="user_id" type="bigint">
-                <constraints nullable="true" />
+                <constraints nullable="false" />
             </column>
             <column name="topic_id" type="bigint">
-                <constraints nullable="true" />
+                <constraints nullable="false" />
             </column>
             <!-- jhipster-needle-liquibase-add-column - JHipster will add columns here, do not remove-->
         </createTable>
@@ -77,6 +77,8 @@
             <column name="rank_three" type="numeric"/>
             <column name="rank_four" type="numeric"/>
             <column name="rank_five" type="numeric"/>
+            <column name="user_id" type="numeric"/>
+            <column name="topic_id" type="numeric"/>
             <!-- jhipster-needle-liquibase-add-loadcolumn - JHipster (and/or extensions) can add load columns here, do not remove-->
         </loadData>
     </changeSet>

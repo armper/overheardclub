@@ -27,10 +27,15 @@ export class PostDetailComponent implements OnInit {
   ngOnInit(): void {
     this.activatedRoute.data.subscribe(({ post }) => {
       this.post = post;
-      this.overheardCommentService.query({ 'postId.equals': this.post.id }).subscribe(comments => (this.comments = comments.body!));
+      this.overheardCommentService.query({ 'postId.equals': this.post.id }).subscribe(comments => this.setComments(comments.body!));
     });
 
     this.accountService.getAuthenticationState().subscribe(account => (this.account = account!));
+  }
+
+  private setComments(comments: IOverheardComment[]): void {
+    comments.sort((a, b) => (a.ranking! > b.ranking! ? -1 : 1));
+    this.comments = comments;
   }
 
   public isAdmin(): boolean | undefined {

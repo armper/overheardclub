@@ -5,6 +5,7 @@ import org.hibernate.annotations.Cache;
 import org.hibernate.annotations.CacheConcurrencyStrategy;
 
 import javax.persistence.*;
+import javax.validation.constraints.*;
 
 import java.io.Serializable;
 import java.time.Instant;
@@ -26,13 +27,16 @@ public class Post implements Serializable {
     @SequenceGenerator(name = "sequenceGenerator")
     private Long id;
 
-    @Column(name = "title")
+    @NotNull
+    @Column(name = "title", nullable = false)
     private String title;
 
-    @Column(name = "content")
+    @NotNull
+    @Column(name = "content", nullable = false)
     private String content;
 
-    @Column(name = "date")
+    @NotNull
+    @Column(name = "date", nullable = false)
     private Instant date;
 
     @Column(name = "rank_one")
@@ -54,11 +58,13 @@ public class Post implements Serializable {
     @Cache(usage = CacheConcurrencyStrategy.NONSTRICT_READ_WRITE)
     private Set<OverheardComment> overheardComments = new HashSet<>();
 
-    @ManyToOne
+    @ManyToOne(optional = false)
+    @NotNull
     @JsonIgnoreProperties("posts")
     private User user;
 
-    @ManyToOne
+    @ManyToOne(optional = false)
+    @NotNull
     @JsonIgnoreProperties("posts")
     private Topic topic;
 

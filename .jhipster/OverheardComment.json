@@ -3,11 +3,17 @@
     "fields": [
         {
             "fieldName": "content",
-            "fieldType": "String"
+            "fieldType": "String",
+            "fieldValidateRules": [
+                "required"
+            ]
         },
         {
             "fieldName": "date",
-            "fieldType": "Instant"
+            "fieldType": "Instant",
+            "fieldValidateRules": [
+                "required"
+            ]
         },
         {
             "fieldName": "ranking",
@@ -19,6 +25,7 @@
             "relationshipType": "many-to-one",
             "otherEntityName": "user",
             "otherEntityRelationshipName": "overheardComment",
+            "relationshipValidateRules": "required",
             "relationshipName": "user",
             "otherEntityField": "id"
         },
@@ -26,6 +33,7 @@
             "relationshipType": "many-to-one",
             "otherEntityName": "post",
             "otherEntityRelationshipName": "overheardComment",
+            "relationshipValidateRules": "required",
             "relationshipName": "post",
             "otherEntityField": "id"
         }

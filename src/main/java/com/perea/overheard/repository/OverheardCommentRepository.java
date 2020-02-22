@@ -10,6 +10,7 @@ import java.util.List;
 /**
  * Spring Data  repository for the OverheardComment entity.
  */
+@SuppressWarnings("unused")
 @Repository
 public interface OverheardCommentRepository extends JpaRepository<OverheardComment, Long>, JpaSpecificationExecutor<OverheardComment> {
 

@@ -198,4 +198,4 @@ To configure CI for your project, run the ci-cd sub-generator (`jhipster ci-cd`)
 
 # Deploy to Google App Engine
 
-./mvnw package appengine:deploy -DskipTests -Pgae,prod,prod-gae or using Gradle ./gradlew appengineDeploy -Pgae -Pprod-gae
+./mvnw package appengine:deploy -DskipTests -Pgae,prod,prod-gae

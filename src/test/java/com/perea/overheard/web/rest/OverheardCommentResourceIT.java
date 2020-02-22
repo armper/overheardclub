@@ -7,6 +7,7 @@ import com.perea.overheard.domain.Post;
 import com.perea.overheard.repository.OverheardCommentRepository;
 import com.perea.overheard.service.OverheardCommentService;
 import com.perea.overheard.web.rest.errors.ExceptionTranslator;
+import com.perea.overheard.service.dto.OverheardCommentCriteria;
 import com.perea.overheard.service.OverheardCommentQueryService;
 
 import org.junit.jupiter.api.BeforeEach;
@@ -100,6 +101,21 @@ public class OverheardCommentResourceIT {
             .content(DEFAULT_CONTENT)
             .date(DEFAULT_DATE)
             .ranking(DEFAULT_RANKING);
+        // Add required entity
+        User user = UserResourceIT.createEntity(em);
+        em.persist(user);
+        em.flush();
+        overheardComment.setUser(user);
+        // Add required entity
+        Post post;
+        if (TestUtil.findAll(em, Post.class).isEmpty()) {
+            post = PostResourceIT.createEntity(em);
+            em.persist(post);
+            em.flush();
+        } else {
+            post = TestUtil.findAll(em, Post.class).get(0);
+        }
+        overheardComment.setPost(post);
         return overheardComment;
     }
     /**
@@ -113,6 +129,21 @@ public class OverheardCommentResourceIT {
             .content(UPDATED_CONTENT)
             .date(UPDATED_DATE)
             .ranking(UPDATED_RANKING);
+        // Add required entity
+        User user = UserResourceIT.createEntity(em);
+        em.persist(user);
+        em.flush();
+        overheardComment.setUser(user);
+        // Add required entity
+        Post post;
+        if (TestUtil.findAll(em, Post.class).isEmpty()) {
+            post = PostResourceIT.createUpdatedEntity(em);
+            em.persist(post);
+            em.flush();
+        } else {
+            post = TestUtil.findAll(em, Post.class).get(0);
+        }
+        overheardComment.setPost(post);
         return overheardComment;
     }
 
@@ -160,6 +191,42 @@ public class OverheardCommentResourceIT {
         assertThat(overheardCommentList).hasSize(databaseSizeBeforeCreate);
     }
 
+
+    @Test
+    @Transactional
+    public void checkContentIsRequired() throws Exception {
+        int databaseSizeBeforeTest = overheardCommentRepository.findAll().size();
+        // set the field null
+        overheardComment.setContent(null);
+
+        // Create the OverheardComment, which fails.
+
+        restOverheardCommentMockMvc.perform(post("/api/overheard-comments")
+            .contentType(TestUtil.APPLICATION_JSON)
+            .content(TestUtil.convertObjectToJsonBytes(overheardComment)))
+            .andExpect(status().isBadRequest());
+
+        List<OverheardComment> overheardCommentList = overheardCommentRepository.findAll();
+        assertThat(overheardCommentList).hasSize(databaseSizeBeforeTest);
+    }
+
+    @Test
+    @Transactional
+    public void checkDateIsRequired() throws Exception {
+        int databaseSizeBeforeTest = overheardCommentRepository.findAll().size();
+        // set the field null
+        overheardComment.setDate(null);
+
+        // Create the OverheardComment, which fails.
+
+        restOverheardCommentMockMvc.perform(post("/api/overheard-comments")
+            .contentType(TestUtil.APPLICATION_JSON)
+            .content(TestUtil.convertObjectToJsonBytes(overheardComment)))
+            .andExpect(status().isBadRequest());
+
+        List<OverheardComment> overheardCommentList = overheardCommentRepository.findAll();
+        assertThat(overheardCommentList).hasSize(databaseSizeBeforeTest);
+    }
 
     @Test
     @Transactional
@@ -451,12 +518,8 @@ public class OverheardCommentResourceIT {
     @Test
     @Transactional
     public void getAllOverheardCommentsByUserIsEqualToSomething() throws Exception {
-        // Initialize the database
-        overheardCommentRepository.saveAndFlush(overheardComment);
-        User user = UserResourceIT.createEntity(em);
-        em.persist(user);
-        em.flush();
-        overheardComment.setUser(user);
+        // Get already existing entity
+        User user = overheardComment.getUser();
         overheardCommentRepository.saveAndFlush(overheardComment);
         Long userId = user.getId();
 
@@ -471,12 +534,8 @@ public class OverheardCommentResourceIT {
     @Test
     @Transactional
     public void getAllOverheardCommentsByPostIsEqualToSomething() throws Exception {
-        // Initialize the database
-        overheardCommentRepository.saveAndFlush(overheardComment);
-        Post post = PostResourceIT.createEntity(em);
-        em.persist(post);
-        em.flush();
-        overheardComment.setPost(post);
+        // Get already existing entity
+        Post post = overheardComment.getPost();
         overheardCommentRepository.saveAndFlush(overheardComment);
         Long postId = post.getId();
 

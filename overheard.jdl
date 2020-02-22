@@ -32,14 +32,14 @@ application {
 }
 
 entity OverheardComment {
-  content String
-  date Instant
+  content String required
+  date Instant required 
   ranking Integer
 }
 entity Post {
-  title String
-  content String
-  date Instant
+  title String required
+  content String required
+  date Instant required
   rankOne Integer
   rankTwo Integer
   rankThree Integer
@@ -48,15 +48,15 @@ entity Post {
 }
 paginate Post with infinite-scroll
 entity Topic {
-  title String
+  title String required
 }
 relationship OneToMany {
-  Post{overheardComment} to OverheardComment{post} , Topic{post} to Post{topic}
+  Post{overheardComment} to OverheardComment{post required} , Topic{post} to Post{topic required}
 }
 relationship ManyToOne {
-  OverheardComment{user} to User
-  Post{user} to User
-  Topic{user} to User
+  OverheardComment{user required} to User
+  Post{user required} to User
+  Topic{user required} to User
 }
 service OverheardComment, Post, Topic with serviceClass
 filter OverheardComment, Post, Topic

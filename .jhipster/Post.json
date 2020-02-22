@@ -3,15 +3,24 @@
     "fields": [
         {
             "fieldName": "title",
-            "fieldType": "String"
+            "fieldType": "String",
+            "fieldValidateRules": [
+                "required"
+            ]
         },
         {
             "fieldName": "content",
-            "fieldType": "String"
+            "fieldType": "String",
+            "fieldValidateRules": [
+                "required"
+            ]
         },
         {
             "fieldName": "date",
-            "fieldType": "Instant"
+            "fieldType": "Instant",
+            "fieldValidateRules": [
+                "required"
+            ]
         },
         {
             "fieldName": "rankOne",
@@ -45,6 +54,7 @@
             "relationshipType": "many-to-one",
             "otherEntityName": "user",
             "otherEntityRelationshipName": "post",
+            "relationshipValidateRules": "required",
             "relationshipName": "user",
             "otherEntityField": "id"
         },
@@ -52,6 +62,7 @@
             "relationshipType": "many-to-one",
             "otherEntityName": "topic",
             "otherEntityRelationshipName": "post",
+            "relationshipValidateRules": "required",
             "relationshipName": "topic",
             "otherEntityField": "id"
         }
