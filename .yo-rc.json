@@ -40,7 +40,7 @@
     "gcpProjectId": "overheardclubcom",
     "gcpCloudSqlInstanceName": "overheardclubcom:us-east4:overheardclub",
     "gcpCloudSqlUserName": "root",
-    "gcpCloudSqlDatabaseName": "overheardclubv2",
+    "gcpCloudSqlDatabaseName": "overheardclub",
     "gaeServiceName": "default",
     "gaeLocation": "us-east4",
     "gaeInstanceClass": "F4",
