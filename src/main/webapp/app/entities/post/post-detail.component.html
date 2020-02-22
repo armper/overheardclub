@@ -1,6 +1,10 @@
 <div class="row justify-content-center">
     <div class="col-8">
         <div *ngIf="post">
+            <button type="submit" (click)="previousState()" class="btn btn-info">
+                <fa-icon icon="arrow-left"></fa-icon>&nbsp;<span>Back</span>
+            </button>
+
             <hr>
 
             <div *ngIf="post.topic">
@@ -21,15 +25,25 @@
                 <span>{{ post.content }}</span>
             </p>
             <br>
-            <hr>
 
-            <button type="submit" (click)="previousState()" class="btn btn-info">
-                <fa-icon icon="arrow-left"></fa-icon>&nbsp;<span>Back</span>
-            </button>
-
-            <button type="button" [routerLink]="['/post', post.id, 'edit']" class="btn btn-primary">
+            <button *ngIf="post.user?.email===account?.email || isAdmin()" type="button"
+                [routerLink]="['/post', post.id, 'edit']" class="btn btn-primary">
                 <fa-icon icon="pencil-alt"></fa-icon>&nbsp;<span>Edit</span>
             </button>
+
+            <hr>
+
+            <h4>Comments</h4>
+
+            <ul style="list-style-type:none" *ngFor="let comment of comments">
+                <li>
+                    <br>
+                    <p>{{comment.ranking}} - {{comment.user.firstName}} - {{comment.date}}</p>
+                    <p>{{comment.content}} </p>
+                    <hr>
+                </li>
+            </ul>
+
         </div>
     </div>
 </div>
