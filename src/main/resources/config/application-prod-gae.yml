@@ -18,7 +18,7 @@ management:
 spring:
   datasource:
     type: com.zaxxer.hikari.HikariDataSource
-    url: 'jdbc:postgresql://google/overheardclub?cloudSqlInstance=overheardclubcom:us-east4:overheardclub&socketFactory=com.google.cloud.sql.postgres.SocketFactory'
+    url: 'jdbc:postgresql://google/overheardclubv2?cloudSqlInstance=overheardclubcom:us-east4:overheardclub&socketFactory=com.google.cloud.sql.postgres.SocketFactory'
     username: 'root'
     password: 'IloveAlice!1'
     hikari:
