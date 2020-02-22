@@ -15,10 +15,10 @@
             <column name="id" type="bigint">
                 <constraints primaryKey="true" nullable="false"/>
             </column>
-            <column name="title" type="varchar(255)">
+            <column name="title" type="varchar(80)">
                 <constraints nullable="false" />
             </column>
-            <column name="content" type="varchar(255)">
+            <column name="content" type="varchar(4096)">
                 <constraints nullable="false" />
             </column>
             <column name="date" type="datetime">
