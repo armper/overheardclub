@@ -27,11 +27,11 @@ export class OverheardCommentUpdateComponent implements OnInit {
 
   editForm = this.fb.group({
     id: [],
-    content: [],
-    date: [],
+    content: [null, [Validators.required]],
+    date: [null, [Validators.required]],
     ranking: [],
-    user: [],
-    post: []
+    user: [null, Validators.required],
+    post: [null, Validators.required]
   });
 
   constructor(

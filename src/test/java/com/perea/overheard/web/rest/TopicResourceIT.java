@@ -7,6 +7,7 @@ import com.perea.overheard.domain.User;
 import com.perea.overheard.repository.TopicRepository;
 import com.perea.overheard.service.TopicService;
 import com.perea.overheard.web.rest.errors.ExceptionTranslator;
+import com.perea.overheard.service.dto.TopicCriteria;
 import com.perea.overheard.service.TopicQueryService;
 
 import org.junit.jupiter.api.BeforeEach;
@@ -89,6 +90,11 @@ public class TopicResourceIT {
     public static Topic createEntity(EntityManager em) {
         Topic topic = new Topic()
             .title(DEFAULT_TITLE);
+        // Add required entity
+        User user = UserResourceIT.createEntity(em);
+        em.persist(user);
+        em.flush();
+        topic.setUser(user);
         return topic;
     }
     /**
@@ -100,6 +106,11 @@ public class TopicResourceIT {
     public static Topic createUpdatedEntity(EntityManager em) {
         Topic topic = new Topic()
             .title(UPDATED_TITLE);
+        // Add required entity
+        User user = UserResourceIT.createEntity(em);
+        em.persist(user);
+        em.flush();
+        topic.setUser(user);
         return topic;
     }
 
@@ -145,6 +156,24 @@ public class TopicResourceIT {
         assertThat(topicList).hasSize(databaseSizeBeforeCreate);
     }
 
+
+    @Test
+    @Transactional
+    public void checkTitleIsRequired() throws Exception {
+        int databaseSizeBeforeTest = topicRepository.findAll().size();
+        // set the field null
+        topic.setTitle(null);
+
+        // Create the Topic, which fails.
+
+        restTopicMockMvc.perform(post("/api/topics")
+            .contentType(TestUtil.APPLICATION_JSON)
+            .content(TestUtil.convertObjectToJsonBytes(topic)))
+            .andExpect(status().isBadRequest());
+
+        List<Topic> topicList = topicRepository.findAll();
+        assertThat(topicList).hasSize(databaseSizeBeforeTest);
+    }
 
     @Test
     @Transactional
@@ -295,12 +324,8 @@ public class TopicResourceIT {
     @Test
     @Transactional
     public void getAllTopicsByUserIsEqualToSomething() throws Exception {
-        // Initialize the database
-        topicRepository.saveAndFlush(topic);
-        User user = UserResourceIT.createEntity(em);
-        em.persist(user);
-        em.flush();
-        topic.setUser(user);
+        // Get already existing entity
+        User user = topic.getUser();
         topicRepository.saveAndFlush(topic);
         Long userId = user.getId();
 

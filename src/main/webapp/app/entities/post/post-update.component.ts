@@ -27,16 +27,16 @@ export class PostUpdateComponent implements OnInit {
 
   editForm = this.fb.group({
     id: [],
-    title: [],
-    content: [],
-    date: [],
+    title: [null, [Validators.required]],
+    content: [null, [Validators.required]],
+    date: [null, [Validators.required]],
     rankOne: [],
     rankTwo: [],
     rankThree: [],
     rankFour: [],
     rankFive: [],
-    user: [],
-    topic: []
+    user: [null, Validators.required],
+    topic: [null, Validators.required]
   });
 
   constructor(

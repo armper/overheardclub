@@ -195,7 +195,3 @@ To configure CI for your project, run the ci-cd sub-generator (`jhipster ci-cd`)
 [protractor]: https://angular.github.io/protractor/
 [leaflet]: https://leafletjs.com/
 [definitelytyped]: https://definitelytyped.org/
-
-# Deploy to Google App Engine
-
-./mvnw package appengine:deploy -DskipTests -Pgae,prod,prod-gae or using Gradle ./gradlew appengineDeploy -Pgae -Pprod-gae

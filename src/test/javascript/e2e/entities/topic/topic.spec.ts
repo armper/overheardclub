@@ -1,7 +1,11 @@
-import { browser, ExpectedConditions as ec, promise } from 'protractor';
+import { browser, ExpectedConditions as ec /* , promise */ } from 'protractor';
 import { NavBarPage, SignInPage } from '../../page-objects/jhi-page-objects';
 
-import { TopicComponentsPage, TopicDeleteDialog, TopicUpdatePage } from './topic.page-object';
+import {
+  TopicComponentsPage,
+  /* TopicDeleteDialog, */
+  TopicUpdatePage
+} from './topic.page-object';
 
 const expect = chai.expect;
 
@@ -10,7 +14,7 @@ describe('Topic e2e test', () => {
   let signInPage: SignInPage;
   let topicComponentsPage: TopicComponentsPage;
   let topicUpdatePage: TopicUpdatePage;
-  let topicDeleteDialog: TopicDeleteDialog;
+  /* let topicDeleteDialog: TopicDeleteDialog; */
 
   before(async () => {
     await browser.get('/');
@@ -35,31 +39,35 @@ describe('Topic e2e test', () => {
     await topicUpdatePage.cancel();
   });
 
-  it('should create and save Topics', async () => {
-    const nbButtonsBeforeCreate = await topicComponentsPage.countDeleteButtons();
+  /* it('should create and save Topics', async () => {
+        const nbButtonsBeforeCreate = await topicComponentsPage.countDeleteButtons();
 
-    await topicComponentsPage.clickOnCreateButton();
+        await topicComponentsPage.clickOnCreateButton();
 
-    await promise.all([topicUpdatePage.setTitleInput('title'), topicUpdatePage.userSelectLastOption()]);
+        await promise.all([
+            topicUpdatePage.setTitleInput('title'),
+            topicUpdatePage.userSelectLastOption(),
+        ]);
 
-    expect(await topicUpdatePage.getTitleInput()).to.eq('title', 'Expected Title value to be equals to title');
+        expect(await topicUpdatePage.getTitleInput()).to.eq('title', 'Expected Title value to be equals to title');
 
-    await topicUpdatePage.save();
-    expect(await topicUpdatePage.getSaveButton().isPresent(), 'Expected save button disappear').to.be.false;
+        await topicUpdatePage.save();
+        expect(await topicUpdatePage.getSaveButton().isPresent(), 'Expected save button disappear').to.be.false;
 
-    expect(await topicComponentsPage.countDeleteButtons()).to.eq(nbButtonsBeforeCreate + 1, 'Expected one more entry in the table');
-  });
+        expect(await topicComponentsPage.countDeleteButtons()).to.eq(nbButtonsBeforeCreate + 1, 'Expected one more entry in the table');
+    }); */
 
-  it('should delete last Topic', async () => {
-    const nbButtonsBeforeDelete = await topicComponentsPage.countDeleteButtons();
-    await topicComponentsPage.clickOnLastDeleteButton();
+  /* it('should delete last Topic', async () => {
+        const nbButtonsBeforeDelete = await topicComponentsPage.countDeleteButtons();
+        await topicComponentsPage.clickOnLastDeleteButton();
 
-    topicDeleteDialog = new TopicDeleteDialog();
-    expect(await topicDeleteDialog.getDialogTitle()).to.eq('Are you sure you want to delete this Topic?');
-    await topicDeleteDialog.clickOnConfirmButton();
+        topicDeleteDialog = new TopicDeleteDialog();
+        expect(await topicDeleteDialog.getDialogTitle())
+            .to.eq('Are you sure you want to delete this Topic?');
+        await topicDeleteDialog.clickOnConfirmButton();
 
-    expect(await topicComponentsPage.countDeleteButtons()).to.eq(nbButtonsBeforeDelete - 1);
-  });
+        expect(await topicComponentsPage.countDeleteButtons()).to.eq(nbButtonsBeforeDelete - 1);
+    }); */
 
   after(async () => {
     await navBarPage.autoSignOut();

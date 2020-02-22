@@ -18,11 +18,11 @@
     </pluginRepositories>
 
     <!-- jhipster-needle-distribution-management -->
-
+ 
     <properties>
         <!-- Build properties -->
         <maven.version>3.3.9</maven.version>
-        <java.version>11</java.version>
+        <java.version>1.8</java.version>
         <node.version>v12.14.0</node.version>
         <npm.version>6.13.7</npm.version>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
@@ -323,16 +323,6 @@
             <groupId>io.dropwizard.metrics</groupId>
             <artifactId>metrics-core</artifactId>
         </dependency>
-        <dependency>
-            <groupId>org.springframework.boot.experimental</groupId>
-            <artifactId>spring-boot-thin-layout</artifactId>
-            <version>1.0.23.RELEASE</version>
-        </dependency>
-        <dependency>
-            <groupId>com.google.cloud.sql</groupId>
-            <artifactId>postgres-socket-factory</artifactId>
-            <version>1.0.12</version>
-        </dependency>
         <!-- jhipster-needle-maven-add-dependency -->
     </dependencies>
 
@@ -398,15 +388,6 @@
             <plugin>
                 <groupId>org.codehaus.mojo</groupId>
                 <artifactId>properties-maven-plugin</artifactId>
-            </plugin>
-            <plugin>
-                <groupId>com.google.cloud.tools</groupId>
-                <artifactId>appengine-maven-plugin</artifactId>
-                <version>2.2.0</version>
-<configuration>
-                    <deploy.projectId>overheardclubcom</deploy.projectId>
-                    <deploy.version>1</deploy.version>
-                </configuration>
             </plugin>
             <!-- jhipster-needle-maven-add-plugin -->
         </plugins>
@@ -1162,54 +1143,6 @@
                         </plugin>
                     </plugins>
                 </pluginManagement>
-            </build>
-        </profile>
-        <profile>
-            <id>prod-gae</id>
-            <properties>
-                <spring.profiles.active>prod${profile.swagger}${profile.no-liquibase},prod-gae</spring.profiles.active>
-            </properties>
-        </profile>
-        <profile>
-            <id>gae</id>
-            <dependencies>
-                <dependency>
-                    <groupId>org.springframework.boot</groupId>
-                    <artifactId>spring-boot-starter-undertow</artifactId>
-                </dependency>
-            </dependencies>
-            <build>
-                <plugins>
-                    <plugin>
-                        <groupId>org.springframework.boot</groupId>
-                        <artifactId>spring-boot-maven-plugin</artifactId>
-                        <dependencies>
-                            <!-- package as a thin jar -->
-                            <dependency>
-                                <groupId>org.springframework.boot.experimental</groupId>
-                                <artifactId>spring-boot-thin-layout</artifactId>
-                                <version>1.0.23.RELEASE</version>
-                            </dependency>
-                        </dependencies>
-                    </plugin>
-                    <plugin>
-                        <groupId>org.springframework.boot.experimental</groupId>
-                        <artifactId>spring-boot-thin-maven-plugin</artifactId>
-                        <version>1.0.23.RELEASE</version>
-                        <configuration>
-                            <outputDirectory>${project.build.directory}/appengine-staging</outputDirectory>
-                        </configuration>
-                        <executions>
-                            <execution>
-                                <id>resolve</id>
-                                <goals>
-                                    <goal>resolve</goal>
-                                </goals>
-                                <inherited>false</inherited>
-                            </execution>
-                        </executions>
-                    </plugin>
-                </plugins>
             </build>
         </profile>
         <!-- jhipster-needle-maven-add-profile -->

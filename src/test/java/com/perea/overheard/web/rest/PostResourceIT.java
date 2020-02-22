@@ -8,6 +8,7 @@ import com.perea.overheard.domain.Topic;
 import com.perea.overheard.repository.PostRepository;
 import com.perea.overheard.service.PostService;
 import com.perea.overheard.web.rest.errors.ExceptionTranslator;
+import com.perea.overheard.service.dto.PostCriteria;
 import com.perea.overheard.service.PostQueryService;
 
 import org.junit.jupiter.api.BeforeEach;
@@ -125,6 +126,21 @@ public class PostResourceIT {
             .rankThree(DEFAULT_RANK_THREE)
             .rankFour(DEFAULT_RANK_FOUR)
             .rankFive(DEFAULT_RANK_FIVE);
+        // Add required entity
+        User user = UserResourceIT.createEntity(em);
+        em.persist(user);
+        em.flush();
+        post.setUser(user);
+        // Add required entity
+        Topic topic;
+        if (TestUtil.findAll(em, Topic.class).isEmpty()) {
+            topic = TopicResourceIT.createEntity(em);
+            em.persist(topic);
+            em.flush();
+        } else {
+            topic = TestUtil.findAll(em, Topic.class).get(0);
+        }
+        post.setTopic(topic);
         return post;
     }
     /**
@@ -143,6 +159,21 @@ public class PostResourceIT {
             .rankThree(UPDATED_RANK_THREE)
             .rankFour(UPDATED_RANK_FOUR)
             .rankFive(UPDATED_RANK_FIVE);
+        // Add required entity
+        User user = UserResourceIT.createEntity(em);
+        em.persist(user);
+        em.flush();
+        post.setUser(user);
+        // Add required entity
+        Topic topic;
+        if (TestUtil.findAll(em, Topic.class).isEmpty()) {
+            topic = TopicResourceIT.createUpdatedEntity(em);
+            em.persist(topic);
+            em.flush();
+        } else {
+            topic = TestUtil.findAll(em, Topic.class).get(0);
+        }
+        post.setTopic(topic);
         return post;
     }
 
@@ -195,6 +226,60 @@ public class PostResourceIT {
         assertThat(postList).hasSize(databaseSizeBeforeCreate);
     }
 
+
+    @Test
+    @Transactional
+    public void checkTitleIsRequired() throws Exception {
+        int databaseSizeBeforeTest = postRepository.findAll().size();
+        // set the field null
+        post.setTitle(null);
+
+        // Create the Post, which fails.
+
+        restPostMockMvc.perform(post("/api/posts")
+            .contentType(TestUtil.APPLICATION_JSON)
+            .content(TestUtil.convertObjectToJsonBytes(post)))
+            .andExpect(status().isBadRequest());
+
+        List<Post> postList = postRepository.findAll();
+        assertThat(postList).hasSize(databaseSizeBeforeTest);
+    }
+
+    @Test
+    @Transactional
+    public void checkContentIsRequired() throws Exception {
+        int databaseSizeBeforeTest = postRepository.findAll().size();
+        // set the field null
+        post.setContent(null);
+
+        // Create the Post, which fails.
+
+        restPostMockMvc.perform(post("/api/posts")
+            .contentType(TestUtil.APPLICATION_JSON)
+            .content(TestUtil.convertObjectToJsonBytes(post)))
+            .andExpect(status().isBadRequest());
+
+        List<Post> postList = postRepository.findAll();
+        assertThat(postList).hasSize(databaseSizeBeforeTest);
+    }
+
+    @Test
+    @Transactional
+    public void checkDateIsRequired() throws Exception {
+        int databaseSizeBeforeTest = postRepository.findAll().size();
+        // set the field null
+        post.setDate(null);
+
+        // Create the Post, which fails.
+
+        restPostMockMvc.perform(post("/api/posts")
+            .contentType(TestUtil.APPLICATION_JSON)
+            .content(TestUtil.convertObjectToJsonBytes(post)))
+            .andExpect(status().isBadRequest());
+
+        List<Post> postList = postRepository.findAll();
+        assertThat(postList).hasSize(databaseSizeBeforeTest);
+    }
 
     @Test
     @Transactional
@@ -1014,12 +1099,8 @@ public class PostResourceIT {
     @Test
     @Transactional
     public void getAllPostsByUserIsEqualToSomething() throws Exception {
-        // Initialize the database
-        postRepository.saveAndFlush(post);
-        User user = UserResourceIT.createEntity(em);
-        em.persist(user);
-        em.flush();
-        post.setUser(user);
+        // Get already existing entity
+        User user = post.getUser();
         postRepository.saveAndFlush(post);
         Long userId = user.getId();
 
@@ -1034,12 +1115,8 @@ public class PostResourceIT {
     @Test
     @Transactional
     public void getAllPostsByTopicIsEqualToSomething() throws Exception {
-        // Initialize the database
-        postRepository.saveAndFlush(post);
-        Topic topic = TopicResourceIT.createEntity(em);
-        em.persist(topic);
-        em.flush();
-        post.setTopic(topic);
+        // Get already existing entity
+        Topic topic = post.getTopic();
         postRepository.saveAndFlush(post);
         Long topicId = topic.getId();
 
