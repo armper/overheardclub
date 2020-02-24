@@ -38,7 +38,7 @@
             <ul style="list-style-type:none" *ngFor="let comment of comments">
                 <li>
                     <br>
-                    <p>{{comment.ranking}} - {{comment.user.firstName}} - {{comment.date}}</p>
+                    <p>{{comment.ranking}} By {{comment.user.firstName}} at {{comment.date}} wrote:</p>
                     <p>{{comment.content}} </p>
                     <hr>
                 </li>

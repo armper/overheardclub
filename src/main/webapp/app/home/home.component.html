@@ -27,9 +27,13 @@
         </div>
 
         <h2>Top funny posts for today:</h2>
-        <ul *ngFor="let post of topFunnyPosts">
+        <ul class="comment" *ngFor="let post of topFunnyPosts">
             <li>
-                {{post.rankOne}} <a href="post/{{post.id}}/view">{{post.title}}</a> - {{post.user?.firstName}}
+                <span class="comment rankings"><span (click)="upRankOne(post.id)">😂</span>{{post.rankOne}} 😬{{post.rankTwo}} 🙄{{post.rankThree}}
+                    🤔{{post.rankFour}}
+                    🤢{{post.rankFive}}</span>
+                <a href="post/{{post.id}}/view">{{post.title}}</a><span class="comment username"> -
+                    {{post.user?.firstName}}</span>
             </li>
         </ul>
 
