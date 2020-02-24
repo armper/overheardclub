@@ -15,23 +15,24 @@ import { PostService } from 'app/entities/post/post.service';
 export class HomeComponent implements OnInit, OnDestroy {
   account: Account | null = null;
   authSubscription!: Subscription;
-  topFunnyPosts!: IPost[] | null;
+  topFunnyPosts!: IPost[];
   postSubscription!: Subscription;
 
-  constructor(private accountService: AccountService, private loginModalService: LoginModalService, private postService: PostService) { }
+  constructor(private accountService: AccountService, private loginModalService: LoginModalService, private postService: PostService) {}
 
   ngOnInit(): void {
     this.authSubscription = this.accountService.getAuthenticationState().subscribe(account => (this.account = account));
     const date = new Date();
     date.setDate(date.getDate() - 7);
 
-    this.postSubscription = this.postService.query({
-      page: "0",
-      size: "5",
-      sort: ["rankOne,desc"],
-      "date.greaterThan": date.toISOString()
-
-    }).subscribe(posts => this.topFunnyPosts = posts.body);
+    this.postSubscription = this.postService
+      .query({
+        page: '0',
+        size: '5',
+        sort: ['rankOne,desc'],
+        'date.greaterThan': date.toISOString()
+      })
+      .subscribe(posts => (this.topFunnyPosts = posts.body!));
   }
 
   isAuthenticated(): boolean {
@@ -40,6 +41,17 @@ export class HomeComponent implements OnInit, OnDestroy {
 
   login(): void {
     this.loginModalService.open();
+  }
+
+  upRankOne(id: number): void {
+    const filterposts = Array.from(this.topFunnyPosts);
+
+    const filteredPosts = filterposts.filter(post => post.id === id);
+
+    filteredPosts.forEach(p => {
+      p.rankOne!++;
+      this.postService.update(p).subscribe(pp => pp.body);
+    });
   }
 
   ngOnDestroy(): void {

@@ -192,4 +192,17 @@ ui bootstrap tweaks
   white-space: nowrap;
 }
 
+.comment .rankings {
+  display: block;
+  font-size: xx-small;
+}
+
+ul.comment {
+  list-style-type: none;
+}
+
+.comment .username {
+  font-size: x-small;
+}
+
 /* jhipster-needle-scss-add-main JHipster will add new css style */
