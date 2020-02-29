@@ -43,15 +43,33 @@ export class HomeComponent implements OnInit, OnDestroy {
     this.loginModalService.open();
   }
 
-  upRankOne(id: number): void {
-    const filterposts = Array.from(this.topFunnyPosts);
+  upRank(id: number, rank: number): void {
+    this.topFunnyPosts
+      .filter(post => post.id === id)
+      .forEach(post => {
+        // this.postService.query({ "hasRankedId.in": this.account?.email }).subscribe(post => {
 
-    const filteredPosts = filterposts.filter(post => post.id === id);
+        // });
 
-    filteredPosts.forEach(p => {
-      p.rankOne!++;
-      this.postService.update(p).subscribe(pp => pp.body);
-    });
+        switch (rank) {
+          case 1:
+            post.rankOne!++;
+            break;
+          case 2:
+            post.rankTwo!++;
+            break;
+          case 3:
+            post.rankThree!++;
+            break;
+          case 4:
+            post.rankFour!++;
+            break;
+          case 5:
+            post.rankFive!++;
+            break;
+        }
+        this.postService.update(post).subscribe(updatePost => updatePost.body);
+      });
   }
 
   ngOnDestroy(): void {
