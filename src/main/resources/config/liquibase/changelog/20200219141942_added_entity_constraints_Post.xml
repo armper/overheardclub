@@ -20,5 +20,17 @@
                                  referencedColumnNames="id"
                                  referencedTableName="topic"/>
 
+        <addForeignKeyConstraint baseColumnNames="post_id"
+                                 baseTableName="post_user_uprank"
+                                 constraintName="fk_post_user_uprank_post_id"
+                                 referencedColumnNames="id"
+                                 referencedTableName="post"/>
+
+        <addForeignKeyConstraint baseColumnNames="user_uprank_id"
+                                 baseTableName="post_user_uprank"
+                                 constraintName="fk_post_user_uprank_user_uprank_id"
+                                 referencedColumnNames="id"
+                                 referencedTableName="jhi_user"/>
+        
     </changeSet>
 </databaseChangeLog>

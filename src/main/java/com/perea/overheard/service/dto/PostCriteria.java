@@ -49,6 +49,8 @@ public class PostCriteria implements Serializable, Criteria {
 
     private LongFilter topicId;
 
+    private LongFilter userUprankId;
+
     public PostCriteria() {
     }
 
@@ -65,6 +67,7 @@ public class PostCriteria implements Serializable, Criteria {
         this.overheardCommentId = other.overheardCommentId == null ? null : other.overheardCommentId.copy();
         this.userId = other.userId == null ? null : other.userId.copy();
         this.topicId = other.topicId == null ? null : other.topicId.copy();
+        this.userUprankId = other.userUprankId == null ? null : other.userUprankId.copy();
     }
 
     @Override
@@ -168,6 +171,14 @@ public class PostCriteria implements Serializable, Criteria {
         this.topicId = topicId;
     }
 
+    public LongFilter getUserUprankId() {
+        return userUprankId;
+    }
+
+    public void setUserUprankId(LongFilter userUprankId) {
+        this.userUprankId = userUprankId;
+    }
+
 
     @Override
     public boolean equals(Object o) {
@@ -190,7 +201,8 @@ public class PostCriteria implements Serializable, Criteria {
             Objects.equals(rankFive, that.rankFive) &&
             Objects.equals(overheardCommentId, that.overheardCommentId) &&
             Objects.equals(userId, that.userId) &&
-            Objects.equals(topicId, that.topicId);
+            Objects.equals(topicId, that.topicId) &&
+            Objects.equals(userUprankId, that.userUprankId);
     }
 
     @Override
@@ -207,7 +219,8 @@ public class PostCriteria implements Serializable, Criteria {
         rankFive,
         overheardCommentId,
         userId,
-        topicId
+        topicId,
+        userUprankId
         );
     }
 
@@ -226,6 +239,7 @@ public class PostCriteria implements Serializable, Criteria {
                 (overheardCommentId != null ? "overheardCommentId=" + overheardCommentId + ", " : "") +
                 (userId != null ? "userId=" + userId + ", " : "") +
                 (topicId != null ? "topicId=" + topicId + ", " : "") +
+                (userUprankId != null ? "userUprankId=" + userUprankId + ", " : "") +
             "}";
     }
 

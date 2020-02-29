@@ -70,6 +70,13 @@ public class Post implements Serializable {
     @JsonIgnoreProperties("posts")
     private Topic topic;
 
+    @ManyToMany
+    @Cache(usage = CacheConcurrencyStrategy.NONSTRICT_READ_WRITE)
+    @JoinTable(name = "post_user_uprank",
+               joinColumns = @JoinColumn(name = "post_id", referencedColumnName = "id"),
+               inverseJoinColumns = @JoinColumn(name = "user_uprank_id", referencedColumnName = "id"))
+    private Set<User> userUpranks = new HashSet<>();
+
     // jhipster-needle-entity-add-field - JHipster will add fields here, do not remove
     public Long getId() {
         return id;
@@ -232,6 +239,29 @@ public class Post implements Serializable {
 
     public void setTopic(Topic topic) {
         this.topic = topic;
+    }
+
+    public Set<User> getUserUpranks() {
+        return userUpranks;
+    }
+
+    public Post userUpranks(Set<User> users) {
+        this.userUpranks = users;
+        return this;
+    }
+
+    public Post addUserUprank(User user) {
+        this.userUpranks.add(user);
+        return this;
+    }
+
+    public Post removeUserUprank(User user) {
+        this.userUpranks.remove(user);
+        return this;
+    }
+
+    public void setUserUpranks(Set<User> users) {
+        this.userUpranks = users;
     }
     // jhipster-needle-entity-add-getters-setters - JHipster will add getters and setters here, do not remove
 

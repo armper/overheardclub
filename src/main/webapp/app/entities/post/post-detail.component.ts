@@ -2,44 +2,18 @@ import { Component, OnInit } from '@angular/core';
 import { ActivatedRoute } from '@angular/router';
 
 import { IPost } from 'app/shared/model/post.model';
-import { Subscription } from 'rxjs';
-import { AccountService } from 'app/core/auth/account.service';
-import { Account } from 'app/core/user/account.model';
-import { OverheardCommentService } from '../overheard-comment/overheard-comment.service';
-import { IOverheardComment } from 'app/shared/model/overheard-comment.model';
 
 @Component({
   selector: 'jhi-post-detail',
   templateUrl: './post-detail.component.html'
 })
 export class PostDetailComponent implements OnInit {
-  post!: IPost;
-  authSubscription!: Subscription;
-  account!: Account;
-  comments!: IOverheardComment[];
+  post: IPost | null = null;
 
-  constructor(
-    protected activatedRoute: ActivatedRoute,
-    protected accountService: AccountService,
-    protected overheardCommentService: OverheardCommentService
-  ) {}
+  constructor(protected activatedRoute: ActivatedRoute) {}
 
   ngOnInit(): void {
-    this.activatedRoute.data.subscribe(({ post }) => {
-      this.post = post;
-      this.overheardCommentService.query({ 'postId.equals': this.post.id }).subscribe(comments => this.setComments(comments.body!));
-    });
-
-    this.accountService.getAuthenticationState().subscribe(account => (this.account = account!));
-  }
-
-  private setComments(comments: IOverheardComment[]): void {
-    comments.sort((a, b) => (a.ranking! > b.ranking! ? -1 : 1));
-    this.comments = comments;
-  }
-
-  public isAdmin(): boolean | undefined {
-    return this.account.authorities.includes('ROLE_ADMIN');
+    this.activatedRoute.data.subscribe(({ post }) => (this.post = post));
   }
 
   previousState(): void {

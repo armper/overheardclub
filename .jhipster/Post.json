@@ -73,6 +73,14 @@
             "relationshipValidateRules": "required",
             "relationshipName": "topic",
             "otherEntityField": "id"
+        },
+        {
+            "relationshipName": "userUprank",
+            "otherEntityName": "user",
+            "relationshipType": "many-to-many",
+            "otherEntityField": "login",
+            "ownerSide": true,
+            "otherEntityRelationshipName": "post"
         }
     ],
     "changelogDate": "20200219141942",
@@ -86,5 +94,7 @@
     "clientRootFolder": "",
     "applications": [
         "overheardclub"
-    ]
+    ],
+    "searchEngine": false,
+    "databaseType": "sql"
 }

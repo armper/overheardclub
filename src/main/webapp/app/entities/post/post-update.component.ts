@@ -36,7 +36,8 @@ export class PostUpdateComponent implements OnInit {
     rankFour: [],
     rankFive: [],
     user: [null, Validators.required],
-    topic: [null, Validators.required]
+    topic: [null, Validators.required],
+    userUpranks: []
   });
 
   constructor(
@@ -74,7 +75,8 @@ export class PostUpdateComponent implements OnInit {
       rankFour: post.rankFour,
       rankFive: post.rankFive,
       user: post.user,
-      topic: post.topic
+      topic: post.topic,
+      userUpranks: post.userUpranks
     });
   }
 
@@ -105,7 +107,8 @@ export class PostUpdateComponent implements OnInit {
       rankFour: this.editForm.get(['rankFour'])!.value,
       rankFive: this.editForm.get(['rankFive'])!.value,
       user: this.editForm.get(['user'])!.value,
-      topic: this.editForm.get(['topic'])!.value
+      topic: this.editForm.get(['topic'])!.value,
+      userUpranks: this.editForm.get(['userUpranks'])!.value
     };
   }
 
@@ -127,5 +130,16 @@ export class PostUpdateComponent implements OnInit {
 
   trackById(index: number, item: SelectableEntity): any {
     return item.id;
+  }
+
+  getSelected(selectedVals: IUser[], option: IUser): IUser {
+    if (selectedVals) {
+      for (let i = 0; i < selectedVals.length; i++) {
+        if (option.id === selectedVals[i].id) {
+          return selectedVals[i];
+        }
+      }
+    }
+    return option;
   }
 }

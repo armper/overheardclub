@@ -52,6 +52,17 @@
 
     <changeSet id="20200219141942-1-relations" author="jhipster">
 
+        <createTable tableName="post_user_uprank">
+            <column name="user_uprank_id" type="bigint">
+                <constraints nullable="false"/>
+            </column>
+            <column name="post_id" type="bigint">
+                <constraints nullable="false"/>
+            </column>
+        </createTable>
+
+        <addPrimaryKey columnNames="post_id, user_uprank_id" tableName="post_user_uprank"/>
+        
     </changeSet>
     <!-- jhipster-needle-liquibase-add-changeset - JHipster will add changesets here, do not remove-->
 

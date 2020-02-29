@@ -51,6 +51,15 @@ public class PostService {
     }
 
     /**
+     * Get all the posts with eager load of many-to-many relationships.
+     *
+     * @return the list of entities.
+     */
+    public Page<Post> findAllWithEagerRelationships(Pageable pageable) {
+        return postRepository.findAllWithEagerRelationships(pageable);
+    }
+
+    /**
      * Get one post by id.
      *
      * @param id the id of the entity.
@@ -59,7 +68,7 @@ public class PostService {
     @Transactional(readOnly = true)
     public Optional<Post> findOne(Long id) {
         log.debug("Request to get Post : {}", id);
-        return postRepository.findById(id);
+        return postRepository.findOneWithEagerRelationships(id);
     }
 
     /**

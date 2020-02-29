@@ -40,6 +40,7 @@ export class PostUpdatePage {
 
   userSelect = element(by.id('field_user'));
   topicSelect = element(by.id('field_topic'));
+  userUprankSelect = element(by.id('field_userUprank'));
 
   async getPageTitle(): Promise<string> {
     return this.pageTitle.getText();
@@ -145,6 +146,25 @@ export class PostUpdatePage {
 
   async getTopicSelectedOption(): Promise<string> {
     return await this.topicSelect.element(by.css('option:checked')).getText();
+  }
+
+  async userUprankSelectLastOption(): Promise<void> {
+    await this.userUprankSelect
+      .all(by.tagName('option'))
+      .last()
+      .click();
+  }
+
+  async userUprankSelectOption(option: string): Promise<void> {
+    await this.userUprankSelect.sendKeys(option);
+  }
+
+  getUserUprankSelect(): ElementFinder {
+    return this.userUprankSelect;
+  }
+
+  async getUserUprankSelectedOption(): Promise<string> {
+    return await this.userUprankSelect.element(by.css('option:checked')).getText();
   }
 
   async save(): Promise<void> {

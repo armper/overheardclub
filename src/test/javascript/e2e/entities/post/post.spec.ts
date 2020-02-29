@@ -55,6 +55,7 @@ describe('Post e2e test', () => {
             postUpdatePage.setRankFiveInput('5'),
             postUpdatePage.userSelectLastOption(),
             postUpdatePage.topicSelectLastOption(),
+            // postUpdatePage.userUprankSelectLastOption(),
         ]);
 
         expect(await postUpdatePage.getTitleInput()).to.eq('title', 'Expected Title value to be equals to title');

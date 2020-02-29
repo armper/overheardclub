@@ -13,9 +13,12 @@ import com.perea.overheard.service.PostQueryService;
 
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.data.domain.PageImpl;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.data.web.PageableHandlerMethodArgumentResolver;
 import org.springframework.http.MediaType;
 import org.springframework.http.converter.json.MappingJackson2HttpMessageConverter;
@@ -27,11 +30,13 @@ import org.springframework.validation.Validator;
 import javax.persistence.EntityManager;
 import java.time.Instant;
 import java.time.temporal.ChronoUnit;
+import java.util.ArrayList;
 import java.util.List;
 
 import static com.perea.overheard.web.rest.TestUtil.createFormattingConversionService;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.hamcrest.Matchers.hasItem;
+import static org.mockito.Mockito.*;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 
@@ -72,6 +77,12 @@ public class PostResourceIT {
 
     @Autowired
     private PostRepository postRepository;
+
+    @Mock
+    private PostRepository postRepositoryMock;
+
+    @Mock
+    private PostService postServiceMock;
 
     @Autowired
     private PostService postService;
@@ -302,6 +313,39 @@ public class PostResourceIT {
             .andExpect(jsonPath("$.[*].rankFive").value(hasItem(DEFAULT_RANK_FIVE)));
     }
     
+    @SuppressWarnings({"unchecked"})
+    public void getAllPostsWithEagerRelationshipsIsEnabled() throws Exception {
+        PostResource postResource = new PostResource(postServiceMock, postQueryService);
+        when(postServiceMock.findAllWithEagerRelationships(any())).thenReturn(new PageImpl(new ArrayList<>()));
+
+        MockMvc restPostMockMvc = MockMvcBuilders.standaloneSetup(postResource)
+            .setCustomArgumentResolvers(pageableArgumentResolver)
+            .setControllerAdvice(exceptionTranslator)
+            .setConversionService(createFormattingConversionService())
+            .setMessageConverters(jacksonMessageConverter).build();
+
+        restPostMockMvc.perform(get("/api/posts?eagerload=true"))
+        .andExpect(status().isOk());
+
+        verify(postServiceMock, times(1)).findAllWithEagerRelationships(any());
+    }
+
+    @SuppressWarnings({"unchecked"})
+    public void getAllPostsWithEagerRelationshipsIsNotEnabled() throws Exception {
+        PostResource postResource = new PostResource(postServiceMock, postQueryService);
+            when(postServiceMock.findAllWithEagerRelationships(any())).thenReturn(new PageImpl(new ArrayList<>()));
+            MockMvc restPostMockMvc = MockMvcBuilders.standaloneSetup(postResource)
+            .setCustomArgumentResolvers(pageableArgumentResolver)
+            .setControllerAdvice(exceptionTranslator)
+            .setConversionService(createFormattingConversionService())
+            .setMessageConverters(jacksonMessageConverter).build();
+
+        restPostMockMvc.perform(get("/api/posts?eagerload=true"))
+        .andExpect(status().isOk());
+
+            verify(postServiceMock, times(1)).findAllWithEagerRelationships(any());
+    }
+
     @Test
     @Transactional
     public void getPost() throws Exception {
@@ -1125,6 +1169,26 @@ public class PostResourceIT {
 
         // Get all the postList where topic equals to topicId + 1
         defaultPostShouldNotBeFound("topicId.equals=" + (topicId + 1));
+    }
+
+
+    @Test
+    @Transactional
+    public void getAllPostsByUserUprankIsEqualToSomething() throws Exception {
+        // Initialize the database
+        postRepository.saveAndFlush(post);
+        User userUprank = UserResourceIT.createEntity(em);
+        em.persist(userUprank);
+        em.flush();
+        post.addUserUprank(userUprank);
+        postRepository.saveAndFlush(post);
+        Long userUprankId = userUprank.getId();
+
+        // Get all the postList where userUprank equals to userUprankId
+        defaultPostShouldBeFound("userUprankId.equals=" + userUprankId);
+
+        // Get all the postList where userUprank equals to userUprankId + 1
+        defaultPostShouldNotBeFound("userUprankId.equals=" + (userUprankId + 1));
     }
 
     /**
