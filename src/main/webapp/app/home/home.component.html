@@ -30,11 +30,14 @@
         <ul class="comment" *ngFor="let post of topFunnyPosts">
             <li>
                 <span class="rankings">
-                    <span (click)="upRank(post, 1)">😂</span>{{post.rankOne}}
-                    <span (click)="upRank(post, 2)">😬</span>{{post.rankTwo}}
-                    <span (click)="upRank(post, 3)">🙄</span>{{post.rankThree}}
-                    <span (click)="upRank(post, 4)">🤔</span>{{post.rankFour}}
-                    <span (click)="upRank(post, 5)">🤢</span>{{post.rankFive}}
+                    <span (click)="upRank(post, 1)">👍</span>{{post.rankOne}}
+                    <span (click)="upRank(post, 2)">❤️</span>{{post.rankTwo}}
+                    <span (click)="upRank(post, 3)">😂</span>{{post.rankThree}}
+                    <span (click)="upRank(post, 4)">🤯</span>{{post.rankFour}}
+                    <span (click)="upRank(post, 5)">😠</span>{{post.rankFive}}
+                    <span (click)="upRank(post, 6)">🙄</span>{{post.rankSix}}
+                    <span (click)="upRank(post, 7)">🤢</span>{{post.rankSeven}}
+                    
                 </span>
                 <span class="username"> User "{{post.user?.firstName}}" wrote: </span>
                 <a href="post/{{post.id}}/view">{{post.title}}</a>
