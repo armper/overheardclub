@@ -6,7 +6,7 @@
 
 runtime: java11
 instance_class: F4
-service: default
+service: overheardclub
 handlers:
 - url: /(.*)
   script: auto
