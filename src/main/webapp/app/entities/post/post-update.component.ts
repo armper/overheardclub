@@ -13,6 +13,8 @@ import { IUser } from 'app/core/user/user.model';
 import { UserService } from 'app/core/user/user.service';
 import { ITopic } from 'app/shared/model/topic.model';
 import { TopicService } from 'app/entities/topic/topic.service';
+import { AccountService } from 'app/core/auth/account.service';
+import { Account } from 'app/core/user/account.model';
 
 type SelectableEntity = IUser | ITopic;
 
@@ -29,23 +31,26 @@ export class PostUpdateComponent implements OnInit {
     id: [],
     title: [null, [Validators.required, Validators.minLength(2), Validators.maxLength(80)]],
     content: [null, [Validators.required, Validators.minLength(2), Validators.maxLength(4096)]],
-    date: [null, [Validators.required]],
+    date: [],
     rankOne: [],
     rankTwo: [],
     rankThree: [],
     rankFour: [],
     rankFive: [],
-    user: [null, Validators.required],
+    user: [],
     topic: [null, Validators.required],
     userUpranks: []
   });
+
+  account!: Account;
 
   constructor(
     protected postService: PostService,
     protected userService: UserService,
     protected topicService: TopicService,
     protected activatedRoute: ActivatedRoute,
-    private fb: FormBuilder
+    private fb: FormBuilder,
+    protected accountService: AccountService
   ) {}
 
   ngOnInit(): void {
@@ -61,6 +66,8 @@ export class PostUpdateComponent implements OnInit {
 
       this.topicService.query().subscribe((res: HttpResponse<ITopic[]>) => (this.topics = res.body || []));
     });
+
+    this.accountService.getAuthenticationState().subscribe(account => (this.account = account!));
   }
 
   updateForm(post: IPost): void {
@@ -95,21 +102,35 @@ export class PostUpdateComponent implements OnInit {
   }
 
   private createFromForm(): IPost {
-    return {
-      ...new Post(),
-      id: this.editForm.get(['id'])!.value,
-      title: this.editForm.get(['title'])!.value,
-      content: this.editForm.get(['content'])!.value,
-      date: this.editForm.get(['date'])!.value ? moment(this.editForm.get(['date'])!.value, DATE_TIME_FORMAT) : undefined,
-      rankOne: this.editForm.get(['rankOne'])!.value,
-      rankTwo: this.editForm.get(['rankTwo'])!.value,
-      rankThree: this.editForm.get(['rankThree'])!.value,
-      rankFour: this.editForm.get(['rankFour'])!.value,
-      rankFive: this.editForm.get(['rankFive'])!.value,
-      user: this.editForm.get(['user'])!.value,
-      topic: this.editForm.get(['topic'])!.value,
-      userUpranks: this.editForm.get(['userUpranks'])!.value
-    };
+    if (this.isAdmin()) {
+      return {
+        ...new Post(),
+        id: this.editForm.get(['id'])!.value,
+        title: this.editForm.get(['title'])!.value,
+        content: this.editForm.get(['content'])!.value,
+        date: this.editForm.get(['date'])!.value ? moment(this.editForm.get(['date'])!.value, DATE_TIME_FORMAT) : undefined,
+        rankOne: this.editForm.get(['rankOne'])!.value,
+        rankTwo: this.editForm.get(['rankTwo'])!.value,
+        rankThree: this.editForm.get(['rankThree'])!.value,
+        rankFour: this.editForm.get(['rankFour'])!.value,
+        rankFive: this.editForm.get(['rankFive'])!.value,
+        user: this.editForm.get(['user'])!.value,
+        topic: this.editForm.get(['topic'])!.value,
+        userUpranks: this.editForm.get(['userUpranks'])!.value
+      };
+    } else {
+      return {
+        ...new Post(),
+        id: this.editForm.get(['id'])!.value,
+        title: this.editForm.get(['title'])!.value,
+        content: this.editForm.get(['content'])!.value,
+        // date: this.editForm.get(['date'])!.value ? moment(this.editForm.get(['date'])!.value, DATE_TIME_FORMAT) : undefined,
+        date: moment(new Date(), DATE_TIME_FORMAT),
+        user: this.account,
+        topic: this.editForm.get(['topic'])!.value,
+        userUpranks: []
+      };
+    }
   }
 
   protected subscribeToSaveResponse(result: Observable<HttpResponse<IPost>>): void {
@@ -141,5 +162,9 @@ export class PostUpdateComponent implements OnInit {
       }
     }
     return option;
+  }
+
+  public isAdmin(): boolean | undefined {
+    return this.account.authorities.includes('ROLE_ADMIN');
   }
 }

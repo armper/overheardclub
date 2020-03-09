@@ -1,13 +1,11 @@
 <div class="row justify-content-center">
     <div class="col-8">
         <div *ngIf="topic">
-            <h2><span>Topic</span> {{ topic.id }}</h2>
-
-            <hr>
+            <h2>{{ topic.title }}</h2>
 
             <jhi-alert-error></jhi-alert-error>
 
-            <dl class="row-md jh-entity-details">
+            <dl hidden="!isAdmin()" class="row-md jh-entity-details">
                 <dt><span>Title</span></dt>
                 <dd>
                     <span>{{ topic.title }}</span>
@@ -18,16 +16,41 @@
                 </dd>
             </dl>
 
-            <button type="submit"
-                    (click)="previousState()"
-                    class="btn btn-info">
+            <button hidden="!isAdmin()" type="submit" (click)="previousState()" class="btn btn-info">
                 <fa-icon icon="arrow-left"></fa-icon>&nbsp;<span>Back</span>
             </button>
 
-            <button type="button"
-                    [routerLink]="['/topic', topic.id, 'edit']"
-                    class="btn btn-primary">
+            <button hidden="!isAdmin()" type="button" [routerLink]="['/topic', topic.id, 'edit']"
+                class="btn btn-primary">
                 <fa-icon icon="pencil-alt"></fa-icon>&nbsp;<span>Edit</span>
+            </button>
+
+            <ul class="comment" *ngFor="let post of posts">
+
+                <hr>
+
+                <li>
+                    <span class="rankings">
+                        <span (click)="upRank(post, 1)">👍</span>{{post.rankOne}}
+                        <span (click)="upRank(post, 2)">❤️</span>{{post.rankTwo}}
+                        <span (click)="upRank(post, 3)">😂</span>{{post.rankThree}}
+                        <span (click)="upRank(post, 4)">🤯</span>{{post.rankFour}}
+                        <span (click)="upRank(post, 5)">😠</span>{{post.rankFive}}
+                        <span (click)="upRank(post, 6)">🙄</span>{{post.rankSix}}
+                        <span (click)="upRank(post, 7)">🤢</span>{{post.rankSeven}}
+
+                    </span>
+                    <span class="username"> User "{{post.user?.firstName}}" posted: </span>
+                    <h3><a href="post/{{post.id}}/view">{{post.title}}</a></h3>
+                </li>
+            </ul>
+
+            <button id="jh-create-entity" class="btn btn-primary float-right jh-create-entity create-post"
+                [routerLink]="['/post/new']">
+                <fa-icon icon="plus"></fa-icon>
+                <span>
+                    Post Something
+                </span>
             </button>
         </div>
     </div>

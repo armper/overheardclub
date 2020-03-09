@@ -19,7 +19,7 @@ spring:
   datasource:
     type: com.zaxxer.hikari.HikariDataSource
     url: 'jdbc:postgresql://google/overheardclub?cloudSqlInstance=&socketFactory=com.google.cloud.sql.postgres.SocketFactory'
-    username: 'root'
-    password: 'IloveAlice!1'
+    username: 'ohclub'
+    password: 'Coneforest1'
     hikari:
       maximumPoolSize: 8

@@ -7,7 +7,6 @@ import { Account } from 'app/core/user/account.model';
 import { IPost } from 'app/shared/model/post.model';
 import { PostService } from 'app/entities/post/post.service';
 import { UserService } from 'app/core/user/user.service';
-import { IUser } from 'app/core/user/user.model';
 
 @Component({
   selector: 'jhi-home',

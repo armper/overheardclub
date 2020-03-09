@@ -26,8 +26,11 @@
             </div>
         </div>
 
-        <h2>Top funny posts for today:</h2>
+        <h2>Top posts for today:</h2>
         <ul class="comment" *ngFor="let post of topFunnyPosts">
+
+            <hr>
+
             <li>
                 <span class="rankings">
                     <span (click)="upRank(post, 1)">👍</span>{{post.rankOne}}
@@ -37,12 +40,20 @@
                     <span (click)="upRank(post, 5)">😠</span>{{post.rankFive}}
                     <span (click)="upRank(post, 6)">🙄</span>{{post.rankSix}}
                     <span (click)="upRank(post, 7)">🤢</span>{{post.rankSeven}}
-                    
+
                 </span>
-                <span class="username"> User "{{post.user?.firstName}}" wrote: </span>
-                <a href="post/{{post.id}}/view">{{post.title}}</a>
+                <span class="username"> User "{{post.user?.firstName}}" posted: </span>
+                <h3><a href="post/{{post.id}}/view">{{post.title}}</a></h3>
             </li>
         </ul>
+
+        <button id="jh-create-entity" class="btn btn-primary float-right jh-create-entity create-post"
+            [routerLink]="['/post/new']">
+            <fa-icon icon="plus"></fa-icon>
+            <span>
+                Post Something
+            </span>
+        </button>
 
     </div>
 </div>
