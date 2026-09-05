@@ -43,7 +43,7 @@ function GuestOnly({ children }: { children: ReactNode }) {
 
 function NotFound() {
   return (
-    <Empty>
+    <Empty moose>
       <span className="eyebrow">404</span>
       <h2 style={{ marginBottom: '0.5rem' }}>This page isn't here</h2>
       <p>It may have been deleted, or the link is wrong.</p>

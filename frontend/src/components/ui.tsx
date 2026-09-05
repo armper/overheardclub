@@ -18,8 +18,13 @@ export function PageHeader({ eyebrow, title, action }: { eyebrow?: string; title
   );
 }
 
-export function Empty({ children }: { children: ReactNode }) {
-  return <div className="empty">{children}</div>;
+export function Empty({ children, moose }: { children: ReactNode; moose?: boolean }) {
+  return (
+    <div className="empty">
+      {moose && <img src="/moose.svg" alt="" />}
+      {children}
+    </div>
+  );
 }
 
 export function FeedSkeleton({ rows = 3 }: { rows?: number }) {

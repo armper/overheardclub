@@ -19,7 +19,7 @@ export function TopBar() {
     <nav className="topbar">
       <div className="topbar-inner">
         <Link to="/" className="brand" onClick={close}>
-          <span className="brand-mark" aria-hidden="true" />
+          <img className="brand-mark" src="/moose.svg" alt="" />
           <span>
             Overheard<span className="brand-accent">Club</span>
           </span>

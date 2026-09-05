@@ -4,7 +4,7 @@ A small, members-only feed for the funny, strange and brilliant things people sa
 Members post a quote under a topic, leave one emoji reaction per post, and comment.
 
 - **Backend**: Java 21, Spring Boot 3, Spring Security (JWT), Spring Data JPA, Flyway. H2 in development, PostgreSQL in production.
-- **Frontend**: React 18, TypeScript, Vite, React Router. No UI framework; one small stylesheet with a minimal monochrome design.
+- **Frontend**: React 18, TypeScript, Vite, React Router. No UI framework; one small stylesheet with a yellow-and-blue theme and a cartoon moose mascot (`frontend/public/moose.svg`).
 
 ## What's in the app
 
