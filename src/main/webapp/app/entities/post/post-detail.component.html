@@ -1,49 +1,44 @@
-<div class="row justify-content-center">
-    <div class="col-8">
-        <div *ngIf="post">
-            <button type="submit" (click)="previousState()" class="btn btn-info">
-                <fa-icon icon="arrow-left"></fa-icon>&nbsp;<span>Back</span>
-            </button>
+<div *ngIf="post">
+    <a class="btn btn-link pl-0 mb-3" [routerLink]="post.topic ? ['/topic', post.topic.id, 'view'] : ['/']">
+        <fa-icon icon="arrow-left"></fa-icon>&nbsp;<span>{{ post.topic ? post.topic.title : 'Feed' }}</span>
+    </a>
 
-            <hr>
+    <jhi-alert-error></jhi-alert-error>
 
-            <div *ngIf="post.topic">
-                <h3><a [routerLink]="['/topic', post.topic?.title, 'view']">{{ post.topic?.title }}</a></h3>
-            </div>
+    <jhi-post-card [post]="post" [full]="true"></jhi-post-card>
 
-            <jhi-alert-error></jhi-alert-error>
-
-            <p>
-                <h4>{{ post.title }}</h4>
-            </p>
-            {{ post.user?.firstName }}
-
-            <span>{{ post.date }}</span>
-            <br>
-            <br>
-            <p>
-                <span>{{ post.content }}</span>
-            </p>
-            <br>
-
-            <button *ngIf="post.user?.email===account?.email || isAdmin()" type="button"
-                [routerLink]="['/post', post.id, 'edit']" class="btn btn-primary">
-                <fa-icon icon="pencil-alt"></fa-icon>&nbsp;<span>Edit</span>
-            </button>
-
-            <hr>
-
-            <h4>Comments</h4>
-
-            <ul style="list-style-type:none" *ngFor="let comment of comments">
-                <li>
-                    <br>
-                    <p>{{comment.ranking}} By {{comment.user.firstName}} at {{comment.date}} wrote:</p>
-                    <p>{{comment.content}} </p>
-                    <hr>
-                </li>
-            </ul>
-
-        </div>
+    <div class="post-actions" *ngIf="canEdit()">
+        <a [routerLink]="['/post', post.id, 'edit']"><fa-icon icon="pencil-alt"></fa-icon>&nbsp;Edit</a>
+        <span>·</span>
+        <a (click)="delete()"><fa-icon icon="trash-alt"></fa-icon>&nbsp;Delete</a>
     </div>
+
+    <section class="comments">
+        <h2 class="h4 mb-3">{{ comments.length }} {{ comments.length === 1 ? 'comment' : 'comments' }}</h2>
+
+        <form class="comment-form" [formGroup]="commentForm" (ngSubmit)="addComment()" novalidate>
+            <textarea class="form-control" formControlName="content" rows="3" placeholder="Add a comment…" [attr.aria-label]="'Comment'"></textarea>
+            <div class="d-flex align-items-center justify-content-between mt-2">
+                <small class="char-count" [class.over]="commentLength() > 4096">{{ commentLength() }} / 4096</small>
+                <button type="submit" class="btn btn-primary btn-sm" [disabled]="commentForm.invalid || savingComment">
+                    {{ savingComment ? 'Posting…' : 'Comment' }}
+                </button>
+            </div>
+        </form>
+
+        <div class="mt-4" *ngIf="comments.length > 0">
+            <article class="comment" *ngFor="let comment of comments; trackBy: trackId">
+                <div class="post-meta">
+                    <span class="author"><span class="avatar">{{ initial(comment) }}</span>{{ authorName(comment) }}</span>
+                    <span class="dot"></span>
+                    <span [title]="comment.date">{{ comment.date | timeAgo }}</span>
+                    <ng-container *ngIf="canRemove(comment)">
+                        <span class="dot"></span>
+                        <a class="muted" (click)="removeComment(comment)">Delete</a>
+                    </ng-container>
+                </div>
+                <p class="comment-body mb-0">{{ comment.content }}</p>
+            </article>
+        </div>
+    </section>
 </div>

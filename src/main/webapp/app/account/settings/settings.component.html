@@ -1,10 +1,16 @@
 <div>
     <div class="row justify-content-center">
-        <div class="col-md-8">
-            <h2 *ngIf="account">User settings for [<b>{{ account.login }}</b>]</h2>
+        <div class="col-12">
+            <div class="page-header" *ngIf="account">
+                <div>
+                    <span class="eyebrow">Account</span>
+                    <h1>Settings</h1>
+                </div>
+                <span class="small-muted">Signed in as <strong>{{ account.login }}</strong></span>
+            </div>
 
             <div class="alert alert-success" *ngIf="success">
-                <strong>Settings saved!</strong>
+                <strong>Settings saved.</strong>
             </div>
 
             <jhi-alert-error></jhi-alert-error>
@@ -84,7 +90,7 @@
                     </div>
                 </div>
 
-                <button type="submit" [disabled]="settingsForm.invalid" class="btn btn-primary">Save</button>
+                <div class="form-actions"><button type="submit" [disabled]="settingsForm.invalid" class="btn btn-primary">Save changes</button></div>
             </form>
         </div>
     </div>

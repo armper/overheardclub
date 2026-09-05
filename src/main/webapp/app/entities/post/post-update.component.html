@@ -1,148 +1,81 @@
-<div class="row justify-content-center">
-    <div class="col-8">
-        <form name="editForm" role="form" novalidate (ngSubmit)="save()" [formGroup]="editForm">
-            <h2 id="jhi-post-heading">Create or edit a Post</h2>
-
-            <div>
-                <jhi-alert-error></jhi-alert-error>
-
-                <div class="form-group" [hidden]="!editForm.get('id')!.value">
-                    <label for="id">ID</label>
-                    <input type="text" class="form-control" id="id" name="id" formControlName="id" readonly />
-                </div>
-
-                <div class="form-group">
-                    <label class="form-control-label" for="field_title">Title</label>
-                    <input type="text" class="form-control" name="title" id="field_title"
-                           formControlName="title"/>
-                    <div *ngIf="editForm.get('title')!.invalid && (editForm.get('title')!.dirty || editForm.get('title')!.touched)">
-                        <small class="form-text text-danger"
-                               *ngIf="editForm.get('title')?.errors?.required">
-                        This field is required.
-                        </small>
-                        <small class="form-text text-danger"
-                               *ngIf="editForm.get('title')?.errors?.minlength">
-                        This field is required to be at least 2 characters.
-                        </small>
-                        <small class="form-text text-danger"
-                               *ngIf="editForm.get('title')?.errors?.maxlength">
-                        This field cannot be longer than 80 characters.
-                        </small>
-                    </div>
-                </div>
-
-                <div class="form-group">
-                    <label class="form-control-label" for="field_content">Content</label>
-                    <input type="text" class="form-control" name="content" id="field_content"
-                           formControlName="content"/>
-                    <div *ngIf="editForm.get('content')!.invalid && (editForm.get('content')!.dirty || editForm.get('content')!.touched)">
-                        <small class="form-text text-danger"
-                               *ngIf="editForm.get('content')?.errors?.required">
-                        This field is required.
-                        </small>
-                        <small class="form-text text-danger"
-                               *ngIf="editForm.get('content')?.errors?.minlength">
-                        This field is required to be at least 2 characters.
-                        </small>
-                        <small class="form-text text-danger"
-                               *ngIf="editForm.get('content')?.errors?.maxlength">
-                        This field cannot be longer than 4096 characters.
-                        </small>
-                    </div>
-                </div>
-
-                <div class="form-group" hidden="!isAdmin()">
-                    <label class="form-control-label" for="field_date">Date</label>
-                    <div class="d-flex">
-                        <input id="field_date" type="datetime-local" class="form-control" name="date" formControlName="date" placeholder="YYYY-MM-DD HH:mm"/>
-                    </div>
-                    <div *ngIf="editForm.get('date')!.invalid && (editForm.get('date')!.dirty || editForm.get('date')!.touched)">
-                        <small class="form-text text-danger"
-                               *ngIf="editForm.get('date')?.errors?.required">
-                        This field is required.
-                        </small>
-                        <small class="form-text text-danger"
-                            [hidden]="!editForm.get('date')?.errors?.ZonedDateTimelocal">
-                            This field should be a date and time.
-                        </small>
-                    </div>
-                </div>
-
-                <div class="form-group" hidden="!isAdmin()">
-                    <label class="form-control-label" for="field_rankOne">Rank One</label>
-                    <input type="number" class="form-control" name="rankOne" id="field_rankOne"
-                           formControlName="rankOne"/>
-                </div>
-
-                <div class="form-group" hidden="!isAdmin()">
-                    <label class="form-control-label" for="field_rankTwo">Rank Two</label>
-                    <input type="number" class="form-control" name="rankTwo" id="field_rankTwo"
-                           formControlName="rankTwo"/>
-                </div>
-
-                <div class="form-group" hidden="!isAdmin()">
-                    <label class="form-control-label" for="field_rankThree">Rank Three</label>
-                    <input type="number" class="form-control" name="rankThree" id="field_rankThree"
-                           formControlName="rankThree"/>
-                </div>
-
-                <div class="form-group" hidden="!isAdmin()">
-                    <label class="form-control-label" for="field_rankFour">Rank Four</label>
-                    <input type="number" class="form-control" name="rankFour" id="field_rankFour"
-                           formControlName="rankFour"/>
-                </div>
-
-                <div class="form-group" hidden="!isAdmin()">
-                    <label class="form-control-label" for="field_rankFive">Rank Five</label>
-                    <input type="number" class="form-control" name="rankFive" id="field_rankFive"
-                           formControlName="rankFive"/>
-                </div>
-
-                <div class="form-group" hidden="!isAdmin()">
-                    <label class="form-control-label" for="field_user">User</label>
-                    <select class="form-control" id="field_user" name="user" formControlName="user">
-                        <option *ngIf="!editForm.get('user')!.value" [ngValue]="null" selected></option>
-                        <option [ngValue]="userOption.id === editForm.get('user')!.value?.id ? editForm.get('user')!.value : userOption" *ngFor="let userOption of users; trackBy: trackById">{{ userOption.id }}</option>
-                    </select>
-                </div>
-                <div *ngIf="editForm.get('user')!.invalid && (editForm.get('user')!.dirty || editForm.get('user')!.touched)">
-                    <small class="form-text text-danger"
-                           *ngIf="editForm.get('user')?.errors?.required">
-                        This field is required.
-                    </small>
-                </div>
-
-                <div class="form-group">
-                    <label class="form-control-label" for="field_topic">Topic</label>
-                    <select class="form-control" id="field_topic" name="topic" formControlName="topic">
-                        <option *ngIf="!editForm.get('topic')!.value" [ngValue]="null" selected></option>
-                        <option [ngValue]="topicOption.id === editForm.get('topic')!.value?.id ? editForm.get('topic')!.value : topicOption" *ngFor="let topicOption of topics; trackBy: trackById">{{ topicOption.id }}</option>
-                    </select>
-                </div>
-                <div *ngIf="editForm.get('topic')!.invalid && (editForm.get('topic')!.dirty || editForm.get('topic')!.touched)">
-                    <small class="form-text text-danger"
-                           *ngIf="editForm.get('topic')?.errors?.required">
-                        This field is required.
-                    </small>
-                </div>
-
-                <div class="form-group" hidden="!isAdmin()">
-                    <label for="field_userUpranks">User Uprank</label>
-                    <select class="form-control" id="field_userUpranks" multiple name="userUpranks" formControlName="userUpranks">
-                        <option [ngValue]="getSelected(editForm.get('userUpranks')!.value, userOption)" *ngFor="let userOption of users; trackBy: trackById">{{ userOption.login }}</option>
-                    </select>
-                </div>
-            </div>
-
-            <div>
-                <button type="button" id="cancel-save" class="btn btn-secondary" (click)="previousState()">
-                    <fa-icon icon="ban"></fa-icon>&nbsp;<span>Cancel</span>
-                </button>
-
-                <button type="submit" id="save-entity" [disabled]="editForm.invalid || isSaving" class="btn btn-primary">
-                    <fa-icon icon="save"></fa-icon>&nbsp;<span>Save</span>
-                </button>
-            </div>
-        </form>
+<form name="editForm" role="form" novalidate (ngSubmit)="save()" [formGroup]="editForm">
+    <div class="page-header">
+        <div>
+            <span class="eyebrow">{{ isNew() ? 'New post' : 'Edit post' }}</span>
+            <h1 id="jhi-post-heading">{{ isNew() ? 'What did you overhear?' : 'Edit your post' }}</h1>
+        </div>
     </div>
-</div>
+
+    <jhi-alert-error></jhi-alert-error>
+
+    <div class="form-group">
+        <label class="form-control-label" for="field_topic">Topic</label>
+        <select class="form-control" id="field_topic" name="topic" formControlName="topic">
+            <option *ngIf="!editForm.get('topic')!.value" [ngValue]="null" selected>Choose a topic…</option>
+            <option [ngValue]="topicOption.id === editForm.get('topic')!.value?.id ? editForm.get('topic')!.value : topicOption" *ngFor="let topicOption of topics; trackBy: trackById">{{ topicOption.title }}</option>
+        </select>
+        <small class="form-text muted" *ngIf="topics.length === 0">There are no topics yet. <a routerLink="/topic">Create one</a> first.</small>
+        <div *ngIf="editForm.get('topic')!.invalid && (editForm.get('topic')!.dirty || editForm.get('topic')!.touched)">
+            <small class="form-text text-danger" *ngIf="editForm.get('topic')?.errors?.required">Pick a topic.</small>
+        </div>
+    </div>
+
+    <div class="form-group">
+        <label class="form-control-label" for="field_title">Title</label>
+        <input type="text" class="form-control" name="title" id="field_title" formControlName="title" placeholder="A short headline" maxlength="80" autocomplete="off" />
+        <div *ngIf="editForm.get('title')!.invalid && (editForm.get('title')!.dirty || editForm.get('title')!.touched)">
+            <small class="form-text text-danger" *ngIf="editForm.get('title')?.errors?.required">A title is required.</small>
+            <small class="form-text text-danger" *ngIf="editForm.get('title')?.errors?.minlength">At least 2 characters.</small>
+            <small class="form-text text-danger" *ngIf="editForm.get('title')?.errors?.maxlength">At most 80 characters.</small>
+        </div>
+    </div>
+
+    <div class="form-group">
+        <label class="form-control-label" for="field_content">The quote</label>
+        <textarea class="form-control" name="content" id="field_content" formControlName="content" rows="6" placeholder="Exactly what was said, and a little context if it helps."></textarea>
+        <div class="char-count" [class.over]="length('content') > 4096">{{ length('content') }} / 4096</div>
+        <div *ngIf="editForm.get('content')!.invalid && (editForm.get('content')!.dirty || editForm.get('content')!.touched)">
+            <small class="form-text text-danger" *ngIf="editForm.get('content')?.errors?.required">Content is required.</small>
+            <small class="form-text text-danger" *ngIf="editForm.get('content')?.errors?.minlength">At least 2 characters.</small>
+            <small class="form-text text-danger" *ngIf="editForm.get('content')?.errors?.maxlength">At most 4096 characters.</small>
+        </div>
+    </div>
+
+    <details class="admin-fields" *ngIf="isAdmin()">
+        <summary class="small-muted mb-3">Admin fields</summary>
+
+        <div class="form-group">
+            <label class="form-control-label" for="field_date">Date</label>
+            <input id="field_date" type="datetime-local" class="form-control" name="date" formControlName="date" placeholder="YYYY-MM-DD HH:mm"/>
+        </div>
+
+        <div class="form-row">
+            <div class="form-group col" *ngFor="let r of reactions">
+                <label class="form-control-label" [for]="'field_' + r.key">{{ r.emoji }}</label>
+                <input type="number" min="0" class="form-control" [name]="r.key" [id]="'field_' + r.key" [formControlName]="r.key"/>
+            </div>
+        </div>
+
+        <div class="form-group">
+            <label class="form-control-label" for="field_user">Author</label>
+            <select class="form-control" id="field_user" name="user" formControlName="user">
+                <option *ngIf="!editForm.get('user')!.value" [ngValue]="null" selected></option>
+                <option [ngValue]="userOption.id === editForm.get('user')!.value?.id ? editForm.get('user')!.value : userOption" *ngFor="let userOption of users; trackBy: trackById">{{ userOption.login }}</option>
+            </select>
+        </div>
+
+        <div class="form-group">
+            <label for="field_userUpranks">Users who reacted</label>
+            <select class="form-control" id="field_userUpranks" multiple name="userUpranks" formControlName="userUpranks">
+                <option [ngValue]="getSelected(editForm.get('userUpranks')!.value, userOption)" *ngFor="let userOption of users; trackBy: trackById">{{ userOption.login }}</option>
+            </select>
+        </div>
+    </details>
+
+    <div class="form-actions">
+        <button type="button" id="cancel-save" class="btn btn-secondary" (click)="previousState()">Cancel</button>
+        <button type="submit" id="save-entity" [disabled]="editForm.invalid || isSaving" class="btn btn-primary">
+            {{ isSaving ? 'Saving…' : isNew() ? 'Post it' : 'Save changes' }}
+        </button>
+    </div>
+</form>

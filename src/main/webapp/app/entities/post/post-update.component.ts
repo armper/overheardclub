@@ -2,7 +2,7 @@ import { Component, OnInit } from '@angular/core';
 import { HttpResponse } from '@angular/common/http';
 // eslint-disable-next-line @typescript-eslint/no-unused-vars
 import { FormBuilder, Validators } from '@angular/forms';
-import { ActivatedRoute } from '@angular/router';
+import { ActivatedRoute, Router } from '@angular/router';
 import { Observable } from 'rxjs';
 import * as moment from 'moment';
 import { DATE_TIME_FORMAT } from 'app/shared/constants/input.constants';
@@ -15,6 +15,7 @@ import { ITopic } from 'app/shared/model/topic.model';
 import { TopicService } from 'app/entities/topic/topic.service';
 import { AccountService } from 'app/core/auth/account.service';
 import { Account } from 'app/core/user/account.model';
+import { REACTIONS, Reaction } from 'app/shared/reaction/reaction.service';
 
 type SelectableEntity = IUser | ITopic;
 
@@ -26,6 +27,10 @@ export class PostUpdateComponent implements OnInit {
   isSaving = false;
   users: IUser[] = [];
   topics: ITopic[] = [];
+  reactions: Reaction[] = REACTIONS;
+  account: Account | null = null;
+  /** The post as loaded, so an edit keeps reactions and metadata intact. */
+  original: IPost = new Post();
 
   editForm = this.fb.group({
     id: [],
@@ -42,32 +47,51 @@ export class PostUpdateComponent implements OnInit {
     userUpranks: []
   });
 
-  account!: Account;
-
   constructor(
     protected postService: PostService,
     protected userService: UserService,
     protected topicService: TopicService,
     protected activatedRoute: ActivatedRoute,
+    protected router: Router,
     private fb: FormBuilder,
     protected accountService: AccountService
   ) {}
 
   ngOnInit(): void {
-    this.activatedRoute.data.subscribe(({ post }) => {
-      if (!post.id) {
-        const today = moment().startOf('day');
-        post.date = today;
+    this.accountService.getAuthenticationState().subscribe(account => {
+      this.account = account;
+      if (this.isAdmin() && this.users.length === 0) {
+        this.userService.query().subscribe((res: HttpResponse<IUser[]>) => (this.users = res.body || []));
       }
-
-      this.updateForm(post);
-
-      this.userService.query().subscribe((res: HttpResponse<IUser[]>) => (this.users = res.body || []));
-
-      this.topicService.query().subscribe((res: HttpResponse<ITopic[]>) => (this.topics = res.body || []));
     });
 
-    this.accountService.getAuthenticationState().subscribe(account => (this.account = account!));
+    this.activatedRoute.data.subscribe(({ post }) => {
+      this.original = post;
+      if (!post.id) {
+        post.date = moment();
+      }
+      this.updateForm(post);
+
+      this.topicService.query({ sort: ['title,asc'] }).subscribe((res: HttpResponse<ITopic[]>) => {
+        this.topics = res.body || [];
+        this.preselectTopic();
+      });
+    });
+  }
+
+  /** `/post/new?topic=<id>` pre-selects the topic the user came from. */
+  private preselectTopic(): void {
+    if (this.editForm.get('topic')!.value) {
+      return;
+    }
+    const topicId = Number(this.activatedRoute.snapshot.queryParamMap.get('topic'));
+    if (!topicId) {
+      return;
+    }
+    const match = this.topics.find(t => t.id === topicId);
+    if (match) {
+      this.editForm.patchValue({ topic: match });
+    }
   }
 
   updateForm(post: IPost): void {
@@ -87,6 +111,15 @@ export class PostUpdateComponent implements OnInit {
     });
   }
 
+  isNew(): boolean {
+    return !this.editForm.get('id')!.value;
+  }
+
+  length(field: string): number {
+    const value = this.editForm.get(field)!.value;
+    return value ? value.length : 0;
+  }
+
   previousState(): void {
     window.history.back();
   }
@@ -94,7 +127,7 @@ export class PostUpdateComponent implements OnInit {
   save(): void {
     this.isSaving = true;
     const post = this.createFromForm();
-    if (post.id !== undefined) {
+    if (post.id !== undefined && post.id !== null) {
       this.subscribeToSaveResponse(this.postService.update(post));
     } else {
       this.subscribeToSaveResponse(this.postService.create(post));
@@ -102,47 +135,74 @@ export class PostUpdateComponent implements OnInit {
   }
 
   private createFromForm(): IPost {
+    const id = this.editForm.get(['id'])!.value;
+    const base: IPost = {
+      ...new Post(),
+      ...this.original,
+      id: id === null ? undefined : id,
+      title: this.editForm.get(['title'])!.value,
+      content: this.editForm.get(['content'])!.value,
+      topic: this.editForm.get(['topic'])!.value
+    };
+
     if (this.isAdmin()) {
       return {
-        ...new Post(),
-        id: this.editForm.get(['id'])!.value,
-        title: this.editForm.get(['title'])!.value,
-        content: this.editForm.get(['content'])!.value,
-        date: this.editForm.get(['date'])!.value ? moment(this.editForm.get(['date'])!.value, DATE_TIME_FORMAT) : undefined,
-        rankOne: this.editForm.get(['rankOne'])!.value,
-        rankTwo: this.editForm.get(['rankTwo'])!.value,
-        rankThree: this.editForm.get(['rankThree'])!.value,
-        rankFour: this.editForm.get(['rankFour'])!.value,
-        rankFive: this.editForm.get(['rankFive'])!.value,
-        user: this.editForm.get(['user'])!.value,
-        topic: this.editForm.get(['topic'])!.value,
-        userUpranks: this.editForm.get(['userUpranks'])!.value
+        ...base,
+        date: this.editForm.get(['date'])!.value ? moment(this.editForm.get(['date'])!.value, DATE_TIME_FORMAT) : base.date,
+        rankOne: this.editForm.get(['rankOne'])!.value || 0,
+        rankTwo: this.editForm.get(['rankTwo'])!.value || 0,
+        rankThree: this.editForm.get(['rankThree'])!.value || 0,
+        rankFour: this.editForm.get(['rankFour'])!.value || 0,
+        rankFive: this.editForm.get(['rankFive'])!.value || 0,
+        user: this.editForm.get(['user'])!.value || base.user || this.currentUserRef(),
+        userUpranks: this.editForm.get(['userUpranks'])!.value || []
       };
-    } else {
+    }
+
+    if (this.isNew()) {
       return {
-        ...new Post(),
-        id: this.editForm.get(['id'])!.value,
-        title: this.editForm.get(['title'])!.value,
-        content: this.editForm.get(['content'])!.value,
-        // date: this.editForm.get(['date'])!.value ? moment(this.editForm.get(['date'])!.value, DATE_TIME_FORMAT) : undefined,
-        date: moment(new Date(), DATE_TIME_FORMAT),
-        user: this.account,
-        topic: this.editForm.get(['topic'])!.value,
+        ...base,
+        date: moment(),
+        rankOne: 0,
+        rankTwo: 0,
+        rankThree: 0,
+        rankFour: 0,
+        rankFive: 0,
+        user: this.currentUserRef(),
         userUpranks: []
       };
     }
+
+    // Members editing their own post: only the text and topic change.
+    return {
+      ...base,
+      rankOne: base.rankOne || 0,
+      rankTwo: base.rankTwo || 0,
+      rankThree: base.rankThree || 0,
+      rankFour: base.rankFour || 0,
+      rankFive: base.rankFive || 0,
+      userUpranks: base.userUpranks || []
+    };
+  }
+
+  private currentUserRef(): IUser | undefined {
+    return this.account && this.account.id ? { id: this.account.id } : undefined;
   }
 
   protected subscribeToSaveResponse(result: Observable<HttpResponse<IPost>>): void {
     result.subscribe(
-      () => this.onSaveSuccess(),
+      res => this.onSaveSuccess(res.body),
       () => this.onSaveError()
     );
   }
 
-  protected onSaveSuccess(): void {
+  protected onSaveSuccess(saved: IPost | null): void {
     this.isSaving = false;
-    this.previousState();
+    if (saved && saved.id) {
+      this.router.navigate(['/post', saved.id, 'view']);
+    } else {
+      this.previousState();
+    }
   }
 
   protected onSaveError(): void {
@@ -164,7 +224,7 @@ export class PostUpdateComponent implements OnInit {
     return option;
   }
 
-  public isAdmin(): boolean | undefined {
-    return this.account.authorities.includes('ROLE_ADMIN');
+  public isAdmin(): boolean {
+    return !!this.account && this.account.authorities.includes('ROLE_ADMIN');
   }
 }

@@ -1,65 +1,34 @@
-<div>
-    <h2 id="page-heading">
-        <span>Topics</span>
-
-        <button id="jh-create-entity" class="btn btn-primary float-right jh-create-entity create-topic" [routerLink]="['/topic/new']">
-            <fa-icon icon="plus"></fa-icon>
-            <span>
-            Create a new Topic
-            </span>
-        </button>
-    </h2>
-
-    <jhi-alert-error></jhi-alert-error>
-
-    <jhi-alert></jhi-alert>
-
-    <div class="alert alert-warning" id="no-result" *ngIf="topics?.length === 0">
-        <span>No topics found</span>
+<div class="page-header">
+    <div>
+        <span class="eyebrow">Browse</span>
+        <h1 id="page-heading">Topics</h1>
     </div>
+    <button type="button" class="btn btn-secondary btn-sm" (click)="toggleCreate()" *ngIf="!showCreate">
+        <fa-icon icon="plus"></fa-icon><span>New topic</span>
+    </button>
+</div>
 
-    <div class="table-responsive" id="entities" *ngIf="topics?.length > 0">
-        <table class="table table-striped" aria-describedby="page-heading">
-            <thead>
-                <tr>
-                    <th scope="col" ><span>ID</span></th>
-                    <th scope="col" ><span>Title</span></th>
-                    <th scope="col" ><span>User</span></th>
-                    <th scope="col"></th>
-                </tr>
-            </thead>
-            <tbody>
-                <tr *ngFor="let topic of topics ;trackBy: trackId">
-                    <td><a [routerLink]="['/topic', topic.id, 'view']">{{ topic.id }}</a></td>
-                    <td>{{ topic.title }}</td>
-                    <td>
-                        {{ topic.user?.id }}
-                    </td>
-                    <td class="text-right">
-                        <div class="btn-group">
-                            <button type="submit"
-                                    [routerLink]="['/topic', topic.id, 'view']"
-                                    class="btn btn-info btn-sm">
-                                <fa-icon icon="eye"></fa-icon>
-                                <span class="d-none d-md-inline">View</span>
-                            </button>
+<jhi-alert-error></jhi-alert-error>
+<jhi-alert></jhi-alert>
 
-                            <button type="submit"
-                                    [routerLink]="['/topic', topic.id, 'edit']"
-                                    class="btn btn-primary btn-sm">
-                                <fa-icon icon="pencil-alt"></fa-icon>
-                                <span class="d-none d-md-inline">Edit</span>
-                            </button>
-
-                            <button type="submit" (click)="delete(topic)"
-                                    class="btn btn-danger btn-sm">
-                                <fa-icon icon="times"></fa-icon>
-                                <span class="d-none d-md-inline">Delete</span>
-                            </button>
-                        </div>
-                    </td>
-                </tr>
-            </tbody>
-        </table>
+<form class="new-topic mb-4" *ngIf="showCreate" [formGroup]="createForm" (ngSubmit)="create()" novalidate>
+    <label class="form-control-label" for="new-topic-title">Topic name</label>
+    <div class="d-flex" style="gap: 0.5rem">
+        <input id="new-topic-title" type="text" class="form-control" formControlName="title" placeholder="e.g. On the train" maxlength="80" autocomplete="off" #newTopic />
+        <button type="submit" class="btn btn-primary" [disabled]="createForm.invalid || saving">{{ saving ? 'Saving…' : 'Create' }}</button>
+        <button type="button" class="btn btn-link" (click)="toggleCreate()">Cancel</button>
     </div>
+    <small class="form-text text-danger" *ngIf="createForm.get('title')?.touched && createForm.get('title')?.errors?.minlength">At least 2 characters.</small>
+</form>
+
+<div class="empty" id="no-result" *ngIf="topics && topics.length === 0">
+    <p>No topics yet. Create the first one.</p>
+    <button type="button" class="btn btn-primary" (click)="toggleCreate()">New topic</button>
+</div>
+
+<div class="topic-grid" id="entities" *ngIf="topics && topics.length > 0">
+    <a class="topic-tile" *ngFor="let topic of topics; trackBy: trackId" [routerLink]="['/topic', topic.id, 'view']">
+        <div class="topic-name">{{ topic.title }}</div>
+        <div class="topic-count" *ngIf="counts[topic.id!] !== undefined">{{ counts[topic.id!] }} {{ counts[topic.id!] === 1 ? 'post' : 'posts' }}</div>
+    </a>
 </div>

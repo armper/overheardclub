@@ -1,59 +1,56 @@
-<div class="row">
-    <div class="col-md-3">
-        <span class="hipster img-fluid rounded"></span>
+<!-- Landing for visitors -->
+<section class="hero" *ngIf="!isAuthenticated()">
+    <span class="eyebrow">A private club for quotes</span>
+    <h1 class="hero-title">The things people say.<br>Overheard, posted, reacted to.</h1>
+    <p class="hero-lead">
+        Overheard Club is a small, members-only feed of the funny, strange and brilliant things
+        you catch in passing. Post a line, file it under a topic, and let the club react.
+    </p>
+    <div class="hero-actions">
+        <a class="btn btn-primary" routerLink="account/register">Join the club</a>
+        <a class="btn btn-secondary" id="home-sign-in" (click)="login()">Sign in</a>
     </div>
+    <ul class="hero-reactions" aria-hidden="true">
+        <li>👍</li><li>❤️</li><li>😂</li><li>🤯</li><li>🙄</li>
+    </ul>
+</section>
 
-    <div class="col-md-9">
-        <h1 class="display-4">Welcome to Overheard Club!</h1>
-
-        <p class="lead">This is your homepage</p>
-
-        <div [ngSwitch]="isAuthenticated()">
-            <div class="alert alert-success" *ngSwitchCase="true">
-                <span id="home-logged-message" *ngIf="account">You are logged in as user "{{ account.login }}".</span>
-            </div>
-
-            <div class="alert alert-warning" *ngSwitchCase="false">
-                <span>If you want to </span>
-                <a class="alert-link" (click)="login()">sign in</a><span>, you can try the default accounts:<br />-
-                    Administrator (login="admin" and password="admin") <br />- User (login="user" and
-                    password="user").</span>
-            </div>
-
-            <div class="alert alert-warning" *ngSwitchCase="false">
-                <span>You don't have an account yet?</span>&nbsp;
-                <a class="alert-link" routerLink="account/register">Register a new account</a>
-            </div>
+<!-- Feed for members -->
+<section *ngIf="isAuthenticated()">
+    <div class="page-header">
+        <div>
+            <span class="eyebrow">Feed</span>
+            <h1>{{ mode === 'top' ? 'Top this week' : 'Latest' }}</h1>
         </div>
-
-        <h2>Top posts for today:</h2>
-        <ul class="comment" *ngFor="let post of topFunnyPosts">
-
-            <hr>
-
-            <li>
-                <span class="rankings">
-                    <span (click)="upRank(post, 1)">👍</span>{{post.rankOne}}
-                    <span (click)="upRank(post, 2)">❤️</span>{{post.rankTwo}}
-                    <span (click)="upRank(post, 3)">😂</span>{{post.rankThree}}
-                    <span (click)="upRank(post, 4)">🤯</span>{{post.rankFour}}
-                    <span (click)="upRank(post, 5)">😠</span>{{post.rankFive}}
-                    <span (click)="upRank(post, 6)">🙄</span>{{post.rankSix}}
-                    <span (click)="upRank(post, 7)">🤢</span>{{post.rankSeven}}
-
-                </span>
-                <span class="username"> User "{{post.user?.firstName}}" posted: </span>
-                <h3><a href="post/{{post.id}}/view">{{post.title}}</a></h3>
-            </li>
-        </ul>
-
-        <button id="jh-create-entity" class="btn btn-primary float-right jh-create-entity create-post"
-            [routerLink]="['/post/new']">
-            <fa-icon icon="plus"></fa-icon>
-            <span>
-                Post Something
-            </span>
-        </button>
-
+        <div class="segmented" role="tablist">
+            <button type="button" role="tab" [class.active]="mode === 'top'" (click)="setMode('top')">Top</button>
+            <button type="button" role="tab" [class.active]="mode === 'latest'" (click)="setMode('latest')">Latest</button>
+        </div>
     </div>
-</div>
+
+    <jhi-alert-error></jhi-alert-error>
+
+    <div *ngIf="loading" class="feed" aria-busy="true">
+        <div class="post-card" *ngFor="let i of [1, 2, 3]">
+            <div class="skeleton w-25"></div>
+            <div class="skeleton w-75"></div>
+            <div class="skeleton w-50"></div>
+        </div>
+    </div>
+
+    <div class="empty" *ngIf="!loading && posts.length === 0">
+        <p *ngIf="mode === 'top'">Nothing has been posted this week yet.</p>
+        <p *ngIf="mode === 'latest'">Nothing here yet. Be the first to post something you overheard.</p>
+        <a class="btn btn-primary" routerLink="/post/new">Post something</a>
+    </div>
+
+    <div class="feed" *ngIf="!loading && posts.length > 0">
+        <jhi-post-card *ngFor="let post of posts; trackBy: trackId" [post]="post" [commentCount]="commentCounts[post.id!]"></jhi-post-card>
+    </div>
+
+    <div class="text-center mt-4" *ngIf="!loading && hasMore">
+        <button type="button" class="btn btn-secondary" (click)="loadMore()" [disabled]="loadingMore">
+            {{ loadingMore ? 'Loading…' : 'Load more' }}
+        </button>
+    </div>
+</section>

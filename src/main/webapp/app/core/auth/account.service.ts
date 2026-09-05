@@ -62,6 +62,11 @@ export class AccountService {
     return this.authenticationState.asObservable();
   }
 
+  /** The currently signed-in account, or null. */
+  getAccount(): Account | null {
+    return this.userIdentity;
+  }
+
   getImageUrl(): string {
     return this.userIdentity ? this.userIdentity.imageUrl : '';
   }

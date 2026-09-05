@@ -1,32 +1,28 @@
 <div>
-    <h2 id="page-heading">
-        <span>Overheard Comments</span>
-
-        <button id="jh-create-entity" class="btn btn-primary float-right jh-create-entity create-overheard-comment" [routerLink]="['/overheard-comment/new']">
-            <fa-icon icon="plus"></fa-icon>
-            <span>
-            Create a new Overheard Comment
-            </span>
-        </button>
-    </h2>
+    <div class="page-header">
+        <div>
+            <span class="eyebrow">Admin</span>
+            <h1 id="page-heading">All comments</h1>
+        </div>
+    </div>
 
     <jhi-alert-error></jhi-alert-error>
 
     <jhi-alert></jhi-alert>
 
-    <div class="alert alert-warning" id="no-result" *ngIf="overheardComments?.length === 0">
-        <span>No overheardComments found</span>
+    <div class="empty" id="no-result" *ngIf="overheardComments?.length === 0">
+        <p>No comments found.</p>
     </div>
 
     <div class="table-responsive" id="entities" *ngIf="overheardComments?.length > 0">
-        <table class="table table-striped" aria-describedby="page-heading">
+        <table class="table" aria-describedby="page-heading">
             <thead>
                 <tr>
                     <th scope="col" ><span>ID</span></th>
                     <th scope="col" ><span>Content</span></th>
                     <th scope="col" ><span>Date</span></th>
                     <th scope="col" ><span>Ranking</span></th>
-                    <th scope="col" ><span>User</span></th>
+                    <th scope="col" ><span>Author</span></th>
                     <th scope="col" ><span>Post</span></th>
                     <th scope="col"></th>
                 </tr>
@@ -37,26 +33,24 @@
                     <td>{{ overheardComment.content }}</td>
                     <td>{{ overheardComment.date | date:'medium' }}</td>
                     <td>{{ overheardComment.ranking }}</td>
-                    <td>
-                        {{ overheardComment.user?.id }}
-                    </td>
+                    <td>{{ overheardComment.user?.login }}</td>
                     <td>
                         <div *ngIf="overheardComment.post">
-                            <a [routerLink]="['/post', overheardComment.post?.id, 'view']" >{{ overheardComment.post?.id }}</a>
+                            <a [routerLink]="['/post', overheardComment.post?.id, 'view']" >{{ overheardComment.post?.title }}</a>
                         </div>
                     </td>
                     <td class="text-right">
                         <div class="btn-group">
                             <button type="submit"
                                     [routerLink]="['/overheard-comment', overheardComment.id, 'view']"
-                                    class="btn btn-info btn-sm">
+                                    class="btn btn-secondary btn-sm">
                                 <fa-icon icon="eye"></fa-icon>
                                 <span class="d-none d-md-inline">View</span>
                             </button>
 
                             <button type="submit"
                                     [routerLink]="['/overheard-comment', overheardComment.id, 'edit']"
-                                    class="btn btn-primary btn-sm">
+                                    class="btn btn-secondary btn-sm">
                                 <fa-icon icon="pencil-alt"></fa-icon>
                                 <span class="d-none d-md-inline">Edit</span>
                             </button>

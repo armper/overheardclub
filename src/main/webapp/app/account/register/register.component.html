@@ -1,32 +1,37 @@
 <div>
     <div class="row justify-content-center">
-        <div class="col-md-8">
-            <h1>Registration</h1>
+        <div class="col-12">
+            <div class="page-header">
+                <div>
+                    <span class="eyebrow">Join</span>
+                    <h1>Create your account</h1>
+                </div>
+            </div>
 
             <div class="alert alert-success" *ngIf="success">
-                <strong>Registration saved!</strong> Please check your email for confirmation.
+                <strong>You're almost in.</strong> Check your email for a confirmation link.
             </div>
 
             <div class="alert alert-danger" *ngIf="error">
-                <strong>Registration failed!</strong> Please try again later.
+                <strong>Registration failed.</strong> Please try again later.
             </div>
 
             <div class="alert alert-danger" *ngIf="errorUserExists">
-                <strong>Login name already registered!</strong> Please choose another one.
+                <strong>That username is taken.</strong> Please choose another one.
             </div>
 
             <div class="alert alert-danger" *ngIf="errorEmailExists">
-                <strong>Email is already in use!</strong> Please choose another one.
+                <strong>That email is already in use.</strong> Please choose another one.
             </div>
 
             <div class="alert alert-danger" *ngIf="doNotMatch">
-                The password and its confirmation do not match!
+                The password and its confirmation do not match.
             </div>
         </div>
     </div>
 
     <div class="row justify-content-center">
-        <div class="col-md-8">
+        <div class="col-12">
             <form name="form" role="form" (ngSubmit)="register()" [formGroup]="registerForm" *ngIf="!success">
                 <div class="form-group">
                     <label class="form-control-label" for="login">Username</label>
@@ -85,8 +90,8 @@
                 </div>
 
                 <div class="form-group">
-                    <label class="form-control-label" for="password">New password</label>
-                    <input type="password" class="form-control" id="password" name="password" placeholder="New password"
+                    <label class="form-control-label" for="password">Password</label>
+                    <input type="password" class="form-control" id="password" name="password" placeholder="Choose a password"
                             formControlName="password">
 
                     <div *ngIf="registerForm.get('password')!.invalid && (registerForm.get('password')!.dirty || registerForm.get('password')!.touched)">
@@ -110,8 +115,8 @@
                 </div>
 
                 <div class="form-group">
-                    <label class="form-control-label" for="confirmPassword">New password confirmation</label>
-                    <input type="password" class="form-control" id="confirmPassword" name="confirmPassword" placeholder="Confirm the new password"
+                    <label class="form-control-label" for="confirmPassword">Confirm password</label>
+                    <input type="password" class="form-control" id="confirmPassword" name="confirmPassword" placeholder="Repeat the password"
                             formControlName="confirmPassword">
 
                     <div *ngIf="registerForm.get('confirmPassword')!.invalid && (registerForm.get('confirmPassword')!.dirty || registerForm.get('confirmPassword')!.touched)">
@@ -132,13 +137,10 @@
                     </div>
                 </div>
 
-                <button type="submit" [disabled]="registerForm.invalid" class="btn btn-primary">Register</button>
+                <button type="submit" [disabled]="registerForm.invalid" class="btn btn-primary">Create account</button>
             </form>
 
-            <div class="mt-3 alert alert-warning">
-                <span>If you want to </span>
-                <a class="alert-link" (click)="openLogin()">sign in</a><span>, you can try the default accounts:<br/>- Administrator (login="admin" and password="admin") <br/>- User (login="user" and password="user").</span>
-            </div>
+            <p class="small-muted mt-4" *ngIf="!success">Already a member? <a (click)="openLogin()">Sign in</a></p>
         </div>
     </div>
 </div>

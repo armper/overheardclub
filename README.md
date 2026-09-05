@@ -1,6 +1,19 @@
-# overheardclub
+# Overheard Club
 
-This application was generated using JHipster 6.7.1, you can find documentation and help at [https://www.jhipster.tech/documentation-archive/v6.7.1](https://www.jhipster.tech/documentation-archive/v6.7.1).
+A small, members-only feed for the funny, strange and brilliant things people say in passing.
+Members post a quote under a topic, react to each other's posts with a single emoji reaction, and leave comments.
+
+The frontend is Angular (JHipster 6 layout) with a minimal, monochrome design; the backend is Spring Boot with JWT auth, H2 in development and PostgreSQL in production.
+
+## What's in the app
+
+- **Feed** (`/`): top posts of the week or the latest posts, with a load-more control. Visitors see a landing page instead.
+- **Topics** (`/topic`): a grid of topics with post counts; create a topic inline; open a topic to see its posts.
+- **Post** (`/post/:id/view`): the full quote, reactions, and an inline comment form. Authors and admins can edit or delete.
+- **New post** (`/post/new`, optionally `?topic=<id>`): a short form with a live character count.
+- **Reactions**: 👍 ❤️ 😂 🤯 🙄 — one reaction per member per post, tracked in the post's reaction list.
+- **Account**: register, activate, sign in, settings, password, reset.
+- **Admin** menu (admins only): users, raw post/comment tables, metrics, health, configuration, audits, logs, API docs.
 
 ## Development
 

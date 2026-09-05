@@ -19,7 +19,7 @@ export class PostResolve implements Resolve<IPost> {
     const id = route.params['id'];
     if (id) {
       return this.service.find(id).pipe(
-        flatMap((post: HttpResponse<Post>) => {
+        flatMap((post: HttpResponse<IPost>) => {
           if (post.body) {
             return of(post.body);
           } else {

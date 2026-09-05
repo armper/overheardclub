@@ -25,6 +25,11 @@ export class MainComponent implements OnInit {
     });
   }
 
+  /** Admin screens hold tables and need the full width; everything else reads best in a narrow column. */
+  isWide(): boolean {
+    return this.router.url.startsWith('/admin');
+  }
+
   private getPageTitle(routeSnapshot: ActivatedRouteSnapshot): string {
     let title: string = routeSnapshot.data && routeSnapshot.data['pageTitle'] ? routeSnapshot.data['pageTitle'] : '';
     if (routeSnapshot.firstChild) {
@@ -36,8 +41,8 @@ export class MainComponent implements OnInit {
   private updateTitle(): void {
     let pageTitle = this.getPageTitle(this.router.routerState.snapshot.root);
     if (!pageTitle) {
-      pageTitle = 'Overheardclub';
+      pageTitle = 'Overheard Club';
     }
-    this.titleService.setTitle(pageTitle);
+    this.titleService.setTitle(pageTitle === 'Overheard Club' ? pageTitle : pageTitle + ' · Overheard Club');
   }
 }

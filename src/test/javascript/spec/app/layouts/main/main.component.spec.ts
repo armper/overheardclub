@@ -35,7 +35,8 @@ describe('Component Tests', () => {
 
     describe('page title', () => {
       let routerState: any;
-      const defaultPageTitle = 'Overheardclub';
+      const defaultPageTitle = 'Overheard Club';
+      const titleSuffix = ' · Overheard Club';
       const parentRoutePageTitle = 'parentTitle';
       const childRoutePageTitle = 'childTitle';
       const navigationEnd = new NavigationEnd(1, '', '');
@@ -64,7 +65,7 @@ describe('Component Tests', () => {
           routerEventsSubject.next(navigationEnd);
 
           // THEN
-          expect(titleService.setTitle).toHaveBeenCalledWith(parentRoutePageTitle);
+          expect(titleService.setTitle).toHaveBeenCalledWith(parentRoutePageTitle + titleSuffix);
         });
 
         it('should set page title to child route pageTitle if child routes exist and pageTitle is set for child route', () => {
@@ -76,7 +77,7 @@ describe('Component Tests', () => {
           routerEventsSubject.next(navigationEnd);
 
           // THEN
-          expect(titleService.setTitle).toHaveBeenCalledWith(childRoutePageTitle);
+          expect(titleService.setTitle).toHaveBeenCalledWith(childRoutePageTitle + titleSuffix);
         });
 
         it('should set page title to parent route pageTitle if child routes exists but pageTitle is not set for child route data', () => {
@@ -88,7 +89,7 @@ describe('Component Tests', () => {
           routerEventsSubject.next(navigationEnd);
 
           // THEN
-          expect(titleService.setTitle).toHaveBeenCalledWith(parentRoutePageTitle);
+          expect(titleService.setTitle).toHaveBeenCalledWith(parentRoutePageTitle + titleSuffix);
         });
 
         it('should set page title to parent route pageTitle if child routes exists but data is not set for child route', () => {
@@ -100,7 +101,7 @@ describe('Component Tests', () => {
           routerEventsSubject.next(navigationEnd);
 
           // THEN
-          expect(titleService.setTitle).toHaveBeenCalledWith(parentRoutePageTitle);
+          expect(titleService.setTitle).toHaveBeenCalledWith(parentRoutePageTitle + titleSuffix);
         });
       });
     });

@@ -39,7 +39,7 @@ export const overheardCommentRoute: Routes = [
     component: OverheardCommentComponent,
     data: {
       authorities: ['ROLE_USER'],
-      pageTitle: 'OverheardComments'
+      pageTitle: 'Comments'
     },
     canActivate: [UserRouteAccessService]
   },
@@ -51,7 +51,7 @@ export const overheardCommentRoute: Routes = [
     },
     data: {
       authorities: ['ROLE_USER'],
-      pageTitle: 'OverheardComments'
+      pageTitle: 'Comments'
     },
     canActivate: [UserRouteAccessService]
   },
@@ -63,7 +63,7 @@ export const overheardCommentRoute: Routes = [
     },
     data: {
       authorities: ['ROLE_USER'],
-      pageTitle: 'OverheardComments'
+      pageTitle: 'Comments'
     },
     canActivate: [UserRouteAccessService]
   },
@@ -75,7 +75,7 @@ export const overheardCommentRoute: Routes = [
     },
     data: {
       authorities: ['ROLE_USER'],
-      pageTitle: 'OverheardComments'
+      pageTitle: 'Comments'
     },
     canActivate: [UserRouteAccessService]
   }

@@ -1,57 +1,45 @@
-<div class="row justify-content-center">
-    <div class="col-8">
-        <div *ngIf="topic">
-            <h2>{{ topic.title }}</h2>
+<div *ngIf="topic">
+    <a class="btn btn-link pl-0 mb-3" routerLink="/topic">
+        <fa-icon icon="arrow-left"></fa-icon>&nbsp;<span>All topics</span>
+    </a>
 
-            <jhi-alert-error></jhi-alert-error>
-
-            <dl hidden="!isAdmin()" class="row-md jh-entity-details">
-                <dt><span>Title</span></dt>
-                <dd>
-                    <span>{{ topic.title }}</span>
-                </dd>
-                <dt><span>User</span></dt>
-                <dd>
-                    {{ topic.user?.id }}
-                </dd>
-            </dl>
-
-            <button hidden="!isAdmin()" type="submit" (click)="previousState()" class="btn btn-info">
-                <fa-icon icon="arrow-left"></fa-icon>&nbsp;<span>Back</span>
-            </button>
-
-            <button hidden="!isAdmin()" type="button" [routerLink]="['/topic', topic.id, 'edit']"
-                class="btn btn-primary">
-                <fa-icon icon="pencil-alt"></fa-icon>&nbsp;<span>Edit</span>
-            </button>
-
-            <ul class="comment" *ngFor="let post of posts">
-
-                <hr>
-
-                <li>
-                    <span class="rankings">
-                        <span (click)="upRank(post, 1)">👍</span>{{post.rankOne}}
-                        <span (click)="upRank(post, 2)">❤️</span>{{post.rankTwo}}
-                        <span (click)="upRank(post, 3)">😂</span>{{post.rankThree}}
-                        <span (click)="upRank(post, 4)">🤯</span>{{post.rankFour}}
-                        <span (click)="upRank(post, 5)">😠</span>{{post.rankFive}}
-                        <span (click)="upRank(post, 6)">🙄</span>{{post.rankSix}}
-                        <span (click)="upRank(post, 7)">🤢</span>{{post.rankSeven}}
-
-                    </span>
-                    <span class="username"> User "{{post.user?.firstName}}" posted: </span>
-                    <h3><a href="post/{{post.id}}/view">{{post.title}}</a></h3>
-                </li>
-            </ul>
-
-            <button id="jh-create-entity" class="btn btn-primary float-right jh-create-entity create-post"
-                [routerLink]="['/post/new']">
-                <fa-icon icon="plus"></fa-icon>
-                <span>
-                    Post Something
-                </span>
-            </button>
+    <div class="page-header">
+        <div>
+            <span class="eyebrow">Topic</span>
+            <h1>{{ topic.title }}</h1>
         </div>
+        <div class="d-flex" style="gap: 0.4rem">
+            <a class="btn btn-secondary btn-sm" *ngIf="canEdit()" [routerLink]="['/topic', topic.id, 'edit']" title="Rename topic">
+                <fa-icon icon="pencil-alt"></fa-icon>
+            </a>
+            <a class="btn btn-primary btn-sm" [routerLink]="['/post/new']" [queryParams]="{ topic: topic.id }">
+                <fa-icon icon="plus"></fa-icon><span>Post here</span>
+            </a>
+        </div>
+    </div>
+
+    <jhi-alert-error></jhi-alert-error>
+
+    <div *ngIf="loading" class="feed" aria-busy="true">
+        <div class="post-card" *ngFor="let i of [1, 2]">
+            <div class="skeleton w-25"></div>
+            <div class="skeleton w-75"></div>
+            <div class="skeleton w-50"></div>
+        </div>
+    </div>
+
+    <div class="empty" *ngIf="!loading && posts.length === 0">
+        <p>Nothing has been posted in this topic yet.</p>
+        <a class="btn btn-primary" [routerLink]="['/post/new']" [queryParams]="{ topic: topic.id }">Post the first one</a>
+    </div>
+
+    <div class="feed" *ngIf="!loading && posts.length > 0">
+        <jhi-post-card *ngFor="let post of posts; trackBy: trackId" [post]="post" [hideTopic]="true" [commentCount]="commentCounts[post.id!]"></jhi-post-card>
+    </div>
+
+    <div class="text-center mt-4" *ngIf="!loading && hasMore">
+        <button type="button" class="btn btn-secondary" (click)="loadMore()" [disabled]="loadingMore">
+            {{ loadingMore ? 'Loading…' : 'Load more' }}
+        </button>
     </div>
 </div>

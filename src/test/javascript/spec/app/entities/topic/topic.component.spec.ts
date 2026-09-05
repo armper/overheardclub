@@ -1,6 +1,7 @@
 import { ComponentFixture, TestBed } from '@angular/core/testing';
 import { of } from 'rxjs';
 import { HttpHeaders, HttpResponse } from '@angular/common/http';
+import { FormBuilder } from '@angular/forms';
 
 import { OverheardclubTestModule } from '../../../test.module';
 import { TopicComponent } from 'app/entities/topic/topic.component';
@@ -16,7 +17,8 @@ describe('Component Tests', () => {
     beforeEach(() => {
       TestBed.configureTestingModule({
         imports: [OverheardclubTestModule],
-        declarations: [TopicComponent]
+        declarations: [TopicComponent],
+        providers: [FormBuilder]
       })
         .overrideTemplate(TopicComponent, '')
         .compileComponents();
