@@ -1,0 +1,34 @@
+spring:
+  application:
+    name: overheardclub
+  profiles:
+    default: dev
+  jpa:
+    open-in-view: false
+    hibernate:
+      ddl-auto: validate
+  flyway:
+    enabled: true
+  jackson:
+    default-property-inclusion: non_null
+
+server:
+  port: 8076
+  compression:
+    enabled: true
+
+management:
+  endpoints:
+    web:
+      exposure:
+        include: health,info
+
+app:
+  jwt:
+    # Override in production: APP_JWT_SECRET (at least 32 characters).
+    secret: ${APP_JWT_SECRET:change-me-this-is-only-a-development-secret-key}
+    ttl-hours: 720
+  seed:
+    enabled: false
+    # First-run admin password. Override with APP_SEED_ADMIN_PASSWORD.
+    admin-password: ${APP_SEED_ADMIN_PASSWORD:}

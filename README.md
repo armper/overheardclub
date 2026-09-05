@@ -1,214 +1,78 @@
 # Overheard Club
 
 A small, members-only feed for the funny, strange and brilliant things people say in passing.
-Members post a quote under a topic, react to each other's posts with a single emoji reaction, and leave comments.
+Members post a quote under a topic, leave one emoji reaction per post, and comment.
 
-The frontend is Angular (JHipster 6 layout) with a minimal, monochrome design; the backend is Spring Boot with JWT auth, H2 in development and PostgreSQL in production.
+- **Backend**: Java 21, Spring Boot 3, Spring Security (JWT), Spring Data JPA, Flyway. H2 in development, PostgreSQL in production.
+- **Frontend**: React 18, TypeScript, Vite, React Router. No UI framework; one small stylesheet with a minimal monochrome design.
 
 ## What's in the app
 
-- **Feed** (`/`): top posts of the week or the latest posts, with a load-more control. Visitors see a landing page instead.
-- **Topics** (`/topic`): a grid of topics with post counts; create a topic inline; open a topic to see its posts.
-- **Post** (`/post/:id/view`): the full quote, reactions, and an inline comment form. Authors and admins can edit or delete.
-- **New post** (`/post/new`, optionally `?topic=<id>`): a short form with a live character count.
-- **Reactions**: 👍 ❤️ 😂 🤯 🙄 — one reaction per member per post, tracked in the post's reaction list.
-- **Account**: register, activate, sign in, settings, password, reset.
-- **Admin** menu (admins only): users, raw post/comment tables, metrics, health, configuration, audits, logs, API docs.
+| Route | What it does |
+|---|---|
+| `/` | Feed: **Top this week** or **Latest**, with load-more. Visitors see a short landing section above it. |
+| `/topics` | Topic grid with post counts; members can create topics inline. |
+| `/topics/:id` | A topic's posts. The creator or an admin can rename it, or delete it while it's empty. |
+| `/posts/:id` | The full quote, reactions, and comments. The author or an admin can edit or delete. |
+| `/posts/new`, `/posts/:id/edit` | Post editor, with `?topic=<id>` to pre-select a topic. |
+| `/login`, `/register` | Sign in or join. Registration is immediate (no email step). |
+| `/settings` | Display name, email, and password. |
+| `/admin/users` | Admins: member list and role changes. |
 
-## Development
+Reading is public; posting, reacting and commenting need an account. Each member gets one reaction per post: 👍 ❤️ 😂 🤯 🙄. Picking another emoji switches it, clicking the same one removes it.
 
-Before you can build this project, you must install and configure the following dependencies on your machine:
+## Run it locally
 
-1. [Node.js][]: We use Node to run a development web server and build the project.
-   Depending on your system, you can install Node either from source or as a pre-packaged bundle.
+Prerequisites: Java 21 and Node 20+.
 
-After installing Node, you should be able to run the following command to install development tools.
-You will only need to run this command when dependencies change in [package.json](package.json).
+```bash
+# Backend on :8076 (H2 file database in ./data, sample data seeded on first run)
+./mvnw spring-boot:run
 
-    npm install
-
-We use npm scripts and [Webpack][] as our build system.
-
-Run the following commands in two separate terminals to create a blissful development experience where your browser
-auto-refreshes when files change on your hard drive.
-
-    ./mvnw
-    npm start
-
-Npm is also used to manage CSS and JavaScript dependencies used in this application. You can upgrade dependencies by
-specifying a newer version in [package.json](package.json). You can also run `npm update` and `npm install` to manage dependencies.
-Add the `help` flag on any command to see how you can use it. For example, `npm help update`.
-
-The `npm run` command will list all of the scripts available to run for this project.
-
-### PWA Support
-
-JHipster ships with PWA (Progressive Web App) support, and it's turned off by default. One of the main components of a PWA is a service worker.
-
-The service worker initialization code is commented out by default. To enable it, uncomment the following code in `src/main/webapp/index.html`:
-
-```html
-<script>
-  if ('serviceWorker' in navigator) {
-    navigator.serviceWorker.register('./service-worker.js').then(function() {
-      console.log('Service Worker Registered');
-    });
-  }
-</script>
+# Frontend dev server on :5173, proxying /api to :8076
+cd frontend && npm install && npm run dev
 ```
 
-Note: [Workbox](https://developers.google.com/web/tools/workbox/) powers JHipster's service worker. It dynamically generates the `service-worker.js` file.
+Dev accounts (created on first start of an empty dev database): `admin` / `admin`, `alice` / `password`, `sam` / `password`.
 
-### Managing dependencies
+To serve the built frontend from the backend instead of the dev server:
 
-For example, to add [Leaflet][] library as a runtime dependency of your application, you would run following command:
-
-    npm install --save --save-exact leaflet
-
-To benefit from TypeScript type definitions from [DefinitelyTyped][] repository in development, you would run following command:
-
-    npm install --save-dev --save-exact @types/leaflet
-
-Then you would import the JS and CSS files specified in library's installation instructions so that [Webpack][] knows about them:
-Edit [src/main/webapp/app/vendor.ts](src/main/webapp/app/vendor.ts) file:
-
-```
-import 'leaflet/dist/leaflet.js';
+```bash
+cd frontend && npm run build   # writes to src/main/resources/static
+./mvnw spring-boot:run          # open http://localhost:8076
 ```
 
-Edit [src/main/webapp/content/scss/vendor.scss](src/main/webapp/content/scss/vendor.scss) file:
+## Tests
 
-```
-@import '~leaflet/dist/leaflet.css';
-```
-
-Note: There are still a few other things remaining to do for Leaflet that we won't detail here.
-
-For further instructions on how to develop with JHipster, have a look at [Using JHipster in development][].
-
-### Using Angular CLI
-
-You can also use [Angular CLI][] to generate some custom client code.
-
-For example, the following command:
-
-    ng generate component my-component
-
-will generate few files:
-
-    create src/main/webapp/app/my-component/my-component.component.html
-    create src/main/webapp/app/my-component/my-component.component.ts
-    update src/main/webapp/app/app.module.ts
-
-## Building for production
-
-### Packaging as jar
-
-To build the final jar and optimize the overheardclub application for production, run:
-
-    ./mvnw -Pprod clean verify
-
-This will concatenate and minify the client CSS and JavaScript files. It will also modify `index.html` so it references these new files.
-To ensure everything worked, run:
-
-    java -jar target/*.jar
-
-Then navigate to [http://localhost:8076](http://localhost:8076) in your browser.
-
-Refer to [Using JHipster in production][] for more details.
-
-### Packaging as war
-
-To package your application as a war in order to deploy it to an application server, run:
-
-    ./mvnw -Pprod,war clean verify
-
-## Testing
-
-To launch your application's tests, run:
-
-    ./mvnw verify
-
-### Client tests
-
-Unit tests are run by [Jest][] and written with [Jasmine][]. They're located in [src/test/javascript/](src/test/javascript/) and can be run with:
-
-    npm test
-
-For more information, refer to the [Running tests page][].
-
-### Code quality
-
-Sonar is used to analyse code quality. You can start a local Sonar server (accessible on http://localhost:9001) with:
-
-```
-docker-compose -f src/main/docker/sonar.yml up -d
+```bash
+./mvnw test                      # API flow test against in-memory H2
+cd frontend && npm run typecheck
 ```
 
-You can run a Sonar analysis with using the [sonar-scanner](https://docs.sonarqube.org/display/SCAN/Analyzing+with+SonarQube+Scanner) or by using the maven plugin.
+## Production build and deploy
 
-Then, run a Sonar analysis:
-
-```
-./mvnw -Pprod clean verify sonar:sonar
-```
-
-If you need to re-run the Sonar phase, please be sure to specify at least the `initialize` phase since Sonar properties are loaded from the sonar-project.properties file.
-
-```
-./mvnw initialize sonar:sonar
+```bash
+./mvnw -Pprod package            # builds the React app and bundles it into target/overheardclub-1.0.0.jar
+SPRING_PROFILES_ACTIVE=prod java -jar target/overheardclub-1.0.0.jar
 ```
 
-or
+Configuration is by environment variable:
 
-For more information, refer to the [Code quality page][].
+| Variable | Purpose |
+|---|---|
+| `DATABASE_URL` | JDBC URL, e.g. `jdbc:postgresql://host:5432/overheardclub` |
+| `DATABASE_USER`, `DATABASE_PASSWORD` | Database credentials |
+| `APP_JWT_SECRET` | Token signing secret, at least 32 characters. Required in production. |
+| `APP_SEED_ADMIN_PASSWORD` | Creates the `admin` account on first start of an empty database. |
+| `PORT` | HTTP port (defaults to 8076) |
 
-## Using Docker to simplify development (optional)
+`src/main/appengine/app.yaml` is a starting point for Google App Engine; supply the variables above through the console or a secret manager rather than committing them.
 
-You can use Docker to improve your JHipster development experience. A number of docker-compose configuration are available in the [src/main/docker](src/main/docker) folder to launch required third party services.
+## Migrating data from the previous (JHipster) version
 
-For example, to start a postgresql database in a docker container, run:
+The old database can be carried over. See the two scripts in `db/`:
 
-    docker-compose -f src/main/docker/postgresql.yml up -d
+1. `db/01-rename-legacy-tables.sql` before starting the new app.
+2. `db/02-copy-legacy-data.sql` after its first start, before anyone registers.
 
-To stop it and remove the container, run:
-
-    docker-compose -f src/main/docker/postgresql.yml down
-
-You can also fully dockerize your application and all the services that it depends on.
-To achieve this, first build a docker image of your app by running:
-
-    ./mvnw -Pprod verify jib:dockerBuild
-
-Then run:
-
-    docker-compose -f src/main/docker/app.yml up -d
-
-For more information refer to [Using Docker and Docker-Compose][], this page also contains information on the docker-compose sub-generator (`jhipster docker-compose`), which is able to generate docker configurations for one or several JHipster applications.
-
-## Continuous Integration (optional)
-
-To configure CI for your project, run the ci-cd sub-generator (`jhipster ci-cd`), this will let you generate configuration files for a number of Continuous Integration systems. Consult the [Setting up Continuous Integration][] page for more information.
-
-[jhipster homepage and latest documentation]: https://www.jhipster.tech
-[jhipster 6.7.1 archive]: https://www.jhipster.tech/documentation-archive/v6.7.1
-[using jhipster in development]: https://www.jhipster.tech/documentation-archive/v6.7.1/development/
-[using docker and docker-compose]: https://www.jhipster.tech/documentation-archive/v6.7.1/docker-compose
-[using jhipster in production]: https://www.jhipster.tech/documentation-archive/v6.7.1/production/
-[running tests page]: https://www.jhipster.tech/documentation-archive/v6.7.1/running-tests/
-[code quality page]: https://www.jhipster.tech/documentation-archive/v6.7.1/code-quality/
-[setting up continuous integration]: https://www.jhipster.tech/documentation-archive/v6.7.1/setting-up-ci/
-[node.js]: https://nodejs.org/
-[yarn]: https://yarnpkg.org/
-[webpack]: https://webpack.github.io/
-[angular cli]: https://cli.angular.io/
-[browsersync]: https://www.browsersync.io/
-[jest]: https://facebook.github.io/jest/
-[jasmine]: https://jasmine.github.io/2.0/introduction.html
-[protractor]: https://angular.github.io/protractor/
-[leaflet]: https://leafletjs.com/
-[definitelytyped]: https://definitelytyped.org/
-
-# Deploy to Google App Engine
-
-./mvnw package appengine:deploy -DskipTests -Pgae,prod,prod-gae
+Members keep their passwords. Old reactions are migrated as 👍 because the old schema didn't record which emoji each member chose.
