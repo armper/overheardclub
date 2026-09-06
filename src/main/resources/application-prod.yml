@@ -1,0 +1,15 @@
+spring:
+  datasource:
+    url: ${DATABASE_URL:jdbc:postgresql://localhost:5432/overheardclub}
+    username: ${DATABASE_USER:overheardclub}
+    password: ${DATABASE_PASSWORD:}
+    hikari:
+      maximum-pool-size: 8
+
+server:
+  port: ${PORT:8076}
+
+management:
+  health:
+    diskspace:
+      enabled: false
