@@ -1,0 +1,35 @@
+<article class="post-card card mb-3">
+    <div class="card-body">
+        <div class="post-meta text-muted small mb-1">
+            <a *ngIf="showTopic && post.topic" class="badge badge-pill badge-light topic-badge"
+               [routerLink]="['/topic', post.topic.id, 'view']">#{{ post.topic.title }}</a>
+            <span class="author"><fa-icon icon="user-circle"></fa-icon> {{ author }}</span>
+            <span *ngIf="post.date" class="date" [title]="post.date.toDate() | date:'medium'">· {{ post.date.fromNow() }}</span>
+        </div>
+
+        <h3 class="post-title h5 mb-2" *ngIf="!full">
+            <a [routerLink]="['/post', post.id, 'view']">{{ post.title }}</a>
+        </h3>
+        <h2 class="post-title mb-3" *ngIf="full">{{ post.title }}</h2>
+
+        <blockquote class="post-content mb-3" [class.full]="full">{{ preview }}</blockquote>
+
+        <div class="d-flex flex-wrap align-items-center reactions" role="group" aria-label="Reactions">
+            <button type="button" *ngFor="let reaction of reactions"
+                    class="btn btn-sm btn-reaction mr-1 mb-1"
+                    [class.disabled-reaction]="alreadyReacted"
+                    [disabled]="reacting"
+                    [title]="alreadyReacted ? 'You already reacted' : reaction.label"
+                    [attr.aria-label]="reaction.label + ' (' + reaction.count(post) + ')'"
+                    (click)="react(reaction)">
+                <span class="emoji">{{ reaction.emoji }}</span>
+                <span class="count">{{ reaction.count(post) }}</span>
+            </button>
+            <a *ngIf="!full" class="ml-auto small comments-link" [routerLink]="['/post', post.id, 'view']">
+                <fa-icon icon="comment"></fa-icon> Comments
+            </a>
+        </div>
+        <small class="text-danger d-block" *ngIf="error">{{ error }}</small>
+        <small class="text-muted d-block" *ngIf="!account">Sign in to react.</small>
+    </div>
+</article>

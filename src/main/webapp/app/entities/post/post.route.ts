@@ -19,7 +19,7 @@ export class PostResolve implements Resolve<IPost> {
     const id = route.params['id'];
     if (id) {
       return this.service.find(id).pipe(
-        flatMap((post: HttpResponse<Post>) => {
+        flatMap((post: HttpResponse<IPost>) => {
           if (post.body) {
             return of(post.body);
           } else {
@@ -38,7 +38,7 @@ export const postRoute: Routes = [
     path: '',
     component: PostComponent,
     data: {
-      authorities: ['ROLE_USER'],
+      authorities: ['ROLE_ADMIN'],
       pageTitle: 'Posts'
     },
     canActivate: [UserRouteAccessService]
@@ -50,10 +50,8 @@ export const postRoute: Routes = [
       post: PostResolve
     },
     data: {
-      authorities: ['ROLE_USER'],
-      pageTitle: 'Posts'
-    },
-    canActivate: [UserRouteAccessService]
+      pageTitle: 'Overheard'
+    }
   },
   {
     path: 'new',

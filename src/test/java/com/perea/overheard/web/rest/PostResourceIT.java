@@ -11,6 +11,8 @@ import com.perea.overheard.web.rest.errors.ExceptionTranslator;
 import com.perea.overheard.service.dto.PostCriteria;
 import com.perea.overheard.service.PostQueryService;
 
+import org.springframework.security.test.context.support.WithMockUser;
+import com.perea.overheard.service.UserService;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.mockito.Mock;
@@ -36,6 +38,7 @@ import java.util.List;
 import static com.perea.overheard.web.rest.TestUtil.createFormattingConversionService;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.hamcrest.Matchers.hasItem;
+import static org.hamcrest.Matchers.not;
 import static org.mockito.Mockito.*;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
@@ -44,6 +47,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
  * Integration tests for the {@link PostResource} REST controller.
  */
 @SpringBootTest(classes = OverheardclubApp.class)
+@WithMockUser(username = "admin", authorities = {"ROLE_ADMIN", "ROLE_USER"})
 public class PostResourceIT {
 
     private static final String DEFAULT_TITLE = "AAAAAAAAAA";
@@ -103,6 +107,9 @@ public class PostResourceIT {
     private EntityManager em;
 
     @Autowired
+    private UserService userService;
+
+    @Autowired
     private Validator validator;
 
     private MockMvc restPostMockMvc;
@@ -112,7 +119,7 @@ public class PostResourceIT {
     @BeforeEach
     public void setup() {
         MockitoAnnotations.initMocks(this);
-        final PostResource postResource = new PostResource(postService, postQueryService);
+        final PostResource postResource = new PostResource(postService, postQueryService, userService);
         this.restPostMockMvc = MockMvcBuilders.standaloneSetup(postResource)
             .setCustomArgumentResolvers(pageableArgumentResolver)
             .setControllerAdvice(exceptionTranslator)
@@ -315,7 +322,7 @@ public class PostResourceIT {
     
     @SuppressWarnings({"unchecked"})
     public void getAllPostsWithEagerRelationshipsIsEnabled() throws Exception {
-        PostResource postResource = new PostResource(postServiceMock, postQueryService);
+        PostResource postResource = new PostResource(postServiceMock, postQueryService, userService);
         when(postServiceMock.findAllWithEagerRelationships(any())).thenReturn(new PageImpl(new ArrayList<>()));
 
         MockMvc restPostMockMvc = MockMvcBuilders.standaloneSetup(postResource)
@@ -332,7 +339,7 @@ public class PostResourceIT {
 
     @SuppressWarnings({"unchecked"})
     public void getAllPostsWithEagerRelationshipsIsNotEnabled() throws Exception {
-        PostResource postResource = new PostResource(postServiceMock, postQueryService);
+        PostResource postResource = new PostResource(postServiceMock, postQueryService, userService);
             when(postServiceMock.findAllWithEagerRelationships(any())).thenReturn(new PageImpl(new ArrayList<>()));
             MockMvc restPostMockMvc = MockMvcBuilders.standaloneSetup(postResource)
             .setCustomArgumentResolvers(pageableArgumentResolver)
@@ -1316,5 +1323,97 @@ public class PostResourceIT {
         // Validate the database contains one less item
         List<Post> postList = postRepository.findAll();
         assertThat(postList).hasSize(databaseSizeBeforeDelete - 1);
+    }
+
+    @Test
+    @Transactional
+    @WithMockUser(username = "user", authorities = "ROLE_USER")
+    public void createPostAsUserIgnoresClientSuppliedRanksAndAuthor() throws Exception {
+        restPostMockMvc.perform(post("/api/posts")
+            .contentType(TestUtil.APPLICATION_JSON)
+            .content(TestUtil.convertObjectToJsonBytes(post)))
+            .andExpect(status().isCreated());
+
+        List<Post> postList = postRepository.findAll();
+        Post testPost = postList.get(postList.size() - 1);
+        assertThat(testPost.getUser().getLogin()).isEqualTo("user");
+        assertThat(testPost.getRankOne()).isEqualTo(0);
+        assertThat(testPost.getDate()).isAfter(DEFAULT_DATE);
+    }
+
+    @Test
+    @Transactional
+    @WithMockUser(username = "user", authorities = "ROLE_USER")
+    public void userCannotEditOrDeleteSomeoneElsesPost() throws Exception {
+        postRepository.saveAndFlush(post);
+        Post updated = postRepository.findById(post.getId()).get();
+        em.detach(updated);
+        updated.setTitle(UPDATED_TITLE);
+
+        restPostMockMvc.perform(put("/api/posts")
+            .contentType(TestUtil.APPLICATION_JSON)
+            .content(TestUtil.convertObjectToJsonBytes(updated)))
+            .andExpect(status().isForbidden());
+
+        restPostMockMvc.perform(delete("/api/posts/{id}", post.getId()))
+            .andExpect(status().isForbidden());
+
+        assertThat(postRepository.findById(post.getId()).get().getTitle()).isEqualTo(DEFAULT_TITLE);
+    }
+
+    @Test
+    @Transactional
+    @WithMockUser(username = "user", authorities = "ROLE_USER")
+    public void reactToPostOnlyOnce() throws Exception {
+        postRepository.saveAndFlush(post);
+
+        restPostMockMvc.perform(post("/api/posts/{id}/reactions/{reaction}", post.getId(), 3))
+            .andExpect(status().isOk())
+            .andExpect(jsonPath("$.rankThree").value(DEFAULT_RANK_THREE + 1));
+
+        restPostMockMvc.perform(post("/api/posts/{id}/reactions/{reaction}", post.getId(), 1))
+            .andExpect(status().isBadRequest());
+
+        restPostMockMvc.perform(post("/api/posts/{id}/reactions/{reaction}", post.getId(), 9))
+            .andExpect(status().isBadRequest());
+
+        Post testPost = postRepository.findById(post.getId()).get();
+        assertThat(testPost.getRankThree()).isEqualTo(DEFAULT_RANK_THREE + 1);
+        assertThat(testPost.getRankOne()).isEqualTo(DEFAULT_RANK_ONE);
+    }
+
+    @Test
+    @Transactional
+    public void getTopPostsOrdersByTotalReactions() throws Exception {
+        post.setDate(Instant.now());
+        postRepository.saveAndFlush(post);
+        Post popular = createEntity(em).date(Instant.now()).rankFive(50);
+        postRepository.saveAndFlush(popular);
+        Post old = createEntity(em).date(Instant.now().minus(30, ChronoUnit.DAYS)).rankOne(500);
+        postRepository.saveAndFlush(old);
+
+        restPostMockMvc.perform(get("/api/posts/top?days=7"))
+            .andExpect(status().isOk())
+            .andExpect(jsonPath("$.[0].id").value(popular.getId().intValue()))
+            .andExpect(jsonPath("$.[*].id").value(hasItem(post.getId().intValue())))
+            .andExpect(jsonPath("$.[*].id").value(not(hasItem(old.getId().intValue()))));
+    }
+
+    @Test
+    @Transactional
+    public void searchPostsMatchesTitleOrContent() throws Exception {
+        postRepository.saveAndFlush(post.title("The parrot said").content("something unexpected"));
+
+        restPostMockMvc.perform(get("/api/posts/search?q=PARROT"))
+            .andExpect(status().isOk())
+            .andExpect(jsonPath("$.[*].id").value(hasItem(post.getId().intValue())));
+
+        restPostMockMvc.perform(get("/api/posts/search?q=unexpected"))
+            .andExpect(status().isOk())
+            .andExpect(jsonPath("$.[*].id").value(hasItem(post.getId().intValue())));
+
+        restPostMockMvc.perform(get("/api/posts/search?q=zzzznomatch"))
+            .andExpect(status().isOk())
+            .andExpect(jsonPath("$").isEmpty());
     }
 }

@@ -67,6 +67,11 @@ Generic styles
   border-left: 5px solid red;
 }
 
+/* Don't flag the comment box as an error before the user has typed anything. */
+.comments .ng-invalid.ng-pristine:not(form) {
+  border-left: 1px solid #ced4da;
+}
+
 /* other generic styles */
 
 .jh-card {
@@ -203,6 +208,11 @@ ul.comment {
 
 .username {
   font-size: small;
+}
+
+.comment-content {
+  white-space: pre-wrap;
+  word-break: break-word;
 }
 
 /* jhipster-needle-scss-add-main JHipster will add new css style */

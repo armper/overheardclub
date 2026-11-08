@@ -62,7 +62,7 @@ public class Post implements Serializable {
 
     @ManyToOne(optional = false)
     @NotNull
-    @JsonIgnoreProperties("posts")
+    @JsonIgnoreProperties(value = {"posts", "email", "activated", "langKey", "resetDate", "createdBy", "createdDate", "lastModifiedBy", "lastModifiedDate"}, allowSetters = true)
     private User user;
 
     @ManyToOne(optional = false)
@@ -71,6 +71,7 @@ public class Post implements Serializable {
     private Topic topic;
 
     @ManyToMany
+    @JsonIgnoreProperties(value = {"email", "activated", "langKey", "resetDate", "createdBy", "createdDate", "lastModifiedBy", "lastModifiedDate"}, allowSetters = true)
     @Cache(usage = CacheConcurrencyStrategy.NONSTRICT_READ_WRITE)
     @JoinTable(name = "post_user_uprank",
                joinColumns = @JoinColumn(name = "post_id", referencedColumnName = "id"),

@@ -31,7 +31,8 @@ describe('Component Tests', () => {
     describe('save', () => {
       it('Should call update service on save for existing entity', fakeAsync(() => {
         // GIVEN
-        const entity = new Post(123);
+        const entity = new Post(123, 'title', 'content');
+        comp.account = { login: 'user', authorities: ['ROLE_USER'] } as any;
         spyOn(service, 'update').and.returnValue(of(new HttpResponse({ body: entity })));
         comp.updateForm(entity);
         // WHEN
@@ -39,13 +40,14 @@ describe('Component Tests', () => {
         tick(); // simulate async
 
         // THEN
-        expect(service.update).toHaveBeenCalledWith(entity);
+        expect(service.update).toHaveBeenCalledWith(jasmine.objectContaining({ id: 123, title: 'title', content: 'content' }));
         expect(comp.isSaving).toEqual(false);
       }));
 
       it('Should call create service on save for new entity', fakeAsync(() => {
         // GIVEN
-        const entity = new Post();
+        const entity = new Post(undefined, 'title', 'content');
+        comp.account = { login: 'user', authorities: ['ROLE_USER'] } as any;
         spyOn(service, 'create').and.returnValue(of(new HttpResponse({ body: entity })));
         comp.updateForm(entity);
         // WHEN
@@ -53,7 +55,7 @@ describe('Component Tests', () => {
         tick(); // simulate async
 
         // THEN
-        expect(service.create).toHaveBeenCalledWith(entity);
+        expect(service.create).toHaveBeenCalledWith(jasmine.objectContaining({ title: 'title', content: 'content' }));
         expect(comp.isSaving).toEqual(false);
       }));
     });

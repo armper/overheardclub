@@ -38,10 +38,8 @@ export const topicRoute: Routes = [
     path: '',
     component: TopicComponent,
     data: {
-      authorities: ['ROLE_USER'],
       pageTitle: 'Topics'
-    },
-    canActivate: [UserRouteAccessService]
+    }
   },
   {
     path: ':id/view',
@@ -50,10 +48,8 @@ export const topicRoute: Routes = [
       topic: TopicResolve
     },
     data: {
-      authorities: ['ROLE_USER'],
-      pageTitle: 'Topics'
-    },
-    canActivate: [UserRouteAccessService]
+      pageTitle: 'Topic'
+    }
   },
   {
     path: 'new',

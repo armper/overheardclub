@@ -2,6 +2,8 @@ package com.perea.overheard.web.rest;
 
 import com.perea.overheard.domain.OverheardComment;
 import com.perea.overheard.service.OverheardCommentService;
+import com.perea.overheard.service.UserService;
+import com.perea.overheard.security.SecurityUtils;
 import com.perea.overheard.web.rest.errors.BadRequestAlertException;
 import com.perea.overheard.service.dto.OverheardCommentCriteria;
 import com.perea.overheard.service.OverheardCommentQueryService;
@@ -12,11 +14,13 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.AccessDeniedException;
 import org.springframework.web.bind.annotation.*;
 
 import javax.validation.Valid;
 import java.net.URI;
 import java.net.URISyntaxException;
+import java.time.Instant;
 import java.util.List;
 import java.util.Optional;
 
@@ -38,9 +42,12 @@ public class OverheardCommentResource {
 
     private final OverheardCommentQueryService overheardCommentQueryService;
 
-    public OverheardCommentResource(OverheardCommentService overheardCommentService, OverheardCommentQueryService overheardCommentQueryService) {
+    private final UserService userService;
+
+    public OverheardCommentResource(OverheardCommentService overheardCommentService, OverheardCommentQueryService overheardCommentQueryService, UserService userService) {
         this.overheardCommentService = overheardCommentService;
         this.overheardCommentQueryService = overheardCommentQueryService;
+        this.userService = userService;
     }
 
     /**
@@ -55,6 +62,13 @@ public class OverheardCommentResource {
         log.debug("REST request to save OverheardComment : {}", overheardComment);
         if (overheardComment.getId() != null) {
             throw new BadRequestAlertException("A new overheardComment cannot already have an ID", ENTITY_NAME, "idexists");
+        }
+        if (!SecurityUtils.isCurrentUserAdmin() || overheardComment.getUser() == null) {
+            overheardComment.setUser(userService.getUserWithAuthorities()
+                .orElseThrow(() -> new AccessDeniedException("You must be signed in")));
+        }
+        if (!SecurityUtils.isCurrentUserAdmin() || overheardComment.getDate() == null) {
+            overheardComment.setDate(Instant.now());
         }
         OverheardComment result = overheardCommentService.save(overheardComment);
         return ResponseEntity.created(new URI("/api/overheard-comments/" + result.getId()))
@@ -76,6 +90,17 @@ public class OverheardCommentResource {
         log.debug("REST request to update OverheardComment : {}", overheardComment);
         if (overheardComment.getId() == null) {
             throw new BadRequestAlertException("Invalid id", ENTITY_NAME, "idnull");
+        }
+        OverheardComment existing = overheardCommentService.findOne(overheardComment.getId())
+            .orElseThrow(() -> new BadRequestAlertException("Not found", ENTITY_NAME, "idnotfound"));
+        if (!SecurityUtils.canModifyContentOf(existing.getUser().getLogin())) {
+            throw new AccessDeniedException("You can only edit your own comments");
+        }
+        if (!SecurityUtils.isCurrentUserAdmin()) {
+            overheardComment.setUser(existing.getUser());
+            overheardComment.setDate(existing.getDate());
+            overheardComment.setPost(existing.getPost());
+            overheardComment.setRanking(existing.getRanking());
         }
         OverheardComment result = overheardCommentService.save(overheardComment);
         return ResponseEntity.ok()
@@ -130,6 +155,10 @@ public class OverheardCommentResource {
     @DeleteMapping("/overheard-comments/{id}")
     public ResponseEntity<Void> deleteOverheardComment(@PathVariable Long id) {
         log.debug("REST request to delete OverheardComment : {}", id);
+        Optional<OverheardComment> owned = overheardCommentService.findOne(id);
+        if (owned.isPresent() && !SecurityUtils.canModifyContentOf(owned.get().getUser().getLogin())) {
+            throw new AccessDeniedException("You can only delete your own comments");
+        }
         overheardCommentService.delete(id);
         return ResponseEntity.noContent().headers(HeaderUtil.createEntityDeletionAlert(applicationName, false, ENTITY_NAME, id.toString())).build();
     }

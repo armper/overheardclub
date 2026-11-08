@@ -2,7 +2,7 @@ import { Component, OnInit } from '@angular/core';
 import { HttpResponse } from '@angular/common/http';
 // eslint-disable-next-line @typescript-eslint/no-unused-vars
 import { FormBuilder, Validators } from '@angular/forms';
-import { ActivatedRoute } from '@angular/router';
+import { ActivatedRoute, Router } from '@angular/router';
 import { Observable } from 'rxjs';
 import * as moment from 'moment';
 import { DATE_TIME_FORMAT } from 'app/shared/constants/input.constants';
@@ -50,24 +50,42 @@ export class PostUpdateComponent implements OnInit {
     protected topicService: TopicService,
     protected activatedRoute: ActivatedRoute,
     private fb: FormBuilder,
-    protected accountService: AccountService
+    protected accountService: AccountService,
+    protected router: Router
   ) {}
 
   ngOnInit(): void {
+    this.accountService.getAuthenticationState().subscribe(account => (this.account = account!));
+
     this.activatedRoute.data.subscribe(({ post }) => {
       if (!post.id) {
-        const today = moment().startOf('day');
-        post.date = today;
+        post.date = moment();
       }
 
       this.updateForm(post);
 
-      this.userService.query().subscribe((res: HttpResponse<IUser[]>) => (this.users = res.body || []));
+      if (this.isAdmin()) {
+        // Listing users is restricted to administrators.
+        this.userService.query().subscribe((res: HttpResponse<IUser[]>) => (this.users = res.body || []));
+      }
 
-      this.topicService.query().subscribe((res: HttpResponse<ITopic[]>) => (this.topics = res.body || []));
+      this.topicService.query().subscribe((res: HttpResponse<ITopic[]>) => {
+        this.topics = (res.body || []).sort((a, b) => (a.title || '').localeCompare(b.title || ''));
+        this.preselectTopic(post);
+      });
     });
+  }
 
-    this.accountService.getAuthenticationState().subscribe(account => (this.account = account!));
+  private preselectTopic(post: IPost): void {
+    if (post.id || this.editForm.get('topic')!.value) {
+      return;
+    }
+    const params = this.activatedRoute.snapshot ? this.activatedRoute.snapshot.queryParams : undefined;
+    const topicId = params && params['topicId'] ? Number(params['topicId']) : undefined;
+    const topic = this.topics.find(t => t.id === topicId);
+    if (topic) {
+      this.editForm.patchValue({ topic });
+    }
   }
 
   updateForm(post: IPost): void {
@@ -135,14 +153,18 @@ export class PostUpdateComponent implements OnInit {
 
   protected subscribeToSaveResponse(result: Observable<HttpResponse<IPost>>): void {
     result.subscribe(
-      () => this.onSaveSuccess(),
+      res => this.onSaveSuccess(res.body),
       () => this.onSaveError()
     );
   }
 
-  protected onSaveSuccess(): void {
+  protected onSaveSuccess(saved?: IPost | null): void {
     this.isSaving = false;
-    this.previousState();
+    if (saved && saved.id) {
+      this.router.navigate(['/post', saved.id, 'view']);
+    } else {
+      this.previousState();
+    }
   }
 
   protected onSaveError(): void {
@@ -164,7 +186,7 @@ export class PostUpdateComponent implements OnInit {
     return option;
   }
 
-  public isAdmin(): boolean | undefined {
-    return this.account.authorities.includes('ROLE_ADMIN');
+  public isAdmin(): boolean {
+    return !!this.account && this.account.authorities.includes('ROLE_ADMIN');
   }
 }

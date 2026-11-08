@@ -9,6 +9,8 @@ import { ITopic, Topic } from 'app/shared/model/topic.model';
 import { TopicService } from './topic.service';
 import { IUser } from 'app/core/user/user.model';
 import { UserService } from 'app/core/user/user.service';
+import { AccountService } from 'app/core/auth/account.service';
+import { Account } from 'app/core/user/account.model';
 
 @Component({
   selector: 'jhi-topic-update',
@@ -17,26 +19,36 @@ import { UserService } from 'app/core/user/user.service';
 export class TopicUpdateComponent implements OnInit {
   isSaving = false;
   users: IUser[] = [];
+  account: Account | null = null;
 
   editForm = this.fb.group({
     id: [],
     title: [null, [Validators.required, Validators.minLength(2), Validators.maxLength(80)]],
-    user: [null, Validators.required]
+    user: []
   });
 
   constructor(
     protected topicService: TopicService,
     protected userService: UserService,
     protected activatedRoute: ActivatedRoute,
-    private fb: FormBuilder
+    private fb: FormBuilder,
+    protected accountService: AccountService
   ) {}
 
   ngOnInit(): void {
+    this.accountService.getAuthenticationState().subscribe(account => (this.account = account));
     this.activatedRoute.data.subscribe(({ topic }) => {
       this.updateForm(topic);
 
-      this.userService.query().subscribe((res: HttpResponse<IUser[]>) => (this.users = res.body || []));
+      if (this.isAdmin()) {
+        // Listing users is restricted to administrators.
+        this.userService.query().subscribe((res: HttpResponse<IUser[]>) => (this.users = res.body || []));
+      }
     });
+  }
+
+  isAdmin(): boolean {
+    return !!this.account && this.account.authorities.includes('ROLE_ADMIN');
   }
 
   updateForm(topic: ITopic): void {
@@ -66,7 +78,8 @@ export class TopicUpdateComponent implements OnInit {
       ...new Topic(),
       id: this.editForm.get(['id'])!.value,
       title: this.editForm.get(['title'])!.value,
-      user: this.editForm.get(['user'])!.value
+      // The server assigns the current user as owner unless an administrator picks one.
+      user: this.editForm.get(['user'])!.value || (this.account as any) || undefined
     };
   }
 

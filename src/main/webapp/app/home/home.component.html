@@ -1,59 +1,108 @@
-<div class="row">
-    <div class="col-md-3">
+<div class="hero row align-items-center mb-4">
+    <div class="col-md-3 d-none d-md-block text-center">
         <span class="hipster img-fluid rounded"></span>
     </div>
-
     <div class="col-md-9">
-        <h1 class="display-4">Welcome to Overheard Club!</h1>
+        <h1 class="display-4">Overheard Club</h1>
+        <p class="lead">
+            The funniest, strangest and most surprising things people say when they think nobody is listening.
+            Share what you overheard, react to the best quotes and join the conversation.
+        </p>
 
-        <p class="lead">This is your homepage</p>
+        <div *ngIf="!isAuthenticated()" class="mb-3">
+            <button type="button" class="btn btn-primary mr-2" (click)="login()">
+                <fa-icon icon="sign-in-alt"></fa-icon> Sign in
+            </button>
+            <a class="btn btn-outline-secondary" routerLink="account/register">
+                <fa-icon icon="user-plus"></fa-icon> Join the club
+            </a>
+        </div>
+        <p *ngIf="isAuthenticated() && account" id="home-logged-message" class="text-muted">
+            Welcome back, {{ account.firstName || account.login }}! Heard anything good lately?
+        </p>
 
-        <div [ngSwitch]="isAuthenticated()">
-            <div class="alert alert-success" *ngSwitchCase="true">
-                <span id="home-logged-message" *ngIf="account">You are logged in as user "{{ account.login }}".</span>
+        <form class="search-form" role="search" (ngSubmit)="search()">
+            <div class="input-group">
+                <input type="search" class="form-control" name="q" [(ngModel)]="searchQuery"
+                       placeholder="Search overheard quotes..." aria-label="Search posts" />
+                <div class="input-group-append">
+                    <button class="btn btn-outline-primary" type="submit" aria-label="Search">
+                        <fa-icon icon="search"></fa-icon>
+                    </button>
+                </div>
             </div>
+        </form>
+    </div>
+</div>
 
-            <div class="alert alert-warning" *ngSwitchCase="false">
-                <span>If you want to </span>
-                <a class="alert-link" (click)="login()">sign in</a><span>, you can try the default accounts:<br />-
-                    Administrator (login="admin" and password="admin") <br />- User (login="user" and
-                    password="user").</span>
-            </div>
-
-            <div class="alert alert-warning" *ngSwitchCase="false">
-                <span>You don't have an account yet?</span>&nbsp;
-                <a class="alert-link" routerLink="account/register">Register a new account</a>
-            </div>
+<div class="row">
+    <div class="col-lg-8">
+        <div class="d-flex flex-wrap align-items-center mb-3">
+            <ul class="nav nav-pills feed-tabs mr-auto">
+                <li class="nav-item">
+                    <a class="nav-link" href="javascript:void(0)" [class.active]="mode === 'top'" (click)="setMode('top')">
+                        <fa-icon icon="fire"></fa-icon> Top this week
+                    </a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" href="javascript:void(0)" [class.active]="mode === 'new'" (click)="setMode('new')">
+                        <fa-icon icon="clock"></fa-icon> Newest
+                    </a>
+                </li>
+                <li class="nav-item" *ngIf="isAuthenticated()">
+                    <a class="nav-link" href="javascript:void(0)" [class.active]="mode === 'mine'" (click)="setMode('mine')">
+                        <fa-icon icon="user"></fa-icon> My posts
+                    </a>
+                </li>
+            </ul>
+            <button id="jh-create-entity" class="btn btn-primary jh-create-entity create-post" [routerLink]="['/post/new']">
+                <fa-icon icon="plus"></fa-icon>
+                <span>Post Something</span>
+            </button>
         </div>
 
-        <h2>Top posts for today:</h2>
-        <ul class="comment" *ngFor="let post of topFunnyPosts">
+        <div *ngIf="mode === 'search'" class="alert alert-info d-flex align-items-center">
+            <span class="mr-auto">Results for "<strong>{{ activeSearch }}</strong>"</span>
+            <button type="button" class="btn btn-sm btn-outline-secondary" (click)="clearSearch()">Clear search</button>
+        </div>
 
-            <hr>
+        <jhi-post-card *ngFor="let post of posts; trackBy: trackId" [post]="post" [account]="account"></jhi-post-card>
 
-            <li>
-                <span class="rankings">
-                    <span (click)="upRank(post, 1)">👍</span>{{post.rankOne}}
-                    <span (click)="upRank(post, 2)">❤️</span>{{post.rankTwo}}
-                    <span (click)="upRank(post, 3)">😂</span>{{post.rankThree}}
-                    <span (click)="upRank(post, 4)">🤯</span>{{post.rankFour}}
-                    <span (click)="upRank(post, 5)">😠</span>{{post.rankFive}}
-                    <span (click)="upRank(post, 6)">🙄</span>{{post.rankSix}}
-                    <span (click)="upRank(post, 7)">🤢</span>{{post.rankSeven}}
+        <div *ngIf="!loading && posts.length === 0" class="alert alert-warning" id="no-result">
+            <span *ngIf="mode === 'top'">Nothing has been overheard this week yet. Be the first to post!</span>
+            <span *ngIf="mode === 'new'">No posts yet. Be the first to post!</span>
+            <span *ngIf="mode === 'mine'">You haven't posted anything yet.</span>
+            <span *ngIf="mode === 'search'">No posts match your search.</span>
+        </div>
 
-                </span>
-                <span class="username"> User "{{post.user?.firstName}}" posted: </span>
-                <h3><a href="post/{{post.id}}/view">{{post.title}}</a></h3>
-            </li>
-        </ul>
-
-        <button id="jh-create-entity" class="btn btn-primary float-right jh-create-entity create-post"
-            [routerLink]="['/post/new']">
-            <fa-icon icon="plus"></fa-icon>
-            <span>
-                Post Something
-            </span>
-        </button>
-
+        <div class="text-center my-3">
+            <span *ngIf="loading" class="text-muted">Loading…</span>
+            <button *ngIf="!loading && hasMore" type="button" class="btn btn-outline-primary" (click)="loadMore()">Load more</button>
+        </div>
     </div>
+
+    <aside class="col-lg-4">
+        <div class="card mb-3">
+            <div class="card-body">
+                <h5 class="card-title"><fa-icon icon="tags"></fa-icon> Topics</h5>
+                <div *ngIf="topics.length === 0" class="text-muted small">No topics yet.</div>
+                <div class="topic-list">
+                    <a *ngFor="let topic of topics" class="badge badge-pill badge-light mr-1 mb-1 topic-pill"
+                       [routerLink]="['/topic', topic.id, 'view']">#{{ topic.title }}</a>
+                </div>
+                <a class="small d-block mt-2" routerLink="/topic">Browse all topics</a>
+                <a *ngIf="isAuthenticated()" class="small d-block" routerLink="/topic/new">Start a new topic</a>
+            </div>
+        </div>
+        <div class="card">
+            <div class="card-body small text-muted">
+                <h6 class="card-title text-body">Club rules</h6>
+                <ul class="pl-3 mb-0">
+                    <li>Keep it anonymous — no real names of the people you overheard.</li>
+                    <li>Quote what you heard, add context in the title.</li>
+                    <li>One reaction per post, so make it count.</li>
+                </ul>
+            </div>
+        </div>
+    </aside>
 </div>

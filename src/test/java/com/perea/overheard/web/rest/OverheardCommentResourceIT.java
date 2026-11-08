@@ -10,6 +10,8 @@ import com.perea.overheard.web.rest.errors.ExceptionTranslator;
 import com.perea.overheard.service.dto.OverheardCommentCriteria;
 import com.perea.overheard.service.OverheardCommentQueryService;
 
+import org.springframework.security.test.context.support.WithMockUser;
+import com.perea.overheard.service.UserService;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.mockito.MockitoAnnotations;
@@ -38,6 +40,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
  * Integration tests for the {@link OverheardCommentResource} REST controller.
  */
 @SpringBootTest(classes = OverheardclubApp.class)
+@WithMockUser(username = "admin", authorities = {"ROLE_ADMIN", "ROLE_USER"})
 public class OverheardCommentResourceIT {
 
     private static final String DEFAULT_CONTENT = "AAAAAAAAAA";
@@ -72,6 +75,9 @@ public class OverheardCommentResourceIT {
     private EntityManager em;
 
     @Autowired
+    private UserService userService;
+
+    @Autowired
     private Validator validator;
 
     private MockMvc restOverheardCommentMockMvc;
@@ -81,7 +87,7 @@ public class OverheardCommentResourceIT {
     @BeforeEach
     public void setup() {
         MockitoAnnotations.initMocks(this);
-        final OverheardCommentResource overheardCommentResource = new OverheardCommentResource(overheardCommentService, overheardCommentQueryService);
+        final OverheardCommentResource overheardCommentResource = new OverheardCommentResource(overheardCommentService, overheardCommentQueryService, userService);
         this.restOverheardCommentMockMvc = MockMvcBuilders.standaloneSetup(overheardCommentResource)
             .setCustomArgumentResolvers(pageableArgumentResolver)
             .setControllerAdvice(exceptionTranslator)

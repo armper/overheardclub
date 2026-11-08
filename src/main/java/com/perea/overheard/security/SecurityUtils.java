@@ -77,6 +77,28 @@ public final class SecurityUtils {
             getAuthorities(authentication).anyMatch(authority::equals);
     }
 
+    /**
+     * Check if the current user is an administrator.
+     *
+     * @return true if the current user has the admin authority.
+     */
+    public static boolean isCurrentUserAdmin() {
+        return isCurrentUserInRole(AuthoritiesConstants.ADMIN);
+    }
+
+    /**
+     * Check if the current user owns content created by the given login, or is an administrator.
+     *
+     * @param ownerLogin the login of the content owner.
+     * @return true if the current user may modify the content.
+     */
+    public static boolean canModifyContentOf(String ownerLogin) {
+        if (isCurrentUserAdmin()) {
+            return true;
+        }
+        return ownerLogin != null && getCurrentUserLogin().map(ownerLogin::equals).orElse(false);
+    }
+
     private static Stream<String> getAuthorities(Authentication authentication) {
         return authentication.getAuthorities().stream()
             .map(GrantedAuthority::getAuthority);

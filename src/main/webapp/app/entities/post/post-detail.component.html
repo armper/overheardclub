@@ -1,49 +1,71 @@
 <div class="row justify-content-center">
-    <div class="col-8">
+    <div class="col-lg-8">
         <div *ngIf="post">
-            <button type="submit" (click)="previousState()" class="btn btn-info">
-                <fa-icon icon="arrow-left"></fa-icon>&nbsp;<span>Back</span>
-            </button>
-
-            <hr>
-
-            <div *ngIf="post.topic">
-                <h3><a [routerLink]="['/topic', post.topic?.title, 'view']">{{ post.topic?.title }}</a></h3>
+            <div class="d-flex align-items-center mb-3">
+                <button type="button" (click)="previousState()" class="btn btn-link pl-0">
+                    <fa-icon icon="arrow-left"></fa-icon>&nbsp;<span>Back</span>
+                </button>
+                <div class="ml-auto">
+                    <button type="button" class="btn btn-sm btn-outline-secondary" (click)="copyLink()">
+                        <fa-icon icon="share-alt"></fa-icon>&nbsp;<span>{{ linkCopied ? 'Link copied!' : 'Share' }}</span>
+                    </button>
+                    <button *ngIf="canModify(post.user)" type="button" [routerLink]="['/post', post.id, 'edit']"
+                            class="btn btn-sm btn-outline-primary ml-1">
+                        <fa-icon icon="pencil-alt"></fa-icon>&nbsp;<span>Edit</span>
+                    </button>
+                    <button *ngIf="canModify(post.user)" type="button" (click)="deletePost()"
+                            class="btn btn-sm btn-outline-danger ml-1">
+                        <fa-icon icon="trash-alt"></fa-icon>&nbsp;<span>Delete</span>
+                    </button>
+                </div>
             </div>
 
             <jhi-alert-error></jhi-alert-error>
 
-            <p>
-                <h4>{{ post.title }}</h4>
-            </p>
-            {{ post.user?.firstName }}
+            <jhi-post-card [post]="post" [account]="account" [full]="true"></jhi-post-card>
 
-            <span>{{ post.date }}</span>
-            <br>
-            <br>
-            <p>
-                <span>{{ post.content }}</span>
-            </p>
-            <br>
+            <section class="comments mt-4">
+                <h4><fa-icon icon="comment"></fa-icon> Comments <small class="text-muted">({{ comments.length }})</small></h4>
 
-            <button *ngIf="post.user?.email===account?.email || isAdmin()" type="button"
-                [routerLink]="['/post', post.id, 'edit']" class="btn btn-primary">
-                <fa-icon icon="pencil-alt"></fa-icon>&nbsp;<span>Edit</span>
-            </button>
+                <form *ngIf="account" [formGroup]="commentForm" (ngSubmit)="addComment()" class="mb-4" novalidate>
+                    <div class="form-group">
+                        <label for="field_comment" class="sr-only">Add a comment</label>
+                        <textarea id="field_comment" class="form-control" rows="3" formControlName="content"
+                                  placeholder="What do you think?" maxlength="4096"></textarea>
+                        <small class="form-text text-danger"
+                               *ngIf="commentForm.get('content')!.dirty && commentForm.get('content')?.errors?.minlength">
+                            A comment needs at least 2 characters.
+                        </small>
+                        <small class="form-text text-danger" *ngIf="commentError">{{ commentError }}</small>
+                    </div>
+                    <button type="submit" class="btn btn-primary" [disabled]="commentForm.invalid || isSavingComment">
+                        <fa-icon icon="comment"></fa-icon>&nbsp;Comment
+                    </button>
+                </form>
 
-            <hr>
+                <div *ngIf="!account" class="alert alert-light border">
+                    <a class="alert-link" href="javascript:void(0)" (click)="login()">Sign in</a> to join the conversation.
+                </div>
 
-            <h4>Comments</h4>
+                <div *ngIf="comments.length === 0" class="text-muted">No comments yet. Start the conversation!</div>
 
-            <ul style="list-style-type:none" *ngFor="let comment of comments">
-                <li>
-                    <br>
-                    <p>{{comment.ranking}} By {{comment.user.firstName}} at {{comment.date}} wrote:</p>
-                    <p>{{comment.content}} </p>
-                    <hr>
-                </li>
-            </ul>
-
+                <ul class="list-unstyled">
+                    <li *ngFor="let comment of comments" class="media comment-item border-bottom py-3">
+                        <fa-icon icon="user-circle" size="2x" class="text-muted mr-3"></fa-icon>
+                        <div class="media-body">
+                            <div class="small text-muted mb-1">
+                                <strong class="text-body">{{ authorOf(comment) }}</strong>
+                                <span *ngIf="comment.date" [title]="comment.date.toDate() | date:'medium'"> · {{ comment.date.fromNow() }}</span>
+                                <a *ngIf="canModify(comment.user)" href="javascript:void(0)" class="text-danger ml-2"
+                                   (click)="deleteComment(comment)">
+                                    <fa-icon icon="trash-alt"></fa-icon> Delete
+                                </a>
+                            </div>
+                            <p class="mb-0 comment-content">{{ comment.content }}</p>
+                        </div>
+                    </li>
+                </ul>
+            </section>
         </div>
     </div>
 </div>

@@ -10,6 +10,9 @@ import com.perea.overheard.web.rest.errors.ExceptionTranslator;
 import com.perea.overheard.service.dto.TopicCriteria;
 import com.perea.overheard.service.TopicQueryService;
 
+import org.springframework.security.test.context.support.WithMockUser;
+import com.perea.overheard.service.UserService;
+import com.perea.overheard.repository.PostRepository;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.mockito.MockitoAnnotations;
@@ -36,6 +39,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
  * Integration tests for the {@link TopicResource} REST controller.
  */
 @SpringBootTest(classes = OverheardclubApp.class)
+@WithMockUser(username = "admin", authorities = {"ROLE_ADMIN", "ROLE_USER"})
 public class TopicResourceIT {
 
     private static final String DEFAULT_TITLE = "AAAAAAAAAA";
@@ -63,6 +67,12 @@ public class TopicResourceIT {
     private EntityManager em;
 
     @Autowired
+    private UserService userService;
+
+    @Autowired
+    private PostRepository postRepository;
+
+    @Autowired
     private Validator validator;
 
     private MockMvc restTopicMockMvc;
@@ -72,7 +82,7 @@ public class TopicResourceIT {
     @BeforeEach
     public void setup() {
         MockitoAnnotations.initMocks(this);
-        final TopicResource topicResource = new TopicResource(topicService, topicQueryService);
+        final TopicResource topicResource = new TopicResource(topicService, topicQueryService, userService, postRepository);
         this.restTopicMockMvc = MockMvcBuilders.standaloneSetup(topicResource)
             .setCustomArgumentResolvers(pageableArgumentResolver)
             .setControllerAdvice(exceptionTranslator)

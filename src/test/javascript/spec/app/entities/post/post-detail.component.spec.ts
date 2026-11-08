@@ -1,5 +1,6 @@
 import { ComponentFixture, TestBed } from '@angular/core/testing';
 import { ActivatedRoute } from '@angular/router';
+import { FormBuilder } from '@angular/forms';
 import { of } from 'rxjs';
 
 import { OverheardclubTestModule } from '../../../test.module';
@@ -16,7 +17,7 @@ describe('Component Tests', () => {
       TestBed.configureTestingModule({
         imports: [OverheardclubTestModule],
         declarations: [PostDetailComponent],
-        providers: [{ provide: ActivatedRoute, useValue: route }]
+        providers: [FormBuilder, { provide: ActivatedRoute, useValue: route }]
       })
         .overrideTemplate(PostDetailComponent, '')
         .compileComponents();

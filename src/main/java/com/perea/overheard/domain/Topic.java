@@ -37,7 +37,7 @@ public class Topic implements Serializable {
 
     @ManyToOne(optional = false)
     @NotNull
-    @JsonIgnoreProperties("topics")
+    @JsonIgnoreProperties(value = {"topics", "email", "activated", "langKey", "resetDate", "createdBy", "createdDate", "lastModifiedBy", "lastModifiedDate"}, allowSetters = true)
     private User user;
 
     // jhipster-needle-entity-add-field - JHipster will add fields here, do not remove

@@ -39,7 +39,7 @@ public class OverheardComment implements Serializable {
 
     @ManyToOne(optional = false)
     @NotNull
-    @JsonIgnoreProperties("overheardComments")
+    @JsonIgnoreProperties(value = {"overheardComments", "email", "activated", "langKey", "resetDate", "createdBy", "createdDate", "lastModifiedBy", "lastModifiedDate"}, allowSetters = true)
     private User user;
 
     @ManyToOne(optional = false)

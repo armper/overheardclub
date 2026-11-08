@@ -1,7 +1,10 @@
 package com.perea.overheard.web.rest;
 
 import com.perea.overheard.domain.Post;
+import com.perea.overheard.domain.User;
+import com.perea.overheard.security.SecurityUtils;
 import com.perea.overheard.service.PostService;
+import com.perea.overheard.service.UserService;
 import com.perea.overheard.web.rest.errors.BadRequestAlertException;
 import com.perea.overheard.service.dto.PostCriteria;
 import com.perea.overheard.service.PostQueryService;
@@ -13,7 +16,9 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
+import org.springframework.security.access.AccessDeniedException;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
@@ -23,6 +28,8 @@ import org.springframework.web.bind.annotation.*;
 import javax.validation.Valid;
 import java.net.URI;
 import java.net.URISyntaxException;
+import java.time.Instant;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Optional;
 
@@ -44,9 +51,17 @@ public class PostResource {
 
     private final PostQueryService postQueryService;
 
-    public PostResource(PostService postService, PostQueryService postQueryService) {
+    private final UserService userService;
+
+    public PostResource(PostService postService, PostQueryService postQueryService, UserService userService) {
         this.postService = postService;
         this.postQueryService = postQueryService;
+        this.userService = userService;
+    }
+
+    private User currentUser() {
+        return userService.getUserWithAuthorities()
+            .orElseThrow(() -> new AccessDeniedException("You must be signed in"));
     }
 
     /**
@@ -61,6 +76,21 @@ public class PostResource {
         log.debug("REST request to save Post : {}", post);
         if (post.getId() != null) {
             throw new BadRequestAlertException("A new post cannot already have an ID", ENTITY_NAME, "idexists");
+        }
+        if (!SecurityUtils.isCurrentUserAdmin() || post.getUser() == null) {
+            // Regular users always post as themselves, with fresh reactions.
+            post.setUser(currentUser());
+        }
+        if (!SecurityUtils.isCurrentUserAdmin()) {
+            post.setDate(Instant.now());
+            post.setRankOne(0);
+            post.setRankTwo(0);
+            post.setRankThree(0);
+            post.setRankFour(0);
+            post.setRankFive(0);
+            post.setUserUpranks(new HashSet<>());
+        } else if (post.getDate() == null) {
+            post.setDate(Instant.now());
         }
         Post result = postService.save(post);
         return ResponseEntity.created(new URI("/api/posts/" + result.getId()))
@@ -83,7 +113,20 @@ public class PostResource {
         if (post.getId() == null) {
             throw new BadRequestAlertException("Invalid id", ENTITY_NAME, "idnull");
         }
-        Post result = postService.save(post);
+        Post existing = postService.findOne(post.getId())
+            .orElseThrow(() -> new BadRequestAlertException("Post not found", ENTITY_NAME, "idnotfound"));
+        if (!SecurityUtils.canModifyContentOf(existing.getUser().getLogin())) {
+            throw new AccessDeniedException("You can only edit your own posts");
+        }
+        Post toSave = post;
+        if (!SecurityUtils.isCurrentUserAdmin()) {
+            // Owners may only change the text and the topic; reactions and authorship are server managed.
+            existing.setTitle(post.getTitle());
+            existing.setContent(post.getContent());
+            existing.setTopic(post.getTopic());
+            toSave = existing;
+        }
+        Post result = postService.save(toSave);
         return ResponseEntity.ok()
             .headers(HeaderUtil.createEntityUpdateAlert(applicationName, false, ENTITY_NAME, post.getId().toString()))
             .body(result);
@@ -117,6 +160,70 @@ public class PostResource {
     }
 
     /**
+     * {@code GET  /posts/top} : the most reacted posts of the last days.
+     *
+     * @param days how many days back to look.
+     * @param page the page number.
+     * @param size the page size.
+     * @return the posts ordered by total reactions.
+     */
+    @GetMapping("/posts/top")
+    public ResponseEntity<List<Post>> getTopPosts(
+        @RequestParam(defaultValue = "7") int days,
+        @RequestParam(defaultValue = "0") int page,
+        @RequestParam(defaultValue = "10") int size
+    ) {
+        log.debug("REST request to get top Posts of the last {} days", days);
+        Page<Post> result = postService.findTop(days, PageRequest.of(Math.max(0, page), Math.min(Math.max(1, size), 50)));
+        HttpHeaders headers = PaginationUtil.generatePaginationHttpHeaders(ServletUriComponentsBuilder.fromCurrentRequest(), result);
+        return ResponseEntity.ok().headers(headers).body(result.getContent());
+    }
+
+    /**
+     * {@code GET  /posts/search?q=} : search posts by title or content.
+     *
+     * @param q the text to search for.
+     * @param page the page number.
+     * @param size the page size.
+     * @return the matching posts, newest first.
+     */
+    @GetMapping("/posts/search")
+    public ResponseEntity<List<Post>> searchPosts(
+        @RequestParam(defaultValue = "") String q,
+        @RequestParam(defaultValue = "0") int page,
+        @RequestParam(defaultValue = "20") int size
+    ) {
+        log.debug("REST request to search Posts for : {}", q);
+        Page<Post> result = postService.search(q, PageRequest.of(Math.max(0, page), Math.min(Math.max(1, size), 50)));
+        HttpHeaders headers = PaginationUtil.generatePaginationHttpHeaders(ServletUriComponentsBuilder.fromCurrentRequest(), result);
+        return ResponseEntity.ok().headers(headers).body(result.getContent());
+    }
+
+    /**
+     * {@code POST  /posts/:id/reactions/:reaction} : react to a post. Each user can react once per post.
+     *
+     * @param id the id of the post.
+     * @param reaction the reaction, from 1 to 5.
+     * @return the updated post, or {@code 400 (Bad Request)} if the user already reacted.
+     */
+    @PostMapping("/posts/{id}/reactions/{reaction}")
+    public ResponseEntity<Post> reactToPost(@PathVariable Long id, @PathVariable int reaction) {
+        log.debug("REST request to react {} to Post : {}", reaction, id);
+        if (reaction < 1 || reaction > 5) {
+            throw new BadRequestAlertException("Unknown reaction", ENTITY_NAME, "badreaction");
+        }
+        User user = currentUser();
+        Optional<Post> post = postService.findOne(id);
+        if (!post.isPresent()) {
+            return ResponseEntity.notFound().build();
+        }
+        if (postService.hasUserReacted(id, user.getLogin())) {
+            throw new BadRequestAlertException("You already reacted to this post", ENTITY_NAME, "alreadyreacted");
+        }
+        return ResponseEntity.ok().body(postService.react(post.get(), user, reaction));
+    }
+
+    /**
      * {@code GET  /posts/:id} : get the "id" post.
      *
      * @param id the id of the post to retrieve.
@@ -138,6 +245,10 @@ public class PostResource {
     @DeleteMapping("/posts/{id}")
     public ResponseEntity<Void> deletePost(@PathVariable Long id) {
         log.debug("REST request to delete Post : {}", id);
+        Optional<Post> post = postService.findOne(id);
+        if (post.isPresent() && !SecurityUtils.canModifyContentOf(post.get().getUser().getLogin())) {
+            throw new AccessDeniedException("You can only delete your own posts");
+        }
         postService.delete(id);
         return ResponseEntity.noContent().headers(HeaderUtil.createEntityDeletionAlert(applicationName, false, ENTITY_NAME, id.toString())).build();
     }

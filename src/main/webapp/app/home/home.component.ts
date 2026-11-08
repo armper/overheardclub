@@ -1,12 +1,17 @@
 import { Component, OnInit, OnDestroy } from '@angular/core';
+import { HttpHeaders, HttpResponse } from '@angular/common/http';
 import { Subscription } from 'rxjs';
+import { JhiParseLinks } from 'ng-jhipster';
 
 import { LoginModalService } from 'app/core/login/login-modal.service';
 import { AccountService } from 'app/core/auth/account.service';
 import { Account } from 'app/core/user/account.model';
 import { IPost } from 'app/shared/model/post.model';
+import { ITopic } from 'app/shared/model/topic.model';
 import { PostService } from 'app/entities/post/post.service';
-import { UserService } from 'app/core/user/user.service';
+import { TopicService } from 'app/entities/topic/topic.service';
+
+export type FeedMode = 'top' | 'new' | 'mine' | 'search';
 
 @Component({
   selector: 'jhi-home',
@@ -14,31 +19,39 @@ import { UserService } from 'app/core/user/user.service';
   styleUrls: ['home.scss']
 })
 export class HomeComponent implements OnInit, OnDestroy {
+  readonly pageSize = 10;
+
   account: Account | null = null;
-  authSubscription!: Subscription;
-  topFunnyPosts!: IPost[];
-  postSubscription!: Subscription;
+  authSubscription?: Subscription;
+
+  mode: FeedMode = 'top';
+  posts: IPost[] = [];
+  topics: ITopic[] = [];
+  page = 0;
+  hasMore = false;
+  loading = false;
+  searchQuery = '';
+  activeSearch = '';
 
   constructor(
     private accountService: AccountService,
     private loginModalService: LoginModalService,
     private postService: PostService,
-    private userService: UserService
+    private topicService: TopicService,
+    private parseLinks: JhiParseLinks
   ) {}
 
   ngOnInit(): void {
-    this.authSubscription = this.accountService.getAuthenticationState().subscribe(account => (this.account = account));
-    const date = new Date();
-    date.setDate(date.getDate() - 7);
-
-    this.postSubscription = this.postService
-      .query({
-        page: '0',
-        size: '5',
-        sort: ['rankOne,desc'],
-        'date.greaterThan': date.toISOString()
-      })
-      .subscribe(posts => (this.topFunnyPosts = posts.body!));
+    this.authSubscription = this.accountService.getAuthenticationState().subscribe(account => {
+      this.account = account;
+      if (!account && this.mode === 'mine') {
+        this.setMode('top');
+      }
+    });
+    this.topicService.query().subscribe(res => {
+      this.topics = (res.body || []).sort((a, b) => (a.title || '').localeCompare(b.title || ''));
+    });
+    this.load();
   }
 
   isAuthenticated(): boolean {
@@ -49,88 +62,88 @@ export class HomeComponent implements OnInit, OnDestroy {
     this.loginModalService.open();
   }
 
-  upRank(post: IPost, rank: number): void {
-    // Only logged in users can upvote
-    if (!this.account) {
+  setMode(mode: FeedMode): void {
+    if (mode !== 'search') {
+      this.activeSearch = '';
+      this.searchQuery = '';
+    }
+    this.mode = mode;
+    this.page = 0;
+    this.posts = [];
+    this.load();
+  }
+
+  search(): void {
+    const query = (this.searchQuery || '').trim();
+    if (!query) {
+      this.setMode('top');
       return;
     }
+    this.activeSearch = query;
+    this.setMode('search');
+  }
 
-    this.userService.find(this.account.login).subscribe(user => {
-      this.postService.query({ 'userUprankId.in': user.id }).subscribe(uprankedPosts => {
-        if (uprankedPosts.body!.length === 0) {
-          this.postService.find(post.id!).subscribe(pp => {
-            post.userUpranks = pp.body!.userUpranks;
+  clearSearch(): void {
+    this.setMode('top');
+  }
 
-            switch (rank) {
-              case 1:
-                post.rankOne!++;
-                break;
-              case 2:
-                post.rankTwo!++;
-                break;
-              case 3:
-                post.rankThree!++;
-                break;
-              case 4:
-                post.rankFour!++;
-                break;
-              case 5:
-                post.rankFive!++;
-                break;
-            }
+  loadMore(): void {
+    this.page++;
+    this.load();
+  }
 
-            post.userUpranks!.push(user);
-            this.postService.update(post).subscribe(updatePost => {
-              updatePost.body;
-              // eslint-disable-next-line no-console
-              console.log(updatePost.body);
-            });
-          });
-        } else {
-          const urps: IPost[] = uprankedPosts.body!.filter(urp => urp.id === post.id);
+  trackId(index: number, item: IPost): number | undefined {
+    return item.id;
+  }
 
-          if (urps.length === 0) {
-            this.postService.find(post.id!).subscribe(pp => {
-              post.userUpranks = pp.body!.userUpranks;
-
-              switch (rank) {
-                case 1:
-                  post.rankOne!++;
-                  break;
-                case 2:
-                  post.rankTwo!++;
-                  break;
-                case 3:
-                  post.rankThree!++;
-                  break;
-                case 4:
-                  post.rankFour!++;
-                  break;
-                case 5:
-                  post.rankFive!++;
-                  break;
-              }
-
-              post.userUpranks!.push(user);
-              this.postService.update(post).subscribe(updatePost => {
-                updatePost.body;
-                // eslint-disable-next-line no-console
-                console.log(updatePost.body);
-              });
-            });
-          }
+  private load(): void {
+    this.loading = true;
+    const paging = { page: this.page, size: this.pageSize };
+    let request;
+    switch (this.mode) {
+      case 'top':
+        request = this.postService.top({ ...paging, days: 7 });
+        break;
+      case 'search':
+        request = this.postService.search({ ...paging, q: this.activeSearch });
+        break;
+      case 'mine':
+        request = this.postService.query({ ...paging, sort: ['date,desc', 'id,desc'], 'userId.equals': this.accountId() });
+        break;
+      default:
+        request = this.postService.query({ ...paging, sort: ['date,desc', 'id,desc'] });
+    }
+    const mode = this.mode;
+    request.subscribe(
+      (res: HttpResponse<IPost[]>) => {
+        if (mode !== this.mode) {
+          return;
         }
-      });
+        this.append(res.body, res.headers);
+        this.loading = false;
+      },
+      () => (this.loading = false)
+    );
+  }
+
+  private accountId(): number | undefined {
+    return this.account ? (this.account as any).id : undefined;
+  }
+
+  private append(data: IPost[] | null, headers: HttpHeaders): void {
+    const link = headers.get('link');
+    const links = link ? this.parseLinks.parse(link) : { last: 0 };
+    this.hasMore = links.last !== undefined && this.page < links.last;
+    (data || []).forEach(post => {
+      if (!this.posts.some(existing => existing.id === post.id)) {
+        this.posts.push(post);
+      }
     });
   }
 
   ngOnDestroy(): void {
     if (this.authSubscription) {
       this.authSubscription.unsubscribe();
-    }
-
-    if (this.postSubscription) {
-      this.postSubscription.unsubscribe();
     }
   }
 }

@@ -1,19 +1,20 @@
 <div class="row justify-content-center">
     <div class="col-8">
         <form name="editForm" role="form" novalidate (ngSubmit)="save()" [formGroup]="editForm">
-            <h2 id="jhi-post-heading">Create or edit a Post</h2>
+            <h2 id="jhi-post-heading">{{ editForm.get('id')!.value ? 'Edit your post' : 'Share something you overheard' }}</h2>
 
             <div>
                 <jhi-alert-error></jhi-alert-error>
 
-                <div class="form-group" [hidden]="!editForm.get('id')!.value">
+                <div class="form-group" [hidden]="!editForm.get('id')!.value || !isAdmin()">
                     <label for="id">ID</label>
                     <input type="text" class="form-control" id="id" name="id" formControlName="id" readonly />
                 </div>
 
                 <div class="form-group">
                     <label class="form-control-label" for="field_title">Title</label>
-                    <input type="text" class="form-control" name="title" id="field_title"
+                    <input type="text" class="form-control" name="title" id="field_title" maxlength="80"
+                           placeholder="Where were you? e.g. &quot;Overheard at the coffee shop&quot;"
                            formControlName="title"/>
                     <div *ngIf="editForm.get('title')!.invalid && (editForm.get('title')!.dirty || editForm.get('title')!.touched)">
                         <small class="form-text text-danger"
@@ -32,9 +33,11 @@
                 </div>
 
                 <div class="form-group">
-                    <label class="form-control-label" for="field_content">Content</label>
-                    <input type="text" class="form-control" name="content" id="field_content"
-                           formControlName="content"/>
+                    <label class="form-control-label" for="field_content">What did you hear?</label>
+                    <textarea class="form-control" name="content" id="field_content" rows="5" maxlength="4096"
+                              placeholder="Quote it as you heard it..."
+                              formControlName="content"></textarea>
+                    <small class="form-text text-muted text-right">{{ (editForm.get('content')!.value || '').length }} / 4096</small>
                     <div *ngIf="editForm.get('content')!.invalid && (editForm.get('content')!.dirty || editForm.get('content')!.touched)">
                         <small class="form-text text-danger"
                                *ngIf="editForm.get('content')?.errors?.required">
@@ -51,7 +54,7 @@
                     </div>
                 </div>
 
-                <div class="form-group" hidden="!isAdmin()">
+                <div class="form-group" [hidden]="!isAdmin()">
                     <label class="form-control-label" for="field_date">Date</label>
                     <div class="d-flex">
                         <input id="field_date" type="datetime-local" class="form-control" name="date" formControlName="date" placeholder="YYYY-MM-DD HH:mm"/>
@@ -68,41 +71,41 @@
                     </div>
                 </div>
 
-                <div class="form-group" hidden="!isAdmin()">
+                <div class="form-group" [hidden]="!isAdmin()">
                     <label class="form-control-label" for="field_rankOne">Rank One</label>
                     <input type="number" class="form-control" name="rankOne" id="field_rankOne"
                            formControlName="rankOne"/>
                 </div>
 
-                <div class="form-group" hidden="!isAdmin()">
+                <div class="form-group" [hidden]="!isAdmin()">
                     <label class="form-control-label" for="field_rankTwo">Rank Two</label>
                     <input type="number" class="form-control" name="rankTwo" id="field_rankTwo"
                            formControlName="rankTwo"/>
                 </div>
 
-                <div class="form-group" hidden="!isAdmin()">
+                <div class="form-group" [hidden]="!isAdmin()">
                     <label class="form-control-label" for="field_rankThree">Rank Three</label>
                     <input type="number" class="form-control" name="rankThree" id="field_rankThree"
                            formControlName="rankThree"/>
                 </div>
 
-                <div class="form-group" hidden="!isAdmin()">
+                <div class="form-group" [hidden]="!isAdmin()">
                     <label class="form-control-label" for="field_rankFour">Rank Four</label>
                     <input type="number" class="form-control" name="rankFour" id="field_rankFour"
                            formControlName="rankFour"/>
                 </div>
 
-                <div class="form-group" hidden="!isAdmin()">
+                <div class="form-group" [hidden]="!isAdmin()">
                     <label class="form-control-label" for="field_rankFive">Rank Five</label>
                     <input type="number" class="form-control" name="rankFive" id="field_rankFive"
                            formControlName="rankFive"/>
                 </div>
 
-                <div class="form-group" hidden="!isAdmin()">
+                <div class="form-group" [hidden]="!isAdmin()">
                     <label class="form-control-label" for="field_user">User</label>
                     <select class="form-control" id="field_user" name="user" formControlName="user">
                         <option *ngIf="!editForm.get('user')!.value" [ngValue]="null" selected></option>
-                        <option [ngValue]="userOption.id === editForm.get('user')!.value?.id ? editForm.get('user')!.value : userOption" *ngFor="let userOption of users; trackBy: trackById">{{ userOption.id }}</option>
+                        <option [ngValue]="userOption.id === editForm.get('user')!.value?.id ? editForm.get('user')!.value : userOption" *ngFor="let userOption of users; trackBy: trackById">{{ userOption.login }}</option>
                     </select>
                 </div>
                 <div *ngIf="editForm.get('user')!.invalid && (editForm.get('user')!.dirty || editForm.get('user')!.touched)">
@@ -114,9 +117,10 @@
 
                 <div class="form-group">
                     <label class="form-control-label" for="field_topic">Topic</label>
+                    <a class="small float-right" routerLink="/topic/new">Missing a topic? Create one</a>
                     <select class="form-control" id="field_topic" name="topic" formControlName="topic">
                         <option *ngIf="!editForm.get('topic')!.value" [ngValue]="null" selected></option>
-                        <option [ngValue]="topicOption.id === editForm.get('topic')!.value?.id ? editForm.get('topic')!.value : topicOption" *ngFor="let topicOption of topics; trackBy: trackById">{{ topicOption.id }}</option>
+                        <option [ngValue]="topicOption.id === editForm.get('topic')!.value?.id ? editForm.get('topic')!.value : topicOption" *ngFor="let topicOption of topics; trackBy: trackById">{{ topicOption.title }}</option>
                     </select>
                 </div>
                 <div *ngIf="editForm.get('topic')!.invalid && (editForm.get('topic')!.dirty || editForm.get('topic')!.touched)">
@@ -126,7 +130,7 @@
                     </small>
                 </div>
 
-                <div class="form-group" hidden="!isAdmin()">
+                <div class="form-group" [hidden]="!isAdmin()">
                     <label for="field_userUpranks">User Uprank</label>
                     <select class="form-control" id="field_userUpranks" multiple name="userUpranks" formControlName="userUpranks">
                         <option [ngValue]="getSelected(editForm.get('userUpranks')!.value, userOption)" *ngFor="let userOption of users; trackBy: trackById">{{ userOption.login }}</option>

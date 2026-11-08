@@ -1,7 +1,10 @@
 package com.perea.overheard.web.rest;
 
 import com.perea.overheard.domain.Topic;
+import com.perea.overheard.repository.PostRepository;
 import com.perea.overheard.service.TopicService;
+import com.perea.overheard.service.UserService;
+import com.perea.overheard.security.SecurityUtils;
 import com.perea.overheard.web.rest.errors.BadRequestAlertException;
 import com.perea.overheard.service.dto.TopicCriteria;
 import com.perea.overheard.service.TopicQueryService;
@@ -12,6 +15,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.AccessDeniedException;
 import org.springframework.web.bind.annotation.*;
 
 import javax.validation.Valid;
@@ -38,9 +42,16 @@ public class TopicResource {
 
     private final TopicQueryService topicQueryService;
 
-    public TopicResource(TopicService topicService, TopicQueryService topicQueryService) {
+    private final UserService userService;
+
+    private final PostRepository postRepository;
+
+    public TopicResource(TopicService topicService, TopicQueryService topicQueryService, UserService userService,
+                         PostRepository postRepository) {
         this.topicService = topicService;
         this.topicQueryService = topicQueryService;
+        this.userService = userService;
+        this.postRepository = postRepository;
     }
 
     /**
@@ -55,6 +66,10 @@ public class TopicResource {
         log.debug("REST request to save Topic : {}", topic);
         if (topic.getId() != null) {
             throw new BadRequestAlertException("A new topic cannot already have an ID", ENTITY_NAME, "idexists");
+        }
+        if (!SecurityUtils.isCurrentUserAdmin() || topic.getUser() == null) {
+            topic.setUser(userService.getUserWithAuthorities()
+                .orElseThrow(() -> new AccessDeniedException("You must be signed in")));
         }
         Topic result = topicService.save(topic);
         return ResponseEntity.created(new URI("/api/topics/" + result.getId()))
@@ -76,6 +91,14 @@ public class TopicResource {
         log.debug("REST request to update Topic : {}", topic);
         if (topic.getId() == null) {
             throw new BadRequestAlertException("Invalid id", ENTITY_NAME, "idnull");
+        }
+        Topic existing = topicService.findOne(topic.getId())
+            .orElseThrow(() -> new BadRequestAlertException("Not found", ENTITY_NAME, "idnotfound"));
+        if (!SecurityUtils.canModifyContentOf(existing.getUser().getLogin())) {
+            throw new AccessDeniedException("You can only edit your own topics");
+        }
+        if (!SecurityUtils.isCurrentUserAdmin()) {
+            topic.setUser(existing.getUser());
         }
         Topic result = topicService.save(topic);
         return ResponseEntity.ok()
@@ -130,6 +153,13 @@ public class TopicResource {
     @DeleteMapping("/topics/{id}")
     public ResponseEntity<Void> deleteTopic(@PathVariable Long id) {
         log.debug("REST request to delete Topic : {}", id);
+        Optional<Topic> owned = topicService.findOne(id);
+        if (owned.isPresent() && !SecurityUtils.canModifyContentOf(owned.get().getUser().getLogin())) {
+            throw new AccessDeniedException("You can only delete your own topics");
+        }
+        if (postRepository.countByTopicId(id) > 0) {
+            throw new BadRequestAlertException("This topic still has posts", ENTITY_NAME, "topichasposts");
+        }
         topicService.delete(id);
         return ResponseEntity.noContent().headers(HeaderUtil.createEntityDeletionAlert(applicationName, false, ENTITY_NAME, id.toString())).build();
     }
